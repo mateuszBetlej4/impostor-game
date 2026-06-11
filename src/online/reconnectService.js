@@ -32,6 +32,32 @@ export async function reconnectSession(identity) {
   return { session: sessionResult.data, player: playerResult.data, identity };
 }
 
+export async function loadSessionSnapshot(sessionId) {
+  const client = getClient();
+
+  const sessionResult = await client
+    .from('online_sessions')
+    .select('*')
+    .eq('id', sessionId)
+    .single();
+
+  if (sessionResult.error) throw sessionResult.error;
+
+  const playersResult = await client
+    .from('online_players')
+    .select('*')
+    .eq('session_id', sessionId)
+    .order('order_index', { ascending: true })
+    .order('joined_at', { ascending: true });
+
+  if (playersResult.error) throw playersResult.error;
+
+  return {
+    session: sessionResult.data,
+    players: playersResult.data || [],
+  };
+}
+
 export function subscribeToSession(sessionId, onChange) {
   const client = getClient();
   const channel = client

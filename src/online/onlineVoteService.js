@@ -64,3 +64,62 @@ export async function loadRoundVotes(roundId) {
   if (result.error) throw result.error;
   return result.data || [];
 }
+
+export function calculateOnlineVoteResult({ players, votes }) {
+  const counts = players.reduce((acc, player) => ({ ...acc, [player.id]: 0 }), {});
+  votes.forEach((vote) => {
+    counts[vote.target_player_id] = (counts[vote.target_player_id] || 0) + 1;
+  });
+
+  const sorted = Object.entries(counts)
+    .map(([playerId, count]) => ({ player: players.find((item) => item.id === playerId), count }))
+    .filter((item) => item.player)
+    .sort((a, b) => b.count - a.count);
+
+  const highest = sorted[0]?.count || 0;
+  const votedOut = sorted.filter((item) => item.count === highest && highest > 0).map((item) => item.player);
+  const impostorCaught = votedOut.some((player) => player.role === 'impostor');
+
+  return {
+    sorted,
+    highest,
+    votedOut,
+    impostorCaught,
+    winner: impostorCaught ? 'mob' : 'impostors',
+  };
+}
+
+export async function finishOnlineVote({ session, identity, round, players, votes }) {
+  const client = getClient();
+
+  if (!identity?.isHost || identity.hostSecret !== session.host_key) {
+    throw new Error('Only the host can finish the online vote.');
+  }
+
+  const result = calculateOnlineVoteResult({ players, votes });
+
+  const roundResult = await client
+    .from('online_rounds')
+    .update({ outcome: result.winner })
+    .eq('id', round.id)
+    .select()
+    .single();
+
+  if (roundResult.error) throw roundResult.error;
+
+  const sessionResult = await client
+    .from('online_sessions')
+    .update({ status: 'results', last_active_at: new Date().toISOString() })
+    .eq('id', session.id)
+    .eq('host_key', identity.hostSecret)
+    .select()
+    .single();
+
+  if (sessionResult.error) throw sessionResult.error;
+
+  return {
+    session: sessionResult.data,
+    round: roundResult.data,
+    result,
+  };
+}

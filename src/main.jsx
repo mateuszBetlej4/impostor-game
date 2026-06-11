@@ -6,7 +6,6 @@ import './styles.css';
 import './passOrder.css';
 import './modes.css';
 import './logoTweaks.css';
-import './dev/devCloud.css';
 
 const WORD_AUDIT_HASH = '#breadcrumb-words';
 
@@ -19,24 +18,7 @@ function RootRouter() {
     return () => window.removeEventListener('hashchange', handleHashChange);
   }, []);
 
-  if (isWordAuditRoute) return <WordAuditPage />;
-
-  return (
-    <>
-      <App />
-      <button
-        className="dev-cloud-button"
-        type="button"
-        aria-label="Open dev word audit"
-        onClick={() => {
-          window.location.hash = WORD_AUDIT_HASH;
-          setIsWordAuditRoute(true);
-        }}
-      >
-        ☁️
-      </button>
-    </>
-  );
+  return isWordAuditRoute ? <WordAuditPage /> : <App />;
 }
 
 createRoot(document.getElementById('root')).render(

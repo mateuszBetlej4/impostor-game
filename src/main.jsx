@@ -3,6 +3,7 @@ import { createRoot } from 'react-dom/client';
 import App from './App.jsx';
 import './styles.css';
 import './passOrder.css';
+import './modes.css';
 import './logoTweaks.css';
 
 createRoot(document.getElementById('root')).render(

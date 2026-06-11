@@ -2,11 +2,13 @@ import React, { useEffect, useState } from 'react';
 import { createRoot } from 'react-dom/client';
 import App from './App.jsx';
 import { WordAuditPage } from './dev/WordAuditPage.jsx';
+import { GameGuards } from './gameGuards.jsx';
 import './styles.css';
 import './passOrder.css';
 import './modes.css';
 import './logoTweaks.css';
 import './setupTabs.css';
+import './gameGuards.css';
 
 const WORD_AUDIT_HASH = '#breadcrumb-words';
 
@@ -19,7 +21,7 @@ function RootRouter() {
     return () => window.removeEventListener('hashchange', handleHashChange);
   }, []);
 
-  return isWordAuditRoute ? <WordAuditPage /> : <App />;
+  return isWordAuditRoute ? <WordAuditPage /> : <><App /><GameGuards /></>;
 }
 
 createRoot(document.getElementById('root')).render(

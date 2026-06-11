@@ -169,7 +169,8 @@
 }
 
 .online-card,
-.online-status-card {
+.online-status-card,
+.online-lobby-card {
   display: grid;
   gap: 10px;
   padding: 14px;
@@ -193,7 +194,8 @@
 }
 
 .online-card label span,
-.online-status-card span {
+.online-status-card span,
+.online-lobby-header span {
   color: var(--mob-muted);
   font-size: 12px;
   font-weight: 950;
@@ -240,6 +242,69 @@
   color: var(--mob-text);
   border: 1px solid var(--mob-border-soft);
   background: rgba(255, 255, 255, 0.045);
+}
+
+.online-lobby-card {
+  margin-top: 2px;
+}
+
+.online-lobby-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.online-lobby-header strong {
+  color: var(--mob-gold-bright);
+  font-weight: 950;
+}
+
+.online-player-list {
+  display: grid;
+  gap: 8px;
+}
+
+.online-player-row {
+  display: grid;
+  grid-template-columns: 34px 1fr auto;
+  align-items: center;
+  gap: 9px;
+  min-height: 48px;
+  padding: 8px;
+  border: 1px solid rgba(244, 208, 111, 0.12);
+  border-radius: 16px;
+  background: rgba(255, 255, 255, 0.035);
+}
+
+.online-player-row > span {
+  width: 32px;
+  height: 32px;
+  display: grid;
+  place-items: center;
+  border-radius: 12px;
+  color: #120d03;
+  background: linear-gradient(145deg, var(--mob-gold-bright), var(--mob-gold-dark));
+  font-weight: 950;
+}
+
+.online-player-row strong {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  color: var(--mob-text);
+}
+
+.online-player-row small {
+  color: rgba(255, 247, 223, 0.66);
+  font-size: 12px;
+  text-align: right;
+}
+
+.online-helper {
+  margin: 2px 0 0;
+  font-size: 13px;
 }
 
 .online-warning {

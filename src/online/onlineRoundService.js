@@ -38,6 +38,11 @@ export async function startOnlineRound({ session, identity, players, wordBank })
     throw new Error('Online sessions need at least 3 connected players.');
   }
 
+  await client
+    .from('online_votes')
+    .delete()
+    .eq('session_id', session.id);
+
   const impostorCount = Math.min(Number(session.impostor_count || 1), activePlayers.length - 1);
   const impostorIds = new Set(shuffle(activePlayers).slice(0, impostorCount).map((player) => player.id));
   const selected = pickWord({ category: session.category || 'Random', wordBank });
@@ -49,6 +54,8 @@ export async function startOnlineRound({ session, identity, players, wordBank })
       category: selected.category,
       word: selected.word,
       clue_round: 1,
+      outcome: null,
+      impostor_guess: null,
     })
     .select()
     .single();

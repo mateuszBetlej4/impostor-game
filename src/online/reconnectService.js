@@ -1,0 +1,44 @@
+import { supabase, isSupabaseConfigured } from './supabaseClient.js';
+
+function getClient() {
+  if (!isSupabaseConfigured || !supabase) {
+    throw new Error('Supabase is not configured yet.');
+  }
+  return supabase;
+}
+
+export async function reconnectSession(identity) {
+  const client = getClient();
+
+  const sessionResult = await client
+    .from('online_sessions')
+    .select('*')
+    .eq('id', identity.sessionId)
+    .eq('code', identity.sessionCode)
+    .single();
+
+  if (sessionResult.error) throw sessionResult.error;
+
+  const playerResult = await client
+    .from('online_players')
+    .update({ connected: true, last_seen_at: new Date().toISOString() })
+    .eq('id', identity.playerId)
+    .eq('player_key', identity.playerSecret)
+    .select()
+    .single();
+
+  if (playerResult.error) throw playerResult.error;
+
+  return { session: sessionResult.data, player: playerResult.data, identity };
+}
+
+export function subscribeToSession(sessionId, onChange) {
+  const client = getClient();
+  const channel = client
+    .channel(`session-${sessionId}`)
+    .on('postgres_changes', { event: '*', schema: 'public', table: 'online_sessions', filter: `id=eq.${sessionId}` }, onChange)
+    .on('postgres_changes', { event: '*', schema: 'public', table: 'online_players', filter: `session_id=eq.${sessionId}` }, onChange)
+    .subscribe();
+
+  return () => client.removeChannel(channel);
+}

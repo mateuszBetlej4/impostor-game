@@ -1,3 +1,46 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 768 768" role="img" aria-label="A$AP MOB FC crest">
-  <image href="data:image/webp;base64,UklGRi6TAAAXRUJQVlA4ICYTAADQ2wCdASqHAoABPm0skUikIqGhKqwEv4AaiWwDc8A4iRWpLxczLiB4mMmmqlAPr61Nq0+qcWXMIu9bkdf/fezz/4Aa5v7/gf/uW/P//gfq/5H/9//wP//H/XzvJv+5/+p+b/m/4v/r5v+X/w7/1//3//P7//5f///oH//UfK9xs7//wLPnggCvK39HQjN8qf+d//L//5v2f/dzLHdm/A/+Pf9J2X66dKd2VE///lzz/2/wffH/+J//k/7N/5Qf0/eN/+Pr9D/+d/5P+o39Ief7//pb+o/+//kzbb/+T///q//b//z+//p/JvrP+1//b//3v/iz4t//BVeL6EdJ+3/v//5//5v+oP+ff8//gD/wP/+O/4Y/1t//L/1//+m//+T/e//Xr+u+P60ftOePwB+4Snv/9x//N/1G//X//+T/6D//5P+//LD86/3n//zfj//59/4b/r/r5Y1loV0Pn//P/0X//p//5v/+H/63/j//K//3/O////mf9P//X//j/0//yP//q/Of+5d//x//ZP9X/n/+T/wJr/7v+b/+f/7L//H//N/5v/Jf1mP/////K/+m/8L/9V//v/+J///1/sf5f+H/85/+P/97/r/8f/7f/4X/3P9H/7P/LgAA+Yf///0//b/+y/+f/V/8K/+d/4/9H/uP/w//t3/3/8A/9L/f//1//T//qf/r/+H//K//p3//t/2/+X+pf/b/6F+2P/n4//UP+T/+c/+j//Jf7/4f82cH////////P1/4v+J/+y/+tP/ev/n/5q/6f//P//b5//N//6v+b/6f+/P/3z/4f/J/wAA//S/27//s//r+W/n/6T///c/1//M4///K//u/+f9//E/zr/6//3P9H/7f/X/r/46f+J///N/5v/Jf1mP/////P/0f/m/+5/8b/8p////zP//N/5v+X8A" width="768" height="768" preserveAspectRatio="xMidYMid meet"/>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-label="A$AP MOB FC crest">
+  <defs>
+    <linearGradient id="gold" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#fff0a8"/>
+      <stop offset="0.35" stop-color="#d6a93a"/>
+      <stop offset="0.7" stop-color="#8a641e"/>
+      <stop offset="1" stop-color="#f4d06f"/>
+    </linearGradient>
+    <linearGradient id="dark" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#1b1710"/>
+      <stop offset="1" stop-color="#050505"/>
+    </linearGradient>
+    <filter id="shadow" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="10" stdDeviation="10" flood-color="#000" flood-opacity="0.55"/>
+    </filter>
+  </defs>
+
+  <rect width="512" height="512" fill="none"/>
+
+  <g filter="url(#shadow)">
+    <path d="M176 108c18-38 44-58 80-58s62 20 80 58c-24-12-47-14-80-4-33-10-56-8-80 4Z" fill="url(#gold)" stroke="#2b1b04" stroke-width="5"/>
+    <path d="M206 76l18 30 32-50 32 50 18-30 10 56H196l10-56Z" fill="url(#dark)" stroke="url(#gold)" stroke-width="8"/>
+    <circle cx="256" cy="88" r="14" fill="url(#gold)" stroke="#2b1b04" stroke-width="4"/>
+
+    <circle cx="256" cy="276" r="184" fill="url(#dark)" stroke="#2b1b04" stroke-width="12"/>
+    <circle cx="256" cy="276" r="168" fill="none" stroke="url(#gold)" stroke-width="12"/>
+    <circle cx="256" cy="276" r="123" fill="#0b0a08" stroke="url(#gold)" stroke-width="8"/>
+
+    <path d="M72 252h120v56H72z" fill="url(#dark)" stroke="url(#gold)" stroke-width="8"/>
+    <path d="M320 252h120v56H320z" fill="url(#dark)" stroke="url(#gold)" stroke-width="8"/>
+
+    <text x="256" y="205" text-anchor="middle" font-size="56" font-family="Georgia, serif" font-weight="900" fill="url(#gold)" stroke="#2b1b04" stroke-width="2">A$AP</text>
+    <text x="132" y="292" text-anchor="middle" font-size="42" font-family="Georgia, serif" font-weight="900" fill="url(#gold)" stroke="#2b1b04" stroke-width="2">MOB</text>
+    <text x="380" y="292" text-anchor="middle" font-size="42" font-family="Georgia, serif" font-weight="900" fill="url(#gold)" stroke="#2b1b04" stroke-width="2">FC</text>
+
+    <text x="256" y="329" text-anchor="middle" font-size="120" font-family="Georgia, serif" font-weight="900" fill="url(#gold)" stroke="#2b1b04" stroke-width="4">M</text>
+    <path d="M214 327l42 44 42-44" fill="none" stroke="url(#gold)" stroke-width="10" stroke-linecap="round" stroke-linejoin="round"/>
+
+    <circle cx="256" cy="392" r="31" fill="url(#gold)" stroke="#2b1b04" stroke-width="6"/>
+    <path d="M237 381l19-11 19 11v22l-19 11-19-11Z" fill="#111" stroke="#5f3f0b" stroke-width="3"/>
+    <path d="M226 392h60M256 370v44" stroke="#111" stroke-width="4" opacity="0.75"/>
+
+    <path d="M162 361c-28-14-48-36-58-66M350 361c28-14 48-36 58-66" fill="none" stroke="url(#gold)" stroke-width="9" stroke-linecap="round"/>
+    <path d="M119 211l-20 7 20 7 7 20 7-20 20-7-20-7-7-20-7 20ZM386 211l-20 7 20 7 7 20 7-20 20-7-20-7-7-20-7 20Z" fill="url(#gold)"/>
+  </g>
 </svg>

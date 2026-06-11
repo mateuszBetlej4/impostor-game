@@ -1,0 +1,39 @@
+.countdown-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 10000;
+  display: grid;
+  place-items: center;
+  padding: 24px;
+  background: rgba(0, 0, 0, 0.72);
+  backdrop-filter: blur(10px);
+}
+
+.countdown-card {
+  width: min(340px, 86vw);
+  min-height: 260px;
+  display: grid;
+  place-items: center;
+  gap: 8px;
+  border: 1px solid rgba(244, 208, 111, 0.38);
+  border-radius: 34px;
+  background: radial-gradient(circle at 50% 0%, rgba(244, 208, 111, 0.24), transparent 44%), linear-gradient(180deg, rgba(24, 20, 13, 0.98), rgba(4, 4, 3, 0.98));
+  box-shadow: 0 30px 90px rgba(0, 0, 0, 0.72), inset 0 1px 0 rgba(255, 255, 255, 0.08);
+  text-align: center;
+}
+
+.countdown-card span {
+  color: var(--mob-gold-bright);
+  font-size: 13px;
+  font-weight: 950;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+}
+
+.countdown-card strong {
+  font-family: 'Barlow Condensed', Inter, sans-serif;
+  color: var(--mob-text);
+  font-size: clamp(130px, 40vw, 190px);
+  line-height: 0.78;
+  text-shadow: 0 0 32px rgba(244, 208, 111, 0.28);
+}

@@ -1,7 +1,7 @@
 import { Eye, EyeOff, RotateCcw, Shield, Skull, Sparkles, Trophy, Users, Vote } from 'lucide-react';
 import { useEffect, useMemo, useState } from 'react';
 import { MOB_LOGO_SRC } from './logoData.js';
-import { GAME_MODES, SESSION_PRESETS, DEFAULT_SETTINGS } from './modeData.js';
+import { SESSION_PRESETS, DEFAULT_SETTINGS } from './modeData.js';
 import { CATEGORY_NAMES, WORD_BANK } from './wordBank.js';
 
 const DEFAULT_PLAYERS = ['Mateusz', 'Dawid', 'Daniel', 'Fabian', 'Patryk'];
@@ -20,14 +20,13 @@ function normalisePlayerName(value) {
   return value.trim().replace(/\s+/g, ' ');
 }
 
-function makeRound({ players, category, impostorCount, modeId, settings }) {
+function makeRound({ players, category, impostorCount, settings }) {
   const chosenCategory = category === 'Random' ? pickRandom(CATEGORY_NAMES) : category;
   const word = pickRandom(WORD_BANK[chosenCategory]);
   const passOrder = settings.randomisePassOrder ? shuffle(players) : players;
   const impostorNames = new Set(shuffle(players).slice(0, impostorCount));
 
   return {
-    modeId,
     settings,
     passOrder,
     category: chosenCategory,
@@ -59,17 +58,15 @@ function App() {
   const [players, setPlayers] = useState(DEFAULT_PLAYERS);
   const [newPlayer, setNewPlayer] = useState('');
   const [category, setCategory] = useState('A$AP MOB');
-  const [modeId, setModeId] = useState('classic');
   const [settings, setSettings] = useState(DEFAULT_SETTINGS);
-  const [impostorCount, setImpostorCount] = useState(GAME_MODES.classic.defaultImpostors);
+  const [impostorCount, setImpostorCount] = useState(1);
   const [round, setRound] = useState(null);
   const [roleVisible, setRoleVisible] = useState(false);
   const [votingPlayerIndex, setVotingPlayerIndex] = useState(0);
   const [guessValue, setGuessValue] = useState('');
   const [scores, setScores] = useState(() => loadScores());
 
-  const mode = GAME_MODES[modeId];
-  const canStart = players.length >= Math.max(MIN_PLAYERS, mode.minPlayers) && impostorCount >= 1 && impostorCount < players.length;
+  const canStart = players.length >= MIN_PLAYERS && impostorCount >= 1 && impostorCount < players.length;
   const currentRevealPlayer = round ? round.passOrder[round.revealIndex] : null;
   const currentVotingPlayer = round ? round.passOrder[votingPlayerIndex] : null;
 
@@ -92,12 +89,6 @@ function App() {
 
   function patchSettings(patch) {
     setSettings((current) => ({ ...current, ...patch }));
-  }
-
-  function changeMode(nextModeId) {
-    const nextMode = GAME_MODES[nextModeId];
-    setModeId(nextModeId);
-    setImpostorCount((current) => Math.min(Math.max(current, nextMode.defaultImpostors), Math.min(nextMode.maxImpostors, players.length - 1)));
   }
 
   function applyPreset(presetKey) {
@@ -131,7 +122,7 @@ function App() {
 
   function startRound() {
     if (!canStart) return;
-    setRound(makeRound({ players, category, impostorCount, modeId, settings }));
+    setRound(makeRound({ players, category, impostorCount, settings }));
     setRoleVisible(false);
     setVotingPlayerIndex(0);
     setGuessValue('');
@@ -142,11 +133,13 @@ function App() {
     if (!round) return;
     const nextIndex = round.revealIndex + 1;
     setRoleVisible(false);
+
     if (nextIndex >= round.passOrder.length) {
       setRound({ ...round, revealedPlayers: [...round.revealedPlayers, currentRevealPlayer], revealIndex: nextIndex });
-      setScreen('clues');
+      setScreen(round.settings.guessRounds > 0 ? 'clues' : 'vote');
       return;
     }
+
     setRound({ ...round, revealedPlayers: [...round.revealedPlayers, currentRevealPlayer], revealIndex: nextIndex });
   }
 
@@ -164,6 +157,7 @@ function App() {
     const nextVotes = { ...round.votes, [currentVotingPlayer]: target };
     const nextIndex = votingPlayerIndex + 1;
     setRound({ ...round, votes: nextVotes });
+
     if (nextIndex >= round.passOrder.length) {
       const counts = Object.values(nextVotes).reduce((acc, vote) => {
         acc[vote] = (acc[vote] || 0) + 1;
@@ -177,6 +171,7 @@ function App() {
       if (!canGuess) applyScores(impostorCaught ? 'mob' : 'impostors');
       return;
     }
+
     setVotingPlayerIndex(nextIndex);
   }
 
@@ -220,7 +215,7 @@ function App() {
   }
 
   function playAgain() {
-    setRound(makeRound({ players, category, impostorCount, modeId, settings }));
+    setRound(makeRound({ players, category, impostorCount, settings }));
     setRoleVisible(false);
     setVotingPlayerIndex(0);
     setGuessValue('');
@@ -234,13 +229,13 @@ function App() {
       <section className="phone-frame">
         <Header screen={screen} onReset={resetGame} />
         {screen === 'home' && (
-          <HomeScreen players={players} newPlayer={newPlayer} setNewPlayer={setNewPlayer} addPlayer={addPlayer} removePlayer={removePlayer} movePlayer={movePlayer} category={category} setCategory={setCategory} modeId={modeId} changeMode={changeMode} settings={settings} patchSettings={patchSettings} applyPreset={applyPreset} impostorCount={impostorCount} setImpostorCount={setImpostorCount} canStart={canStart} startRound={startRound} scores={scores} resetScores={() => setScores({})} />
+          <HomeScreen players={players} newPlayer={newPlayer} setNewPlayer={setNewPlayer} addPlayer={addPlayer} removePlayer={removePlayer} movePlayer={movePlayer} category={category} setCategory={setCategory} settings={settings} patchSettings={patchSettings} applyPreset={applyPreset} impostorCount={impostorCount} setImpostorCount={setImpostorCount} canStart={canStart} startRound={startRound} scores={scores} resetScores={() => setScores({})} />
         )}
-        {screen === 'reveal' && round && <RevealScreen player={currentRevealPlayer} roleVisible={roleVisible} setRoleVisible={setRoleVisible} isImpostor={round.impostors.has(currentRevealPlayer)} category={round.category} word={round.word} mode={GAME_MODES[round.modeId]} currentIndex={round.revealIndex} totalPlayers={round.passOrder.length} finishCurrentReveal={finishCurrentReveal} showCategoryToImpostor={round.settings.showCategoryToImpostor} />}
-        {screen === 'clues' && round && <ClueScreen round={round} mode={GAME_MODES[round.modeId]} onNext={nextClueRound} />}
+        {screen === 'reveal' && round && <RevealScreen player={currentRevealPlayer} roleVisible={roleVisible} setRoleVisible={setRoleVisible} isImpostor={round.impostors.has(currentRevealPlayer)} category={round.category} word={round.word} currentIndex={round.revealIndex} totalPlayers={round.passOrder.length} finishCurrentReveal={finishCurrentReveal} showCategoryToImpostor={round.settings.showCategoryToImpostor} />}
+        {screen === 'clues' && round && <ClueScreen round={round} onNext={nextClueRound} />}
         {screen === 'vote' && round && <VoteScreen players={players} currentVotingPlayer={currentVotingPlayer} votingPlayerIndex={votingPlayerIndex} totalPlayers={round.passOrder.length} submitVote={submitVote} />}
-        {screen === 'guess' && round && <GuessScreen impostors={[...round.impostors]} guessValue={guessValue} setGuessValue={setGuessValue} submitImpostorGuess={submitImpostorGuess} skipGuess={skipGuess} mode={GAME_MODES[round.modeId]} />}
-        {screen === 'result' && round && voteResult && <ResultScreen round={round} mode={GAME_MODES[round.modeId]} voteResult={voteResult} onPlayAgain={playAgain} onReset={resetGame} />}
+        {screen === 'guess' && round && <GuessScreen impostors={[...round.impostors]} guessValue={guessValue} setGuessValue={setGuessValue} submitImpostorGuess={submitImpostorGuess} skipGuess={skipGuess} />}
+        {screen === 'result' && round && voteResult && <ResultScreen round={round} voteResult={voteResult} onPlayAgain={playAgain} onReset={resetGame} />}
       </section>
     </main>
   );
@@ -258,26 +253,18 @@ function Header({ screen, onReset }) {
   );
 }
 
-function HomeScreen({ players, newPlayer, setNewPlayer, addPlayer, removePlayer, movePlayer, category, setCategory, modeId, changeMode, settings, patchSettings, applyPreset, impostorCount, setImpostorCount, canStart, startRound, scores, resetScores }) {
-  const mode = GAME_MODES[modeId];
+function HomeScreen({ players, newPlayer, setNewPlayer, addPlayer, removePlayer, movePlayer, category, setCategory, settings, patchSettings, applyPreset, impostorCount, setImpostorCount, canStart, startRound, scores, resetScores }) {
   const hasScores = Object.values(scores).some((score) => score > 0);
-  const maxImpostors = Math.min(mode.maxImpostors, Math.max(1, players.length - 1));
+  const maxImpostors = Math.max(1, players.length - 1);
 
   return (
     <div className="screen-stack">
       <section className="hero-card">
         <img className="hero-logo" src={MOB_LOGO_SRC} alt="A$AP MOB FC crest" />
-        <p className="eyebrow">{mode.name} session</p>
-        <h2>{mode.title}</h2>
-        <p className="hero-copy">{mode.description}</p>
-        <div className="hero-stats"><span><strong>{players.length}</strong> players</span><span><strong>{impostorCount}</strong> {mode.impostorRole}</span></div>
-      </section>
-
-      <section className="panel-card">
-        <div className="section-title-row"><div><p className="eyebrow">Game mode</p><h3>Modes</h3></div><Sparkles size={20} /></div>
-        <div className="mode-grid">
-          {Object.values(GAME_MODES).map((item) => <button key={item.id} type="button" className={`mode-card ${modeId === item.id ? 'selected' : ''}`} onClick={() => changeMode(item.id)}><span>{item.badge}</span><strong>{item.name}</strong><small>{item.description}</small></button>)}
-        </div>
+        <p className="eyebrow">Private MOB session</p>
+        <h2>Find the snake before they steal the crown.</h2>
+        <p className="hero-copy">Set the rules, pass order, reveal your roles, give clues, and vote out the impostor.</p>
+        <div className="hero-stats"><span><strong>{players.length}</strong> players</span><span><strong>{impostorCount}</strong> impostor</span></div>
       </section>
 
       <section className="panel-card">
@@ -286,7 +273,7 @@ function HomeScreen({ players, newPlayer, setNewPlayer, addPlayer, removePlayer,
           {Object.entries(SESSION_PRESETS).map(([key, preset]) => <button key={key} type="button" className="preset-button" onClick={() => applyPreset(key)}><strong>{preset.name}</strong><small>{preset.description}</small></button>)}
         </div>
         <div className="settings-grid">
-          <label><span>Guess / clue rounds before vote</span><select value={settings.guessRounds} onChange={(event) => patchSettings({ guessRounds: Number(event.target.value) })}>{[0, 1, 2, 3, 4].map((value) => <option key={value} value={value}>{value === 0 ? 'Skip straight to vote' : `${value} round${value > 1 ? 's' : ''}`}</option>)}</select></label>
+          <label><span>Clue rounds before vote</span><select value={settings.guessRounds} onChange={(event) => patchSettings({ guessRounds: Number(event.target.value) })}>{[0, 1, 2, 3, 4].map((value) => <option key={value} value={value}>{value === 0 ? 'Skip straight to vote' : `${value} round${value > 1 ? 's' : ''}`}</option>)}</select></label>
           <label><span>Discussion timer</span><select value={settings.discussionSeconds} onChange={(event) => patchSettings({ discussionSeconds: Number(event.target.value) })}>{[0, 30, 60, 90, 120, 180].map((value) => <option key={value} value={value}>{value === 0 ? 'No timer' : `${value} seconds`}</option>)}</select></label>
           <label><span>MOB win points</span><select value={settings.pointsMobWin} onChange={(event) => patchSettings({ pointsMobWin: Number(event.target.value) })}>{[1, 2, 3].map((value) => <option key={value} value={value}>{value}</option>)}</select></label>
           <label><span>Impostor win points</span><select value={settings.pointsImpostorWin} onChange={(event) => patchSettings({ pointsImpostorWin: Number(event.target.value) })}>{[1, 2, 3, 4].map((value) => <option key={value} value={value}>{value}</option>)}</select></label>
@@ -307,12 +294,12 @@ function HomeScreen({ players, newPlayer, setNewPlayer, addPlayer, removePlayer,
 
       <section className="panel-card settings-card">
         <label><span>Category</span><select value={category} onChange={(event) => setCategory(event.target.value)}><option value="Random">Random</option>{CATEGORY_NAMES.map((name) => <option key={name} value={name}>{name}</option>)}</select></label>
-        <label><span>{mode.impostorRole}s</span><select value={impostorCount} onChange={(event) => setImpostorCount(Number(event.target.value))}>{Array.from({ length: maxImpostors }, (_, index) => index + 1).map((count) => <option key={count} value={count}>{count}</option>)}</select></label>
+        <label><span>Impostors</span><select value={impostorCount} onChange={(event) => setImpostorCount(Number(event.target.value))}>{Array.from({ length: maxImpostors }, (_, index) => index + 1).map((count) => <option key={count} value={count}>{count}</option>)}</select></label>
       </section>
 
       {hasScores && <section className="panel-card score-card"><div className="section-title-row"><div><p className="eyebrow">Season table</p><h3>Scores</h3></div><button className="mini-button" type="button" onClick={resetScores}>Reset</button></div><div className="score-list">{Object.entries(scores).sort((a, b) => b[1] - a[1]).filter(([name]) => players.includes(name)).map(([name, score]) => <div className="score-row" key={name}><span>{name}</span><strong>{score}</strong></div>)}</div></section>}
-      {!canStart && <p className="warning-text">This mode needs at least {mode.minPlayers} players, and impostors must be fewer than players.</p>}
-      <button className="primary-action" type="button" disabled={!canStart} onClick={startRound}><Sparkles size={20} /> Start {mode.name} Round</button>
+      {!canStart && <p className="warning-text">You need at least 3 players, and impostors must be fewer than players.</p>}
+      <button className="primary-action" type="button" disabled={!canStart} onClick={startRound}><Sparkles size={20} /> Start MOB Round</button>
     </div>
   );
 }
@@ -321,28 +308,28 @@ function Toggle({ label, checked, onChange }) {
   return <button className={`toggle-row ${checked ? 'on' : ''}`} type="button" onClick={() => onChange(!checked)}><span>{label}</span><strong>{checked ? 'On' : 'Off'}</strong></button>;
 }
 
-function RevealScreen({ player, roleVisible, setRoleVisible, isImpostor, category, word, mode, currentIndex, totalPlayers, finishCurrentReveal, showCategoryToImpostor }) {
-  return <div className="screen-stack reveal-layout"><div className="progress-pill">Reveal {currentIndex + 1} of {totalPlayers}</div><section className="role-card"><p className="eyebrow">Pass the crown to</p><h2>{player}</h2>{!roleVisible ? <button className="hold-card" type="button" onClick={() => setRoleVisible(true)}><Eye size={34} /><span>Tap to reveal role</span><small>Keep it hidden from the MOB.</small></button> : <div className={`secret-card ${isImpostor ? 'is-impostor' : 'is-crew'}`}>{isImpostor ? <Skull size={42} /> : <Shield size={42} />}<p className="eyebrow">{isImpostor ? `You are the ${mode.impostorRole}` : `You are ${mode.normalRole}`}</p><h3>{isImpostor ? 'Blend in.' : word}</h3>{(!isImpostor || showCategoryToImpostor) && <p>Category: <strong>{category}</strong></p>}<small>{isImpostor ? 'Fake a clue, survive the vote, then guess the word if you get caught.' : 'Give clues that prove you know the word, but do not make it too obvious.'}</small></div>}</section>{roleVisible && <button className="primary-action" type="button" onClick={finishCurrentReveal}><EyeOff size={20} /> Hide & Pass On</button>}</div>;
+function RevealScreen({ player, roleVisible, setRoleVisible, isImpostor, category, word, currentIndex, totalPlayers, finishCurrentReveal, showCategoryToImpostor }) {
+  return <div className="screen-stack reveal-layout"><div className="progress-pill">Reveal {currentIndex + 1} of {totalPlayers}</div><section className="role-card"><p className="eyebrow">Pass the crown to</p><h2>{player}</h2>{!roleVisible ? <button className="hold-card" type="button" onClick={() => setRoleVisible(true)}><Eye size={34} /><span>Tap to reveal role</span><small>Keep it hidden from the MOB.</small></button> : <div className={`secret-card ${isImpostor ? 'is-impostor' : 'is-crew'}`}>{isImpostor ? <Skull size={42} /> : <Shield size={42} />}<p className="eyebrow">{isImpostor ? 'You are the impostor' : 'You are in the MOB'}</p><h3>{isImpostor ? 'Blend in.' : word}</h3>{(!isImpostor || showCategoryToImpostor) && <p>Category: <strong>{category}</strong></p>}<small>{isImpostor ? 'Fake a clue, survive the vote, then guess the word if you get caught.' : 'Give clues that prove you know the word, but do not make it too obvious.'}</small></div>}</section>{roleVisible && <button className="primary-action" type="button" onClick={finishCurrentReveal}><EyeOff size={20} /> Hide & Pass On</button>}</div>;
 }
 
-function ClueScreen({ round, mode, onNext }) {
-  const total = Math.max(0, round.settings.guessRounds);
-  return <div className="screen-stack"><section className="hero-card compact-hero"><p className="eyebrow">Round {round.clueRound} of {total}</p><h2>{mode.clueTitle}</h2><p className="hero-copy">Category: <strong>{round.category}</strong>{round.settings.discussionSeconds ? ` • ${round.settings.discussionSeconds}s discussion` : ''}</p></section><section className="panel-card"><div className="section-title-row"><div><p className="eyebrow">Order</p><h3>Lineup</h3></div><Trophy size={20} /></div><ol className="ordered-list">{round.passOrder.map((player, index) => <li key={player}><span>{index + 1}</span>{player}</li>)}</ol></section><button className="primary-action" type="button" onClick={onNext}><Vote size={20} /> {round.clueRound >= total ? 'Start Vote' : 'Next Round'}</button></div>;
+function ClueScreen({ round, onNext }) {
+  const total = Math.max(1, round.settings.guessRounds);
+  return <div className="screen-stack"><section className="hero-card compact-hero"><p className="eyebrow">Clue round {round.clueRound} of {total}</p><h2>One clue each. No repeats. No obvious giveaways.</h2><p className="hero-copy">Category: <strong>{round.category}</strong>{round.settings.discussionSeconds ? ` • ${round.settings.discussionSeconds}s discussion` : ''}</p></section><section className="panel-card"><div className="section-title-row"><div><p className="eyebrow">Order</p><h3>Lineup</h3></div><Trophy size={20} /></div><ol className="ordered-list">{round.passOrder.map((player, index) => <li key={player}><span>{index + 1}</span>{player}</li>)}</ol></section><button className="primary-action" type="button" onClick={onNext}><Vote size={20} /> {round.clueRound >= round.settings.guessRounds ? 'Start Vote' : 'Next Round'}</button></div>;
 }
 
 function VoteScreen({ players, currentVotingPlayer, votingPlayerIndex, totalPlayers, submitVote }) {
   return <div className="screen-stack"><div className="progress-pill">Vote {votingPlayerIndex + 1} of {totalPlayers}</div><section className="panel-card vote-panel"><p className="eyebrow">The MOB votes</p><h2>{currentVotingPlayer}, who is hiding?</h2><div className="vote-grid">{players.map((player) => <button key={player} type="button" onClick={() => submitVote(player)}>{player}</button>)}</div></section></div>;
 }
 
-function GuessScreen({ impostors, guessValue, setGuessValue, submitImpostorGuess, skipGuess, mode }) {
-  return <div className="screen-stack"><section className="hero-card compact-hero guess-hero"><p className="eyebrow">Final chance</p><h2>{impostors.join(', ')}, {mode.guessLabel}</h2><p className="hero-copy">One correct guess steals the round.</p></section><section className="panel-card"><label className="guess-field"><span>Your guess</span><input value={guessValue} onChange={(event) => setGuessValue(event.target.value)} placeholder="Type the secret word" /></label></section><div className="action-grid"><button className="secondary-action" type="button" onClick={skipGuess}>No Guess</button><button className="primary-action" type="button" onClick={submitImpostorGuess} disabled={!guessValue.trim()}>Submit Guess</button></div></div>;
+function GuessScreen({ impostors, guessValue, setGuessValue, submitImpostorGuess, skipGuess }) {
+  return <div className="screen-stack"><section className="hero-card compact-hero guess-hero"><p className="eyebrow">Final chance</p><h2>{impostors.join(', ')}, guess the secret word to steal the win.</h2><p className="hero-copy">One correct guess steals the round.</p></section><section className="panel-card"><label className="guess-field"><span>Your guess</span><input value={guessValue} onChange={(event) => setGuessValue(event.target.value)} placeholder="Type the secret word" /></label></section><div className="action-grid"><button className="secondary-action" type="button" onClick={skipGuess}>No Guess</button><button className="primary-action" type="button" onClick={submitImpostorGuess} disabled={!guessValue.trim()}>Submit Guess</button></div></div>;
 }
 
-function ResultScreen({ round, mode, voteResult, onPlayAgain, onReset }) {
+function ResultScreen({ round, voteResult, onPlayAgain, onReset }) {
   const impostors = [...round.impostors];
   const winner = round.outcome || (voteResult.caught ? 'mob' : 'impostors');
-  const title = winner === 'mob' ? 'MOB wins' : `${mode.impostorRole} wins`;
-  return <div className="screen-stack"><section className={`result-card ${winner === 'mob' ? 'caught' : 'escaped'}`}><img className="result-logo" src={MOB_LOGO_SRC} alt="A$AP MOB FC crest" /><p className="eyebrow">The MOB has spoken</p><h2>{title}</h2><div className="result-facts"><div><span>{mode.impostorRole}</span><strong>{impostors.join(', ')}</strong></div><div><span>Secret word</span><strong>{round.word}</strong></div>{round.impostorGuess && <div><span>Guess</span><strong>{round.impostorGuess}</strong></div>}<div><span>Category</span><strong>{round.category}</strong></div></div></section><section className="panel-card"><div className="section-title-row"><div><p className="eyebrow">Votes</p><h3>Final count</h3></div><Vote size={20} /></div><div className="vote-results">{voteResult.sorted.map(([player, count]) => <div key={player} className="vote-result-row"><span>{player}</span><strong>{count}</strong></div>)}</div></section><div className="action-grid"><button className="secondary-action" type="button" onClick={onReset}>New Setup</button><button className="primary-action" type="button" onClick={onPlayAgain}>Play Again</button></div></div>;
+  const title = winner === 'mob' ? 'MOB wins' : 'Impostor wins';
+  return <div className="screen-stack"><section className={`result-card ${winner === 'mob' ? 'caught' : 'escaped'}`}><img className="result-logo" src={MOB_LOGO_SRC} alt="A$AP MOB FC crest" /><p className="eyebrow">The MOB has spoken</p><h2>{title}</h2><div className="result-facts"><div><span>Impostor</span><strong>{impostors.join(', ')}</strong></div><div><span>Secret word</span><strong>{round.word}</strong></div>{round.impostorGuess && <div><span>Guess</span><strong>{round.impostorGuess}</strong></div>}<div><span>Category</span><strong>{round.category}</strong></div></div></section><section className="panel-card"><div className="section-title-row"><div><p className="eyebrow">Votes</p><h3>Final count</h3></div><Vote size={20} /></div><div className="vote-results">{voteResult.sorted.map(([player, count]) => <div key={player} className="vote-result-row"><span>{player}</span><strong>{count}</strong></div>)}</div></section><div className="action-grid"><button className="secondary-action" type="button" onClick={onReset}>New Setup</button><button className="primary-action" type="button" onClick={onPlayAgain}>Play Again</button></div></div>;
 }
 
 export default App;

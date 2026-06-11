@@ -1,9 +1,11 @@
-import { Crown, Eye, EyeOff, RotateCcw, Shield, Skull, Sparkles, Trophy, Users, Vote } from 'lucide-react';
-import { useMemo, useState } from 'react';
+import { Eye, EyeOff, RotateCcw, Shield, Skull, Sparkles, Trophy, Users, Vote } from 'lucide-react';
+import { useEffect, useMemo, useState } from 'react';
+import { MOB_LOGO_SRC } from './logoData.js';
 import { CATEGORY_NAMES, WORD_BANK } from './wordBank.js';
 
 const DEFAULT_PLAYERS = ['Mateusz', 'Patrick', 'Chappie'];
 const MIN_PLAYERS = 3;
+const SCORE_KEY = 'asap-mob-impostor-scoreboard-v1';
 
 function shuffle(items) {
   return [...items].sort(() => Math.random() - 0.5);
@@ -29,7 +31,21 @@ function makeRound({ players, category, impostorCount }) {
     revealIndex: 0,
     revealedPlayers: [],
     votes: {},
+    impostorGuess: '',
+    outcome: null,
   };
+}
+
+function loadScores() {
+  try {
+    return JSON.parse(localStorage.getItem(SCORE_KEY)) || {};
+  } catch {
+    return {};
+  }
+}
+
+function saveScores(scores) {
+  localStorage.setItem(SCORE_KEY, JSON.stringify(scores));
 }
 
 function App() {
@@ -41,10 +57,16 @@ function App() {
   const [round, setRound] = useState(null);
   const [roleVisible, setRoleVisible] = useState(false);
   const [votingPlayerIndex, setVotingPlayerIndex] = useState(0);
+  const [guessValue, setGuessValue] = useState('');
+  const [scores, setScores] = useState(() => loadScores());
 
   const canStart = players.length >= MIN_PLAYERS && impostorCount >= 1 && impostorCount < players.length;
   const currentRevealPlayer = round ? players[round.revealIndex] : null;
   const currentVotingPlayer = players[votingPlayerIndex];
+
+  useEffect(() => {
+    saveScores(scores);
+  }, [scores]);
 
   const voteResult = useMemo(() => {
     if (!round) return null;
@@ -65,6 +87,7 @@ function App() {
     const name = normalisePlayerName(newPlayer);
     if (!name || players.includes(name)) return;
     setPlayers((current) => [...current, name]);
+    setScores((current) => ({ ...current, [name]: current[name] || 0 }));
     setNewPlayer('');
   }
 
@@ -79,6 +102,7 @@ function App() {
     setRound(makeRound({ players, category, impostorCount }));
     setRoleVisible(false);
     setVotingPlayerIndex(0);
+    setGuessValue('');
     setScreen('reveal');
   }
 
@@ -108,21 +132,72 @@ function App() {
     if (!round) return;
     const nextVotes = { ...round.votes, [currentVotingPlayer]: target };
     const nextIndex = votingPlayerIndex + 1;
+    const nextRound = { ...round, votes: nextVotes };
 
-    setRound({ ...round, votes: nextVotes });
+    setRound(nextRound);
 
     if (nextIndex >= players.length) {
-      setScreen('result');
+      const caught = Object.values(nextVotes).reduce((acc, vote) => {
+        acc[vote] = (acc[vote] || 0) + 1;
+        return acc;
+      }, {});
+      const highest = Math.max(...Object.values(caught));
+      const votedOut = Object.entries(caught).filter(([, count]) => count === highest).map(([name]) => name);
+      const impostorCaught = votedOut.some((name) => round.impostors.has(name));
+      setScreen(impostorCaught ? 'guess' : 'result');
+      if (!impostorCaught) applyScores('impostors');
       return;
     }
 
     setVotingPlayerIndex(nextIndex);
   }
 
+  function applyScores(winner) {
+    if (!round) return;
+    setScores((current) => {
+      const next = { ...current };
+      players.forEach((player) => {
+        next[player] = next[player] || 0;
+      });
+      players.forEach((player) => {
+        const isImpostor = round.impostors.has(player);
+        if (winner === 'mob' && !isImpostor) next[player] += 1;
+        if (winner === 'impostors' && isImpostor) next[player] += 2;
+      });
+      return next;
+    });
+  }
+
+  function submitImpostorGuess() {
+    if (!round) return;
+    const guess = normalisePlayerName(guessValue).toLowerCase();
+    const actual = round.word.toLowerCase();
+    const exact = guess === actual;
+    const close = guess.length > 2 && actual.includes(guess);
+    const impostorWins = exact || close;
+    const nextRound = {
+      ...round,
+      impostorGuess: guessValue,
+      outcome: impostorWins ? 'impostors' : 'mob',
+    };
+    setRound(nextRound);
+    if (impostorWins) applyScores('impostors');
+    else applyScores('mob');
+    setScreen('result');
+  }
+
+  function skipGuess() {
+    if (!round) return;
+    setRound({ ...round, outcome: 'mob' });
+    applyScores('mob');
+    setScreen('result');
+  }
+
   function resetGame() {
     setRound(null);
     setRoleVisible(false);
     setVotingPlayerIndex(0);
+    setGuessValue('');
     setScreen('home');
   }
 
@@ -130,7 +205,12 @@ function App() {
     setRound(makeRound({ players, category, impostorCount }));
     setRoleVisible(false);
     setVotingPlayerIndex(0);
+    setGuessValue('');
     setScreen('reveal');
+  }
+
+  function resetScores() {
+    setScores({});
   }
 
   return (
@@ -154,6 +234,8 @@ function App() {
             setImpostorCount={setImpostorCount}
             canStart={canStart}
             startRound={startRound}
+            scores={scores}
+            resetScores={resetScores}
           />
         )}
 
@@ -184,6 +266,16 @@ function App() {
           />
         )}
 
+        {screen === 'guess' && round && (
+          <GuessScreen
+            impostors={[...round.impostors]}
+            guessValue={guessValue}
+            setGuessValue={setGuessValue}
+            submitImpostorGuess={submitImpostorGuess}
+            skipGuess={skipGuess}
+          />
+        )}
+
         {screen === 'result' && round && voteResult && (
           <ResultScreen round={round} voteResult={voteResult} onPlayAgain={playAgain} onReset={resetGame} />
         )}
@@ -196,9 +288,7 @@ function Header({ screen, onReset }) {
   return (
     <header className="app-header">
       <div className="brand-lockup">
-        <div className="crest-mark" aria-hidden="true">
-          <Crown size={22} />
-        </div>
+        <img className="crest-mark crest-image" src={MOB_LOGO_SRC} alt="A$AP MOB FC crest" />
         <div>
           <p className="eyebrow">A$AP MOB</p>
           <h1>MOB Impostor</h1>
@@ -225,11 +315,15 @@ function HomeScreen({
   setImpostorCount,
   canStart,
   startRound,
+  scores,
+  resetScores,
 }) {
+  const hasScores = Object.values(scores).some((score) => score > 0);
+
   return (
     <div className="screen-stack">
       <section className="hero-card">
-        <div className="hero-crown"><Crown size={42} /></div>
+        <img className="hero-logo" src={MOB_LOGO_SRC} alt="A$AP MOB FC crest" />
         <p className="eyebrow">Private MOB session</p>
         <h2>Find the snake before they steal the crown.</h2>
         <p className="hero-copy">Pass the phone, reveal your role, give clues, and vote out the impostor.</p>
@@ -287,6 +381,26 @@ function HomeScreen({
           </select>
         </label>
       </section>
+
+      {hasScores && (
+        <section className="panel-card score-card">
+          <div className="section-title-row">
+            <div>
+              <p className="eyebrow">Season table</p>
+              <h3>Scores</h3>
+            </div>
+            <button className="mini-button" type="button" onClick={resetScores}>Reset</button>
+          </div>
+          <div className="score-list">
+            {Object.entries(scores)
+              .sort((a, b) => b[1] - a[1])
+              .filter(([name]) => players.includes(name))
+              .map(([name, score]) => (
+                <div className="score-row" key={name}><span>{name}</span><strong>{score}</strong></div>
+              ))}
+          </div>
+        </section>
+      )}
 
       {!canStart && <p className="warning-text">You need at least 3 players, and impostors must be fewer than players.</p>}
 
@@ -389,19 +503,45 @@ function VoteScreen({ players, currentVotingPlayer, votingPlayerIndex, submitVot
   );
 }
 
+function GuessScreen({ impostors, guessValue, setGuessValue, submitImpostorGuess, skipGuess }) {
+  return (
+    <div className="screen-stack">
+      <section className="hero-card compact-hero guess-hero">
+        <p className="eyebrow">Final chance</p>
+        <h2>{impostors.join(', ')}, guess the secret word to steal the win.</h2>
+        <p className="hero-copy">The MOB found you. One correct guess gives impostors the round.</p>
+      </section>
+
+      <section className="panel-card">
+        <label className="guess-field">
+          <span>Your guess</span>
+          <input value={guessValue} onChange={(event) => setGuessValue(event.target.value)} placeholder="Type the secret word" />
+        </label>
+      </section>
+
+      <div className="action-grid">
+        <button className="secondary-action" type="button" onClick={skipGuess}>No Guess</button>
+        <button className="primary-action" type="button" onClick={submitImpostorGuess} disabled={!guessValue.trim()}>Submit Guess</button>
+      </div>
+    </div>
+  );
+}
+
 function ResultScreen({ round, voteResult, onPlayAgain, onReset }) {
   const impostors = [...round.impostors];
-  const title = voteResult.caught ? 'Impostor exposed' : 'The snake escaped';
+  const winner = round.outcome || (voteResult.caught ? 'mob' : 'impostors');
+  const title = winner === 'mob' ? 'MOB wins' : 'Impostor wins';
 
   return (
     <div className="screen-stack">
-      <section className={`result-card ${voteResult.caught ? 'caught' : 'escaped'}`}>
-        <Crown size={46} />
+      <section className={`result-card ${winner === 'mob' ? 'caught' : 'escaped'}`}>
+        <img className="result-logo" src={MOB_LOGO_SRC} alt="A$AP MOB FC crest" />
         <p className="eyebrow">The MOB has spoken</p>
         <h2>{title}</h2>
         <div className="result-facts">
           <div><span>Impostor</span><strong>{impostors.join(', ')}</strong></div>
           <div><span>Secret word</span><strong>{round.word}</strong></div>
+          {round.impostorGuess && <div><span>Guess</span><strong>{round.impostorGuess}</strong></div>}
           <div><span>Category</span><strong>{round.category}</strong></div>
         </div>
       </section>

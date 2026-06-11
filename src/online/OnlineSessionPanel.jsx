@@ -29,6 +29,7 @@ export function OnlineSessionPanel({ defaultHostName, category, impostorCount, s
   const impostorNames = useMemo(() => lobbyPlayers.filter((player) => player.role === 'impostor').map((player) => player.name), [lobbyPlayers]);
   const canHostStart = Boolean(onlineState?.identity?.isHost && onlineState?.session?.status === 'lobby' && connectedPlayers.length >= 3);
   const canHostChangePhase = Boolean(onlineState?.identity?.isHost && onlineState?.session && onlineState?.session?.status !== 'lobby' && onlineState?.session?.status !== 'results');
+  const canHostPlayAgain = Boolean(onlineState?.identity?.isHost && onlineState?.session?.status === 'results' && connectedPlayers.length >= 3);
   const allConnectedVoted = connectedPlayers.length > 0 && onlineVotes.length >= connectedPlayers.length;
 
   useEffect(() => {
@@ -88,6 +89,7 @@ export function OnlineSessionPanel({ defaultHostName, category, impostorCount, s
     try {
       const result = await startOnlineRound({ session: onlineState.session, identity: onlineState.identity, players: lobbyPlayers, wordBank: WORD_BANK });
       setOnlineRound(result.round);
+      setOnlineVotes([]);
       setOnlineState((current) => current ? { ...current, session: result.session } : current);
       setRoleVisible(false);
       await refreshCurrentLobby();
@@ -158,7 +160,7 @@ export function OnlineSessionPanel({ defaultHostName, category, impostorCount, s
         {onlineState.session.status === 'reveal' && currentPlayer && <div className={`online-reveal-card ${currentPlayer.role === 'impostor' ? 'is-impostor' : 'is-mob'}`}><span>Your private role</span>{!roleVisible && !currentPlayer.has_seen_role ? <button type="button" onClick={revealMyRole}>Tap to Reveal</button> : <><strong>{currentPlayer.role === 'impostor' ? 'Impostor' : 'MOB'}</strong><small>{currentPlayer.role === 'impostor' ? 'Blend in. You do not see the secret word.' : `Secret word: ${onlineRound?.word || 'loading...'}`}</small><small>Category: {onlineRound?.category || 'loading...'}</small></>}</div>}
         {onlineState.session.status === 'clues' && <div className="online-phase-card"><span>Clue phase</span><strong>Give clues</strong><small>Category: {onlineRound?.category || 'loading...'} · Host can move everyone to voting when ready.</small></div>}
         {onlineState.session.status === 'vote' && <div className="online-vote-card"><span>Vote phase</span><strong>{onlineVotes.length} / {connectedPlayers.length} voted</strong>{myVote ? <small>Your vote is in. Waiting for the rest of the MOB.</small> : <div className="online-vote-grid">{connectedPlayers.filter((player) => player.id !== currentPlayer?.id).map((player) => <button key={player.id} type="button" disabled={busy} onClick={() => voteForPlayer(player.id)}>{player.name}</button>)}</div>}{onlineState.identity?.isHost && <button className="online-start-button" type="button" disabled={busy || onlineVotes.length === 0} onClick={hostFinishVote}>{allConnectedVoted ? 'Finish Vote' : 'Finish Early'}</button>}</div>}
-        {onlineState.session.status === 'results' && <div className={`online-result-card ${onlineRound?.outcome === 'mob' ? 'is-mob' : 'is-impostor'}`}><span>Results</span><strong>{onlineRound?.outcome === 'mob' ? 'MOB wins' : 'Impostor wins'}</strong><small>Impostor: {impostorNames.join(', ') || 'loading...'}</small><small>Secret word: {onlineRound?.word || 'loading...'}</small><div className="online-result-list">{voteResult.sorted.map((item) => <div key={item.player.id}><span>{item.player.name}</span><strong>{item.count}</strong></div>)}</div></div>}
+        {onlineState.session.status === 'results' && <div className={`online-result-card ${onlineRound?.outcome === 'mob' ? 'is-mob' : 'is-impostor'}`}><span>Results</span><strong>{onlineRound?.outcome === 'mob' ? 'MOB wins' : 'Impostor wins'}</strong><small>Impostor: {impostorNames.join(', ') || 'loading...'}</small><small>Secret word: {onlineRound?.word || 'loading...'}</small><div className="online-result-list">{voteResult.sorted.map((item) => <div key={item.player.id}><span>{item.player.name}</span><strong>{item.count}</strong></div>)}</div>{canHostPlayAgain && <button className="online-start-button" type="button" disabled={busy} onClick={hostStartOnlineRound}>Play Again</button>}</div>}
       </div>}
 
       {reconnectIdentity && !onlineState && <div className="online-status-card reconnect-card"><span>Reconnect available</span><strong>{reconnectIdentity.sessionCode}</strong><small>Return to your previous online session after a refresh or connection loss.</small><div className="online-action-row"><button type="button" disabled={busy || !isSupabaseConfigured} onClick={() => run(() => reconnectSession(reconnectIdentity))}>Reconnect</button><button type="button" className="ghost-button" onClick={forgetReconnect}>Forget</button></div></div>}

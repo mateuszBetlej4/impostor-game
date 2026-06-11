@@ -79,17 +79,18 @@ function selectWord(selectedCategory, usedWords, wordBank, categoryNames) {
   };
 }
 
-function makeRound({ players, category, word, impostorCount, settings }) {
+function makeRound({ players, category, word, impostorCount, settings, impostors }) {
   return {
     settings,
     passOrder: settings.randomisePassOrder ? shuffle(players) : [...players],
     category,
     word,
-    impostors: new Set(shuffle(players).slice(0, impostorCount)),
+    impostors: impostors || new Set(shuffle(players).slice(0, impostorCount)),
     revealIndex: 0,
     revealedPlayers: [],
     clueRound: 1,
     votes: {},
+    skipVotes: {},
     impostorGuess: '',
     outcome: null,
   };
@@ -123,6 +124,8 @@ function App() {
   const totalWords = categoryNames.reduce((sum, name) => sum + allWordBank[name].length, 0);
   const usedWordCount = Object.entries(usedWords).reduce((sum, [name, words]) => sum + (allWordBank[name] ? words.length : 0), 0);
   const selectedWordCount = category === 'Random' ? totalWords : (allWordBank[category]?.length || 0);
+  const skipVotesNeeded = round ? Math.max(1, Math.floor((players.length - round.impostors.size) / 2) + 1) : 1;
+  const currentPlayerSkipVoted = Boolean(round?.skipVotes?.[currentRevealPlayer]);
 
   useEffect(() => saveJson(SCORE_KEY, scores), [scores]);
   useEffect(() => saveJson(USED_WORDS_KEY, usedWords), [usedWords]);
@@ -157,6 +160,35 @@ function App() {
     setVotingPlayerIndex(0);
     setGuessValue('');
     setScreen('reveal');
+  }
+
+  function rerollSkippedSecret(nextSkipVotes) {
+    const selected = selectWord(category, usedWords, allWordBank, categoryNames);
+    setUsedWords(selected.nextUsedWords);
+    setRound(makeRound({
+      players,
+      category: selected.category,
+      word: selected.word,
+      impostorCount,
+      settings,
+      impostors: round.impostors,
+    }));
+    setRoleVisible(false);
+    setVotingPlayerIndex(0);
+    setGuessValue('');
+    setScreen('reveal');
+    return nextSkipVotes;
+  }
+
+  function submitSecretSkipVote() {
+    if (!round || !currentRevealPlayer || round.impostors.has(currentRevealPlayer)) return;
+    const nextSkipVotes = { ...(round.skipVotes || {}), [currentRevealPlayer]: true };
+    const hasPassed = Object.keys(nextSkipVotes).length >= skipVotesNeeded;
+    if (hasPassed) {
+      rerollSkippedSecret(nextSkipVotes);
+      return;
+    }
+    setRound({ ...round, skipVotes: nextSkipVotes });
   }
 
   function saveCustomSet() {
@@ -297,7 +329,7 @@ function App() {
         <Header screen={screen} onReset={resetGame} onStart={confirmStart} canStart={canStart} />
         {screen === 'home' && <HomeScreen setupMode={setupMode} setSetupMode={setSetupMode} players={players} newPlayer={newPlayer} setNewPlayer={setNewPlayer} addPlayer={addPlayer} removePlayer={removePlayer} movePlayer={movePlayer} category={category} setCategory={setCategory} categoryNames={categoryNames} customSetNames={customSetNames} settings={settings} patchSettings={patchSettings} applyPreset={(presetKey) => patchSettings(SESSION_PRESETS[presetKey].settings)} impostorCount={impostorCount} setImpostorCount={setImpostorCount} canStart={canStart} startRound={confirmStart} scores={scores} resetScores={() => setScores({})} usedWordCount={usedWordCount} totalWords={totalWords} selectedWordCount={selectedWordCount} resetUsedWords={() => setUsedWords({})} customSetName={customSetName} setCustomSetName={setCustomSetName} customSetBase={customSetBase} setCustomSetBase={setCustomSetBase} customSetWords={customSetWords} setCustomSetWords={setCustomSetWords} saveCustomSet={saveCustomSet} deleteCustomSet={deleteCustomSet} />}
         {screen === 'confirm' && <ConfirmScreen players={players} category={category} selectedWordCount={selectedWordCount} impostorCount={impostorCount} settings={settings} totalWords={totalWords} usedWordCount={usedWordCount} onBack={() => setScreen('home')} onConfirm={startNewRound} />}
-        {screen === 'reveal' && round && <RevealScreen player={currentRevealPlayer} roleVisible={roleVisible} setRoleVisible={setRoleVisible} isImpostor={round.impostors.has(currentRevealPlayer)} category={round.category} word={round.word} currentIndex={round.revealIndex} totalPlayers={round.passOrder.length} finishCurrentReveal={finishCurrentReveal} showCategoryToImpostor={round.settings.showCategoryToImpostor} />}
+        {screen === 'reveal' && round && <RevealScreen player={currentRevealPlayer} roleVisible={roleVisible} setRoleVisible={setRoleVisible} isImpostor={round.impostors.has(currentRevealPlayer)} category={round.category} word={round.word} currentIndex={round.revealIndex} totalPlayers={round.passOrder.length} finishCurrentReveal={finishCurrentReveal} showCategoryToImpostor={round.settings.showCategoryToImpostor} submitSecretSkipVote={submitSecretSkipVote} hasSkipVoted={currentPlayerSkipVoted} skipVotesNeeded={skipVotesNeeded} />}
         {screen === 'clues' && round && <ClueScreen round={round} onNext={nextClueRound} />}
         {screen === 'vote' && round && <VoteScreen players={players} currentVotingPlayer={currentVotingPlayer} votingPlayerIndex={votingPlayerIndex} totalPlayers={round.passOrder.length} submitVote={submitVote} />}
         {screen === 'guess' && round && <GuessScreen impostors={[...round.impostors]} guessValue={guessValue} setGuessValue={setGuessValue} submitImpostorGuess={submitImpostorGuess} skipGuess={skipGuess} />}
@@ -324,7 +356,11 @@ function ConfirmScreen({ players, category, selectedWordCount, impostorCount, se
 }
 
 function Toggle({ label, checked, onChange }) { return <button className={`toggle-row ${checked ? 'on' : ''}`} type="button" onClick={() => onChange(!checked)}><span>{label}</span><strong>{checked ? 'On' : 'Off'}</strong></button>; }
-function RevealScreen({ player, roleVisible, setRoleVisible, isImpostor, category, word, currentIndex, totalPlayers, finishCurrentReveal, showCategoryToImpostor }) { return <div className="screen-stack reveal-layout"><div className="progress-pill">Reveal {currentIndex + 1} of {totalPlayers}</div><section className="role-card"><p className="eyebrow">Pass the crown to</p><h2>{player}</h2>{!roleVisible ? <button className="hold-card" type="button" onClick={() => setRoleVisible(true)}><Eye size={34} /><span>Tap to reveal role</span><small>Keep it hidden from the MOB.</small></button> : <div className={`secret-card ${isImpostor ? 'is-impostor' : 'is-crew'}`}>{isImpostor ? <Skull size={42} /> : <Shield size={42} />}<p className="eyebrow">{isImpostor ? 'You are the impostor' : 'You are in the MOB'}</p><h3>{isImpostor ? 'Blend in.' : word}</h3>{(!isImpostor || showCategoryToImpostor) && <p>Category: <strong>{category}</strong></p>}<small>{isImpostor ? 'Fake a clue, survive the vote, then guess the word if you get caught.' : 'Give clues that prove you know the word, but do not make it too obvious.'}</small></div>}</section>{roleVisible && <button className="primary-action" type="button" onClick={finishCurrentReveal}><EyeOff size={20} /> Hide & Pass On</button>}</div>; }
+
+function RevealScreen({ player, roleVisible, setRoleVisible, isImpostor, category, word, currentIndex, totalPlayers, finishCurrentReveal, showCategoryToImpostor, submitSecretSkipVote, hasSkipVoted, skipVotesNeeded }) {
+  return <div className="screen-stack reveal-layout"><div className="progress-pill">Reveal {currentIndex + 1} of {totalPlayers}</div><section className="role-card"><p className="eyebrow">Pass the crown to</p><h2>{player}</h2>{!roleVisible ? <button className="hold-card" type="button" onClick={() => setRoleVisible(true)}><Eye size={34} /><span>Tap to reveal role</span><small>Keep it hidden from the MOB.</small></button> : <div className={`secret-card ${isImpostor ? 'is-impostor' : 'is-crew'}`}>{isImpostor ? <Skull size={42} /> : <Shield size={42} />}<p className="eyebrow">{isImpostor ? 'You are the impostor' : 'You are in the MOB'}</p><h3>{isImpostor ? 'Blend in.' : word}</h3>{(!isImpostor || showCategoryToImpostor) && <p>Category: <strong>{category}</strong></p>}<small>{isImpostor ? 'Fake a clue, survive the vote, then guess the word if you get caught.' : 'Give clues that prove you know the word, but do not make it too obvious.'}</small></div>}</section>{roleVisible && !isImpostor && <section className="panel-card"><p className="eyebrow">Secret skip vote</p><h3>Bad word?</h3><p className="helper-text">You can privately vote to skip this secret. Do not say you voted skip, because that would prove you are not the impostor.</p><button className="secondary-action" type="button" disabled={hasSkipVoted} onClick={submitSecretSkipVote}>{hasSkipVoted ? 'Skip vote recorded' : 'Vote to skip word'}</button><small className="helper-text">Skip passes at {skipVotesNeeded} hidden vote{skipVotesNeeded > 1 ? 's' : ''}.</small></section>}{roleVisible && <button className="primary-action" type="button" onClick={finishCurrentReveal}><EyeOff size={20} /> Hide & Pass On</button>}</div>;
+}
+
 function ClueScreen({ round, onNext }) { const total = Math.max(1, round.settings.guessRounds); return <div className="screen-stack"><section className="hero-card compact-hero"><p className="eyebrow">Clue round {round.clueRound} of {total}</p><h2>One clue each. No repeats. No obvious giveaways.</h2><p className="hero-copy">Category: <strong>{round.category}</strong>{round.settings.discussionSeconds ? ` • ${round.settings.discussionSeconds}s discussion` : ''}</p></section><section className="panel-card"><div className="section-title-row"><div><p className="eyebrow">Order</p><h3>Lineup</h3></div><Trophy size={20} /></div><ol className="ordered-list">{round.passOrder.map((player, index) => <li key={player}><span>{index + 1}</span>{player}</li>)}</ol></section><button className="primary-action" type="button" onClick={onNext}><Vote size={20} /> {round.clueRound >= round.settings.guessRounds ? 'Start Vote' : 'Next Round'}</button></div>; }
 function VoteScreen({ players, currentVotingPlayer, votingPlayerIndex, totalPlayers, submitVote }) { return <div className="screen-stack"><div className="progress-pill">Vote {votingPlayerIndex + 1} of {totalPlayers}</div><section className="panel-card vote-panel"><p className="eyebrow">The MOB votes</p><h2>{currentVotingPlayer}, who is hiding?</h2><div className="vote-grid">{players.map((player) => <button key={player} type="button" onClick={() => submitVote(player)}>{player}</button>)}</div></section></div>; }
 function GuessScreen({ impostors, guessValue, setGuessValue, submitImpostorGuess, skipGuess }) { return <div className="screen-stack"><section className="hero-card compact-hero guess-hero"><p className="eyebrow">Final chance</p><h2>{impostors.join(', ')}, guess the secret word to steal the win.</h2><p className="hero-copy">One correct guess steals the round.</p></section><section className="panel-card"><label className="guess-field"><span>Your guess</span><input value={guessValue} onChange={(event) => setGuessValue(event.target.value)} placeholder="Type the secret word" /></label></section><div className="action-grid"><button className="secondary-action" type="button" onClick={skipGuess}>No Guess</button><button className="primary-action" type="button" onClick={submitImpostorGuess} disabled={!guessValue.trim()}>Submit Guess</button></div></div>; }

@@ -6,6 +6,7 @@ import './styles.css';
 import './passOrder.css';
 import './modes.css';
 import './logoTweaks.css';
+import './setupTabs.css';
 
 const WORD_AUDIT_HASH = '#breadcrumb-words';
 

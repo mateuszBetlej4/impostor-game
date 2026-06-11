@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+  <defs>
+    <radialGradient id="g" cx="50%" cy="24%" r="70%">
+      <stop offset="0" stop-color="#f4d06f"/>
+      <stop offset="0.45" stop-color="#d6a93a"/>
+      <stop offset="1" stop-color="#080604"/>
+    </radialGradient>
+    <linearGradient id="b" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#20160a"/>
+      <stop offset="1" stop-color="#050505"/>
+    </linearGradient>
+  </defs>
+  <rect width="512" height="512" rx="112" fill="url(#b)"/>
+  <circle cx="256" cy="256" r="202" fill="none" stroke="#f4d06f" stroke-width="22"/>
+  <circle cx="256" cy="256" r="168" fill="url(#g)" opacity="0.18"/>
+  <text x="256" y="224" text-anchor="middle" font-family="Impact, 'Arial Black', sans-serif" font-size="88" font-weight="900" fill="#f4d06f" letter-spacing="-2">A$AP</text>
+  <text x="256" y="326" text-anchor="middle" font-family="Impact, 'Arial Black', sans-serif" font-size="118" font-weight="900" fill="#fff7df" letter-spacing="-5">MOB</text>
+  <text x="256" y="384" text-anchor="middle" font-family="Arial, sans-serif" font-size="30" font-weight="900" fill="#d6a93a" letter-spacing="6">IMPOSTOR</text>
+</svg>

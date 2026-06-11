@@ -36,19 +36,6 @@ function getCountdownLabel(text) {
   return 'Starting in';
 }
 
-function scrollSetupToTopNow() {
-  const reset = () => {
-    document.documentElement.scrollTop = 0;
-    document.body.scrollTop = 0;
-    window.scrollTo({ top: 0, left: 0, behavior: 'auto' });
-    document.querySelector('.phone-frame')?.scrollTo?.({ top: 0, left: 0, behavior: 'auto' });
-  };
-
-  reset();
-  window.requestAnimationFrame(reset);
-  window.setTimeout(reset, 0);
-}
-
 export function GameGuards() {
   const [countdown, setCountdown] = useState(null);
   const bypassRef = useRef(false);
@@ -104,10 +91,6 @@ export function GameGuards() {
       if (bypassRef.current) return;
       const button = event.target.closest('button');
       if (!button || button.disabled) return;
-
-      if (button.closest('.setup-bottom-nav')) {
-        scrollSetupToTopNow();
-      }
 
       const text = getButtonText(button);
 

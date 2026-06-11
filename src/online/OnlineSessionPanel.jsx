@@ -7,7 +7,7 @@ import { canReconnect, clearReconnectIdentity, loadReconnectIdentity } from './r
 import { normalizeCode } from './sessionCodes.js';
 import { startOnlineRound } from './onlineRoundService.js';
 import { markRoleSeen } from './onlineRevealService.js';
-import { setOnlinePhase, submitOnlineVote } from './onlineVoteService.js';
+import { calculateOnlineVoteResult, finishOnlineVote, setOnlinePhase, submitOnlineVote } from './onlineVoteService.js';
 
 export function OnlineSessionPanel({ defaultHostName, category, impostorCount, settings }) {
   const [hostName, setHostName] = useState(defaultHostName || 'Host');
@@ -25,8 +25,11 @@ export function OnlineSessionPanel({ defaultHostName, category, impostorCount, s
   const connectedPlayers = useMemo(() => lobbyPlayers.filter((player) => player.connected !== false), [lobbyPlayers]);
   const currentPlayer = useMemo(() => lobbyPlayers.find((player) => player.id === onlineState?.identity?.playerId) || onlineState?.player, [lobbyPlayers, onlineState]);
   const myVote = useMemo(() => onlineVotes.find((vote) => vote.voter_player_id === onlineState?.identity?.playerId), [onlineVotes, onlineState]);
+  const voteResult = useMemo(() => calculateOnlineVoteResult({ players: connectedPlayers, votes: onlineVotes }), [connectedPlayers, onlineVotes]);
+  const impostorNames = useMemo(() => lobbyPlayers.filter((player) => player.role === 'impostor').map((player) => player.name), [lobbyPlayers]);
   const canHostStart = Boolean(onlineState?.identity?.isHost && onlineState?.session?.status === 'lobby' && connectedPlayers.length >= 3);
-  const canHostChangePhase = Boolean(onlineState?.identity?.isHost && onlineState?.session && onlineState?.session?.status !== 'lobby');
+  const canHostChangePhase = Boolean(onlineState?.identity?.isHost && onlineState?.session && onlineState?.session?.status !== 'lobby' && onlineState?.session?.status !== 'results');
+  const allConnectedVoted = connectedPlayers.length > 0 && onlineVotes.length >= connectedPlayers.length;
 
   useEffect(() => {
     const identity = loadReconnectIdentity();
@@ -52,7 +55,6 @@ export function OnlineSessionPanel({ defaultHostName, category, impostorCount, s
 
     refreshLobby();
     const unsubscribe = subscribeToSession(onlineState.session.id, refreshLobby);
-
     return () => { active = false; unsubscribe?.(); };
   }, [onlineState?.session?.id]);
 
@@ -121,6 +123,17 @@ export function OnlineSessionPanel({ defaultHostName, category, impostorCount, s
     } catch (err) { setError(err.message || 'Could not submit vote.'); } finally { setBusy(false); }
   }
 
+  async function hostFinishVote() {
+    if (!onlineState?.session || !onlineState?.identity || !onlineRound) return;
+    setBusy(true); setError('');
+    try {
+      const result = await finishOnlineVote({ session: onlineState.session, identity: onlineState.identity, round: onlineRound, players: connectedPlayers, votes: onlineVotes });
+      setOnlineState((current) => current ? { ...current, session: result.session } : current);
+      setOnlineRound(result.round);
+      await refreshCurrentLobby();
+    } catch (err) { setError(err.message || 'Could not finish vote.'); } finally { setBusy(false); }
+  }
+
   function forgetReconnect() {
     clearReconnectIdentity(); setReconnectIdentity(null); setOnlineState(null); setLobbyPlayers([]); setOnlineRound(null); setOnlineVotes([]); setRoleVisible(false);
   }
@@ -144,7 +157,8 @@ export function OnlineSessionPanel({ defaultHostName, category, impostorCount, s
 
         {onlineState.session.status === 'reveal' && currentPlayer && <div className={`online-reveal-card ${currentPlayer.role === 'impostor' ? 'is-impostor' : 'is-mob'}`}><span>Your private role</span>{!roleVisible && !currentPlayer.has_seen_role ? <button type="button" onClick={revealMyRole}>Tap to Reveal</button> : <><strong>{currentPlayer.role === 'impostor' ? 'Impostor' : 'MOB'}</strong><small>{currentPlayer.role === 'impostor' ? 'Blend in. You do not see the secret word.' : `Secret word: ${onlineRound?.word || 'loading...'}`}</small><small>Category: {onlineRound?.category || 'loading...'}</small></>}</div>}
         {onlineState.session.status === 'clues' && <div className="online-phase-card"><span>Clue phase</span><strong>Give clues</strong><small>Category: {onlineRound?.category || 'loading...'} · Host can move everyone to voting when ready.</small></div>}
-        {onlineState.session.status === 'vote' && <div className="online-vote-card"><span>Vote phase</span><strong>{onlineVotes.length} / {connectedPlayers.length} voted</strong>{myVote ? <small>Your vote is in. Waiting for the rest of the MOB.</small> : <div className="online-vote-grid">{connectedPlayers.filter((player) => player.id !== currentPlayer?.id).map((player) => <button key={player.id} type="button" disabled={busy} onClick={() => voteForPlayer(player.id)}>{player.name}</button>)}</div>}</div>}
+        {onlineState.session.status === 'vote' && <div className="online-vote-card"><span>Vote phase</span><strong>{onlineVotes.length} / {connectedPlayers.length} voted</strong>{myVote ? <small>Your vote is in. Waiting for the rest of the MOB.</small> : <div className="online-vote-grid">{connectedPlayers.filter((player) => player.id !== currentPlayer?.id).map((player) => <button key={player.id} type="button" disabled={busy} onClick={() => voteForPlayer(player.id)}>{player.name}</button>)}</div>}{onlineState.identity?.isHost && <button className="online-start-button" type="button" disabled={busy || onlineVotes.length === 0} onClick={hostFinishVote}>{allConnectedVoted ? 'Finish Vote' : 'Finish Early'}</button>}</div>}
+        {onlineState.session.status === 'results' && <div className={`online-result-card ${onlineRound?.outcome === 'mob' ? 'is-mob' : 'is-impostor'}`}><span>Results</span><strong>{onlineRound?.outcome === 'mob' ? 'MOB wins' : 'Impostor wins'}</strong><small>Impostor: {impostorNames.join(', ') || 'loading...'}</small><small>Secret word: {onlineRound?.word || 'loading...'}</small><div className="online-result-list">{voteResult.sorted.map((item) => <div key={item.player.id}><span>{item.player.name}</span><strong>{item.count}</strong></div>)}</div></div>}
       </div>}
 
       {reconnectIdentity && !onlineState && <div className="online-status-card reconnect-card"><span>Reconnect available</span><strong>{reconnectIdentity.sessionCode}</strong><small>Return to your previous online session after a refresh or connection loss.</small><div className="online-action-row"><button type="button" disabled={busy || !isSupabaseConfigured} onClick={() => run(() => reconnectSession(reconnectIdentity))}>Reconnect</button><button type="button" className="ghost-button" onClick={forgetReconnect}>Forget</button></div></div>}

@@ -7,6 +7,7 @@ import { canReconnect, clearReconnectIdentity, loadReconnectIdentity } from './r
 import { normalizeCode } from './sessionCodes.js';
 import { startOnlineRound } from './onlineRoundService.js';
 import { markRoleSeen } from './onlineRevealService.js';
+import { submitOnlineSecretSkipVote } from './onlineSkipService.js';
 import { calculateOnlineVoteResult, finishOnlineVote, setOnlinePhase, submitOnlineImpostorGuess, submitOnlineVote } from './onlineVoteService.js';
 import './online.css';
 
@@ -19,6 +20,7 @@ export function OnlineSessionPanel({ defaultHostName, category, impostorCount, s
   const [lobbyPlayers, setLobbyPlayers] = useState([]);
   const [onlineRound, setOnlineRound] = useState(null);
   const [onlineVotes, setOnlineVotes] = useState([]);
+  const [onlineSkipVotes, setOnlineSkipVotes] = useState([]);
   const [roleVisible, setRoleVisible] = useState(false);
   const [guessValue, setGuessValue] = useState('');
   const [error, setError] = useState('');
@@ -27,6 +29,7 @@ export function OnlineSessionPanel({ defaultHostName, category, impostorCount, s
   const connectedPlayers = useMemo(() => lobbyPlayers.filter((player) => player.connected !== false), [lobbyPlayers]);
   const currentPlayer = useMemo(() => lobbyPlayers.find((player) => player.id === onlineState?.identity?.playerId) || onlineState?.player, [lobbyPlayers, onlineState]);
   const myVote = useMemo(() => onlineVotes.find((vote) => vote.voter_player_id === onlineState?.identity?.playerId), [onlineVotes, onlineState]);
+  const mySkipVote = useMemo(() => onlineSkipVotes.find((vote) => vote.voter_player_id === onlineState?.identity?.playerId), [onlineSkipVotes, onlineState]);
   const voteResult = useMemo(() => calculateOnlineVoteResult({ players: connectedPlayers, votes: onlineVotes }), [connectedPlayers, onlineVotes]);
   const impostorNames = useMemo(() => lobbyPlayers.filter((player) => player.role === 'impostor').map((player) => player.name), [lobbyPlayers]);
   const canHostStart = Boolean(onlineState?.identity?.isHost && onlineState?.session?.status === 'lobby' && connectedPlayers.length >= 3);
@@ -34,6 +37,8 @@ export function OnlineSessionPanel({ defaultHostName, category, impostorCount, s
   const canHostPlayAgain = Boolean(onlineState?.identity?.isHost && onlineState?.session?.status === 'results' && connectedPlayers.length >= 3);
   const allConnectedVoted = connectedPlayers.length > 0 && onlineVotes.length >= connectedPlayers.length;
   const isCurrentPlayerImpostor = currentPlayer?.role === 'impostor';
+  const mobPlayerCount = connectedPlayers.filter((player) => player.role !== 'impostor').length;
+  const skipVotesNeeded = Math.max(1, Math.floor(mobPlayerCount / 2) + 1);
 
   useEffect(() => {
     const identity = loadReconnectIdentity();
@@ -51,6 +56,7 @@ export function OnlineSessionPanel({ defaultHostName, category, impostorCount, s
         setLobbyPlayers(snapshot.players);
         setOnlineRound(snapshot.round);
         setOnlineVotes(snapshot.votes || []);
+        setOnlineSkipVotes(snapshot.skipVotes || []);
       } catch (err) {
         if (active) setError(err.message || 'Could not refresh online lobby.');
       }
@@ -70,6 +76,7 @@ export function OnlineSessionPanel({ defaultHostName, category, impostorCount, s
       setLobbyPlayers(snapshot.players);
       setOnlineRound(snapshot.round);
       setOnlineVotes(snapshot.votes || []);
+      setOnlineSkipVotes(snapshot.skipVotes || []);
     } catch (err) { setError(err.message || 'Online session action failed.'); } finally { setBusy(false); }
   }
 
@@ -80,6 +87,7 @@ export function OnlineSessionPanel({ defaultHostName, category, impostorCount, s
     setLobbyPlayers(snapshot.players);
     setOnlineRound(snapshot.round);
     setOnlineVotes(snapshot.votes || []);
+    setOnlineSkipVotes(snapshot.skipVotes || []);
   }
 
   async function hostStartOnlineRound() {
@@ -87,7 +95,7 @@ export function OnlineSessionPanel({ defaultHostName, category, impostorCount, s
     setBusy(true); setError('');
     try {
       const result = await startOnlineRound({ session: onlineState.session, identity: onlineState.identity, players: lobbyPlayers, wordBank: WORD_BANK });
-      setOnlineRound(result.round); setOnlineVotes([]); setGuessValue('');
+      setOnlineRound(result.round); setOnlineVotes([]); setOnlineSkipVotes([]); setGuessValue('');
       setOnlineState((current) => current ? { ...current, session: result.session } : current);
       setRoleVisible(false);
       await refreshCurrentLobby();
@@ -112,6 +120,22 @@ export function OnlineSessionPanel({ defaultHostName, category, impostorCount, s
       setLobbyPlayers((current) => current.map((player) => player.id === updated.id ? updated : player));
       setOnlineState((current) => current ? { ...current, player: updated } : current);
     } catch (err) { setError(err.message || 'Could not mark role as seen.'); }
+  }
+
+  async function voteToSkipSecret() {
+    if (!onlineState?.session || !onlineState?.identity || !onlineRound || !currentPlayer || isCurrentPlayerImpostor) return;
+    setBusy(true); setError('');
+    try {
+      const result = await submitOnlineSecretSkipVote({ session: onlineState.session, identity: onlineState.identity, round: onlineRound, players: connectedPlayers, wordBank: WORD_BANK });
+      if (result.skipped) {
+        setRoleVisible(false);
+        setOnlineVotes([]);
+        setOnlineSkipVotes([]);
+        setOnlineRound(result.round);
+        setOnlineState((current) => current ? { ...current, session: result.session } : current);
+      }
+      await refreshCurrentLobby();
+    } catch (err) { setError(err.message || 'Could not submit skip vote.'); } finally { setBusy(false); }
   }
 
   async function voteForPlayer(targetPlayerId) {
@@ -146,7 +170,7 @@ export function OnlineSessionPanel({ defaultHostName, category, impostorCount, s
   }
 
   function forgetReconnect() {
-    clearReconnectIdentity(); setReconnectIdentity(null); setOnlineState(null); setLobbyPlayers([]); setOnlineRound(null); setOnlineVotes([]); setRoleVisible(false); setGuessValue('');
+    clearReconnectIdentity(); setReconnectIdentity(null); setOnlineState(null); setLobbyPlayers([]); setOnlineRound(null); setOnlineVotes([]); setOnlineSkipVotes([]); setRoleVisible(false); setGuessValue('');
   }
 
   async function copyCode() {
@@ -163,7 +187,7 @@ export function OnlineSessionPanel({ defaultHostName, category, impostorCount, s
         {onlineState.identity?.isHost && onlineState.session.status === 'lobby' && <button className="online-start-button" type="button" disabled={busy || !canHostStart} onClick={hostStartOnlineRound}>Start Online Round</button>}
         {onlineState.identity?.isHost && onlineState.session.status === 'lobby' && !canHostStart && <p className="helper-text online-helper">Need at least 3 connected players before starting.</p>}
         {canHostChangePhase && <div className="online-action-row"><button type="button" disabled={busy} onClick={() => changePhase('clues')}>Clues</button><button type="button" disabled={busy} className="ghost-button" onClick={() => changePhase('vote')}>Vote</button></div>}
-        {onlineState.session.status === 'reveal' && currentPlayer && <div className={`online-reveal-card ${currentPlayer.role === 'impostor' ? 'is-impostor' : 'is-mob'}`}><span>Your private role</span>{!roleVisible && !currentPlayer.has_seen_role ? <button type="button" onClick={revealMyRole}>Tap to Reveal</button> : <><strong>{currentPlayer.role === 'impostor' ? 'Impostor' : 'MOB'}</strong><small>{currentPlayer.role === 'impostor' ? 'Blend in. You do not see the secret word.' : `Secret word: ${onlineRound?.word || 'loading...'}`}</small><small>Category: {onlineRound?.category || 'loading...'}</small></>}</div>}
+        {onlineState.session.status === 'reveal' && currentPlayer && <div className={`online-reveal-card ${currentPlayer.role === 'impostor' ? 'is-impostor' : 'is-mob'}`}><span>Your private role</span>{!roleVisible && !currentPlayer.has_seen_role ? <button type="button" onClick={revealMyRole}>Tap to Reveal</button> : <><strong>{currentPlayer.role === 'impostor' ? 'Impostor' : 'MOB'}</strong><small>{currentPlayer.role === 'impostor' ? 'Blend in. You do not see the secret word.' : `Secret word: ${onlineRound?.word || 'loading...'}`}</small><small>Category: {onlineRound?.category || 'loading...'}</small>{currentPlayer.role !== 'impostor' && <div className="online-skip-box"><span>Secret skip vote</span><small>Privately vote to reroll this word. Do not say you voted skip, because that clears you.</small><button type="button" disabled={busy || Boolean(mySkipVote)} onClick={voteToSkipSecret}>{mySkipVote ? 'Skip vote recorded' : 'Vote to skip word'}</button><small>Passes at {skipVotesNeeded} hidden vote{skipVotesNeeded === 1 ? '' : 's'}.</small></div>}</>}</div>}
         {onlineState.session.status === 'clues' && <div className="online-phase-card"><span>Clue phase</span><strong>Give clues</strong><small>Category: {onlineRound?.category || 'loading...'} · Host can move everyone to voting when ready.</small></div>}
         {onlineState.session.status === 'vote' && <div className="online-vote-card"><span>Vote phase</span><strong>{onlineVotes.length} / {connectedPlayers.length} voted</strong>{myVote ? <small>Your vote is in. Waiting for the rest of the MOB.</small> : <div className="online-vote-grid">{connectedPlayers.filter((player) => player.id !== currentPlayer?.id).map((player) => <button key={player.id} type="button" disabled={busy} onClick={() => voteForPlayer(player.id)}>{player.name}</button>)}</div>}{onlineState.identity?.isHost && <button className="online-start-button" type="button" disabled={busy || onlineVotes.length === 0} onClick={hostFinishVote}>{allConnectedVoted ? 'Finish Vote' : 'Finish Early'}</button>}</div>}
         {onlineState.session.status === 'guess' && <div className="online-guess-card"><span>Final impostor guess</span><strong>Guess the word</strong>{isCurrentPlayerImpostor ? <><input value={guessValue} onChange={(event) => setGuessValue(event.target.value)} placeholder="Type the secret word" /><button type="button" disabled={busy || !guessValue.trim()} onClick={submitGuess}>Submit Guess</button></> : <small>Impostor is guessing the secret word. Wait for results.</small>}</div>}

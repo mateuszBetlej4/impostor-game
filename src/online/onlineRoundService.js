@@ -43,6 +43,11 @@ export async function startOnlineRound({ session, identity, players, wordBank })
     .delete()
     .eq('session_id', session.id);
 
+  await client
+    .from('online_skip_votes')
+    .delete()
+    .eq('session_id', session.id);
+
   const impostorCount = Math.min(Number(session.impostor_count || 1), activePlayers.length - 1);
   const impostorIds = new Set(shuffle(activePlayers).slice(0, impostorCount).map((player) => player.id));
   const selected = pickWord({ category: session.category || 'Random', wordBank });

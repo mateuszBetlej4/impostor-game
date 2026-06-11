@@ -3,6 +3,7 @@ import { useEffect, useMemo, useState } from 'react';
 import { MOB_LOGO_SRC } from './logoData.js';
 import { SESSION_PRESETS, DEFAULT_SETTINGS } from './modeData.js';
 import { WORD_BANK } from './wordBank.js';
+import { OnlineSessionPanel } from './online/OnlineSessionPanel.jsx';
 
 const DEFAULT_PLAYERS = ['Mateusz', 'Dawid', 'Daniel', 'Fabian', 'Patryk'];
 const MIN_PLAYERS = 3;
@@ -28,7 +29,11 @@ function normalisePlayerName(value) {
 }
 
 function loadJson(key, fallback) {
-  try { return JSON.parse(localStorage.getItem(key)) || fallback; } catch { return fallback; }
+  try {
+    return JSON.parse(localStorage.getItem(key)) || fallback;
+  } catch {
+    return fallback;
+  }
 }
 
 function saveJson(key, value) {
@@ -47,15 +52,31 @@ function getUnusedWords(category, usedWords, wordBank) {
 function selectWord(selectedCategory, usedWords, wordBank, categoryNames) {
   let category = selectedCategory;
   let nextUsedWords = { ...usedWords };
+
   if (selectedCategory === 'Random' || !wordBank[selectedCategory]) {
     let categoriesWithUnusedWords = categoryNames.filter((name) => getUnusedWords(name, nextUsedWords, wordBank).length > 0);
-    if (categoriesWithUnusedWords.length === 0) { nextUsedWords = {}; categoriesWithUnusedWords = categoryNames; }
+    if (categoriesWithUnusedWords.length === 0) {
+      nextUsedWords = {};
+      categoriesWithUnusedWords = categoryNames;
+    }
     category = pickRandom(categoriesWithUnusedWords);
   }
+
   let availableWords = getUnusedWords(category, nextUsedWords, wordBank);
-  if (availableWords.length === 0) { nextUsedWords = { ...nextUsedWords, [category]: [] }; availableWords = wordBank[category]; }
+  if (availableWords.length === 0) {
+    nextUsedWords = { ...nextUsedWords, [category]: [] };
+    availableWords = wordBank[category];
+  }
+
   const word = pickRandom(availableWords);
-  return { category, word, nextUsedWords: { ...nextUsedWords, [category]: [...(nextUsedWords[category] || []), word] } };
+  return {
+    category,
+    word,
+    nextUsedWords: {
+      ...nextUsedWords,
+      [category]: [...(nextUsedWords[category] || []), word],
+    },
+  };
 }
 
 function makeRound({ players, category, word, impostorCount, settings }) {
@@ -76,6 +97,7 @@ function makeRound({ players, category, word, impostorCount, settings }) {
 
 function App() {
   const [screen, setScreen] = useState('home');
+  const [setupMode, setSetupMode] = useState('local');
   const [players, setPlayers] = useState(DEFAULT_PLAYERS);
   const [newPlayer, setNewPlayer] = useState('');
   const [category, setCategory] = useState('Random');
@@ -105,7 +127,9 @@ function App() {
   useEffect(() => saveJson(SCORE_KEY, scores), [scores]);
   useEffect(() => saveJson(USED_WORDS_KEY, usedWords), [usedWords]);
   useEffect(() => saveJson(CUSTOM_SETS_KEY, customSets), [customSets]);
-  useEffect(() => { if (category !== 'Random' && !allWordBank[category]) setCategory('Random'); }, [allWordBank, category]);
+  useEffect(() => {
+    if (category !== 'Random' && !allWordBank[category]) setCategory('Random');
+  }, [allWordBank, category]);
 
   const voteResult = useMemo(() => {
     if (!round) return null;
@@ -117,9 +141,13 @@ function App() {
     return { counts, sorted, top, highest, caught: top.some((name) => round.impostors.has(name)) };
   }, [players, round]);
 
-  function patchSettings(patch) { setSettings((current) => ({ ...current, ...patch })); }
+  function patchSettings(patch) {
+    setSettings((current) => ({ ...current, ...patch }));
+  }
 
-  function confirmStart() { if (canStart) setScreen('confirm'); }
+  function confirmStart() {
+    if (canStart) setScreen('confirm');
+  }
 
   function startNewRound() {
     const selected = selectWord(category, usedWords, allWordBank, categoryNames);
@@ -140,12 +168,22 @@ function App() {
     if (!rawName || finalWords.length < 3) return;
     setCustomSets((current) => ({ ...current, [name]: finalWords }));
     setCategory(name);
-    setCustomSetName(''); setCustomSetBase('Blank'); setCustomSetWords('');
+    setCustomSetName('');
+    setCustomSetBase('Blank');
+    setCustomSetWords('');
   }
 
   function deleteCustomSet(name) {
-    setCustomSets((current) => { const next = { ...current }; delete next[name]; return next; });
-    setUsedWords((current) => { const next = { ...current }; delete next[name]; return next; });
+    setCustomSets((current) => {
+      const next = { ...current };
+      delete next[name];
+      return next;
+    });
+    setUsedWords((current) => {
+      const next = { ...current };
+      delete next[name];
+      return next;
+    });
     if (category === name) setCategory('Random');
   }
 
@@ -166,7 +204,12 @@ function App() {
   function movePlayer(fromIndex, direction) {
     const toIndex = fromIndex + direction;
     if (toIndex < 0 || toIndex >= players.length) return;
-    setPlayers((current) => { const next = [...current]; const [moved] = next.splice(fromIndex, 1); next.splice(toIndex, 0, moved); return next; });
+    setPlayers((current) => {
+      const next = [...current];
+      const [moved] = next.splice(fromIndex, 1);
+      next.splice(toIndex, 0, moved);
+      return next;
+    });
   }
 
   function finishCurrentReveal() {
@@ -183,7 +226,10 @@ function App() {
 
   function nextClueRound() {
     if (!round) return;
-    if (round.clueRound >= round.settings.guessRounds) { setScreen('vote'); return; }
+    if (round.clueRound >= round.settings.guessRounds) {
+      setScreen('vote');
+      return;
+    }
     setRound({ ...round, clueRound: round.clueRound + 1 });
   }
 
@@ -229,15 +275,27 @@ function App() {
     setScreen('result');
   }
 
-  function skipGuess() { if (!round) return; setRound({ ...round, outcome: 'mob' }); applyScores('mob'); setScreen('result'); }
-  function resetGame() { setRound(null); setRoleVisible(false); setVotingPlayerIndex(0); setGuessValue(''); setScreen('home'); }
+  function skipGuess() {
+    if (!round) return;
+    setRound({ ...round, outcome: 'mob' });
+    applyScores('mob');
+    setScreen('result');
+  }
+
+  function resetGame() {
+    setRound(null);
+    setRoleVisible(false);
+    setVotingPlayerIndex(0);
+    setGuessValue('');
+    setScreen('home');
+  }
 
   return (
     <main className="app-shell">
       <div className="orb orb-one" /><div className="orb orb-two" />
       <section className="phone-frame">
         <Header screen={screen} onReset={resetGame} onStart={confirmStart} canStart={canStart} />
-        {screen === 'home' && <HomeScreen players={players} newPlayer={newPlayer} setNewPlayer={setNewPlayer} addPlayer={addPlayer} removePlayer={removePlayer} movePlayer={movePlayer} category={category} setCategory={setCategory} categoryNames={categoryNames} customSetNames={customSetNames} settings={settings} patchSettings={patchSettings} applyPreset={(presetKey) => patchSettings(SESSION_PRESETS[presetKey].settings)} impostorCount={impostorCount} setImpostorCount={setImpostorCount} canStart={canStart} startRound={confirmStart} scores={scores} resetScores={() => setScores({})} usedWordCount={usedWordCount} totalWords={totalWords} selectedWordCount={selectedWordCount} resetUsedWords={() => setUsedWords({})} customSetName={customSetName} setCustomSetName={setCustomSetName} customSetBase={customSetBase} setCustomSetBase={setCustomSetBase} customSetWords={customSetWords} setCustomSetWords={setCustomSetWords} saveCustomSet={saveCustomSet} deleteCustomSet={deleteCustomSet} />}
+        {screen === 'home' && <HomeScreen setupMode={setupMode} setSetupMode={setSetupMode} players={players} newPlayer={newPlayer} setNewPlayer={setNewPlayer} addPlayer={addPlayer} removePlayer={removePlayer} movePlayer={movePlayer} category={category} setCategory={setCategory} categoryNames={categoryNames} customSetNames={customSetNames} settings={settings} patchSettings={patchSettings} applyPreset={(presetKey) => patchSettings(SESSION_PRESETS[presetKey].settings)} impostorCount={impostorCount} setImpostorCount={setImpostorCount} canStart={canStart} startRound={confirmStart} scores={scores} resetScores={() => setScores({})} usedWordCount={usedWordCount} totalWords={totalWords} selectedWordCount={selectedWordCount} resetUsedWords={() => setUsedWords({})} customSetName={customSetName} setCustomSetName={setCustomSetName} customSetBase={customSetBase} setCustomSetBase={setCustomSetBase} customSetWords={customSetWords} setCustomSetWords={setCustomSetWords} saveCustomSet={saveCustomSet} deleteCustomSet={deleteCustomSet} />}
         {screen === 'confirm' && <ConfirmScreen players={players} category={category} selectedWordCount={selectedWordCount} impostorCount={impostorCount} settings={settings} totalWords={totalWords} usedWordCount={usedWordCount} onBack={() => setScreen('home')} onConfirm={startNewRound} />}
         {screen === 'reveal' && round && <RevealScreen player={currentRevealPlayer} roleVisible={roleVisible} setRoleVisible={setRoleVisible} isImpostor={round.impostors.has(currentRevealPlayer)} category={round.category} word={round.word} currentIndex={round.revealIndex} totalPlayers={round.passOrder.length} finishCurrentReveal={finishCurrentReveal} showCategoryToImpostor={round.settings.showCategoryToImpostor} />}
         {screen === 'clues' && round && <ClueScreen round={round} onNext={nextClueRound} />}
@@ -253,10 +311,12 @@ function Header({ screen, onReset, onStart, canStart }) {
   return <header className="app-header"><div className="brand-lockup"><img className="crest-mark crest-image" src={MOB_LOGO_SRC} alt="A$AP MOB FC crest" /><div><p className="eyebrow">A$AP MOB</p><h1>MOB Impostor</h1></div></div><div className="header-actions">{screen === 'home' && <button className="header-start" type="button" disabled={!canStart} onClick={onStart}>Start</button>}{screen !== 'home' && <button className="icon-button" type="button" onClick={onReset} aria-label="Reset game"><RotateCcw size={18} /></button>}</div></header>;
 }
 
-function HomeScreen({ players, newPlayer, setNewPlayer, addPlayer, removePlayer, movePlayer, category, setCategory, categoryNames, customSetNames, settings, patchSettings, applyPreset, impostorCount, setImpostorCount, canStart, startRound, scores, resetScores, usedWordCount, totalWords, selectedWordCount, resetUsedWords, customSetName, setCustomSetName, customSetBase, setCustomSetBase, customSetWords, setCustomSetWords, saveCustomSet, deleteCustomSet }) {
+function HomeScreen({ setupMode, setSetupMode, players, newPlayer, setNewPlayer, addPlayer, removePlayer, movePlayer, category, setCategory, categoryNames, customSetNames, settings, patchSettings, applyPreset, impostorCount, setImpostorCount, canStart, startRound, scores, resetScores, usedWordCount, totalWords, selectedWordCount, resetUsedWords, customSetName, setCustomSetName, customSetBase, setCustomSetBase, customSetWords, setCustomSetWords, saveCustomSet, deleteCustomSet }) {
   const hasScores = Object.values(scores).some((score) => score > 0);
   const maxImpostors = Math.max(1, players.length - 1);
-  return <div className="screen-stack"><section className="hero-card setup-summary"><img className="hero-logo" src={MOB_LOGO_SRC} alt="A$AP MOB FC crest" /><p className="eyebrow">Pre-game setup</p><h2>Check the session, then start from the sticky header.</h2><div className="summary-grid"><div><span>Players</span><strong>{players.length}</strong></div><div><span>Impostors</span><strong>{impostorCount}</strong></div><div><span>Set</span><strong>{category}</strong></div><div><span>Words</span><strong>{selectedWordCount}</strong></div></div></section><section className="panel-card settings-card priority-card"><div className="section-title-row"><div><p className="eyebrow">Game setup</p><h3>Session</h3></div><Sparkles size={20} /></div><label><span>Category / set</span><select value={category} onChange={(event) => setCategory(event.target.value)}><option value="Random">Random</option>{categoryNames.map((name) => <option key={name} value={name}>{name}</option>)}</select></label><label><span>Impostors</span><select value={impostorCount} onChange={(event) => setImpostorCount(Number(event.target.value))}>{Array.from({ length: maxImpostors }, (_, index) => index + 1).map((count) => <option key={count} value={count}>{count}</option>)}</select></label><div className="score-row"><span>Words used</span><strong>{usedWordCount} / {totalWords}</strong></div><button className="secondary-action" type="button" onClick={resetUsedWords}>Reset Word History</button></section><section className="panel-card"><div className="section-title-row"><div><p className="eyebrow">Phone pass order</p><h3>Players</h3></div><Users size={20} /></div><p className="helper-text">Add players and reorder exactly who gets the phone next.</p><div className="pass-order-list">{players.map((player, index) => <div key={player} className="pass-order-row"><span className="order-number">{index + 1}</span><strong>{player}</strong><div className="order-actions"><button type="button" onClick={() => movePlayer(index, -1)} disabled={index === 0}>↑</button><button type="button" onClick={() => movePlayer(index, 1)} disabled={index === players.length - 1}>↓</button><button type="button" className="remove-order" onClick={() => removePlayer(player)}>×</button></div></div>)}</div><div className="input-row"><input value={newPlayer} onChange={(event) => setNewPlayer(event.target.value)} onKeyDown={(event) => { if (event.key === 'Enter') addPlayer(); }} placeholder="Add player name" /><button type="button" onClick={addPlayer}>Add</button></div></section><section className="panel-card"><div className="section-title-row"><div><p className="eyebrow">Rules</p><h3>Customisation</h3></div><Trophy size={20} /></div><div className="preset-row">{Object.entries(SESSION_PRESETS).map(([key, preset]) => <button key={key} type="button" className="preset-button" onClick={() => applyPreset(key)}><strong>{preset.name}</strong><small>{preset.description}</small></button>)}</div><div className="settings-grid"><label><span>Clue rounds before vote</span><select value={settings.guessRounds} onChange={(event) => patchSettings({ guessRounds: Number(event.target.value) })}>{[0, 1, 2, 3, 4].map((value) => <option key={value} value={value}>{value === 0 ? 'Skip straight to vote' : `${value} round${value > 1 ? 's' : ''}`}</option>)}</select></label><label><span>Discussion timer</span><select value={settings.discussionSeconds} onChange={(event) => patchSettings({ discussionSeconds: Number(event.target.value) })}>{[0, 30, 60, 90, 120, 180].map((value) => <option key={value} value={value}>{value === 0 ? 'No timer' : `${value} seconds`}</option>)}</select></label><label><span>MOB win points</span><select value={settings.pointsMobWin} onChange={(event) => patchSettings({ pointsMobWin: Number(event.target.value) })}>{[1, 2, 3].map((value) => <option key={value} value={value}>{value}</option>)}</select></label><label><span>Impostor win points</span><select value={settings.pointsImpostorWin} onChange={(event) => patchSettings({ pointsImpostorWin: Number(event.target.value) })}>{[1, 2, 3, 4].map((value) => <option key={value} value={value}>{value}</option>)}</select></label></div><div className="toggle-list"><Toggle label="Show category to impostor" checked={settings.showCategoryToImpostor} onChange={(value) => patchSettings({ showCategoryToImpostor: value })} /><Toggle label="Impostor final guess after being caught" checked={settings.allowImpostorFinalGuess} onChange={(value) => patchSettings({ allowImpostorFinalGuess: value })} /><Toggle label="Randomise pass order at start" checked={settings.randomisePassOrder} onChange={(value) => patchSettings({ randomisePassOrder: value })} /></div></section><section className="panel-card"><div className="section-title-row"><div><p className="eyebrow">Custom library</p><h3>Build a Set</h3></div><Sparkles size={20} /></div><div className="settings-grid"><label><span>Set name</span><input value={customSetName} onChange={(event) => setCustomSetName(event.target.value)} placeholder="e.g. Le Mans Trip" /></label><label><span>Start from existing set</span><select value={customSetBase} onChange={(event) => setCustomSetBase(event.target.value)}><option value="Blank">Blank set</option>{categoryNames.map((name) => <option key={name} value={name}>{name}</option>)}</select></label><label><span>Add new words</span><textarea value={customSetWords} onChange={(event) => setCustomSetWords(event.target.value)} placeholder="One word per line, or separated by commas" rows="5" /></label></div><button className="primary-action" type="button" onClick={saveCustomSet}>Save Custom Set</button>{customSetNames.length > 0 && <div className="custom-set-list">{customSetNames.map((name) => <div className="score-row" key={name}><span>{name}</span><button className="mini-button" type="button" onClick={() => deleteCustomSet(name)}>Delete</button></div>)}</div>}</section>{hasScores && <section className="panel-card score-card"><div className="section-title-row"><div><p className="eyebrow">Season table</p><h3>Scores</h3></div><button className="mini-button" type="button" onClick={resetScores}>Reset</button></div><div className="score-list">{Object.entries(scores).sort((a, b) => b[1] - a[1]).filter(([name]) => players.includes(name)).map(([name, score]) => <div className="score-row" key={name}><span>{name}</span><strong>{score}</strong></div>)}</div></section>}{!canStart && <p className="warning-text">You need at least 3 players, and impostors must be fewer than players.</p>}<button className="primary-action bottom-start" type="button" disabled={!canStart} onClick={startRound}><Sparkles size={20} /> Review & Start</button></div>;
+  const hostName = players[0] || 'Host';
+
+  return <div className="screen-stack"><section className="hero-card setup-summary"><img className="hero-logo" src={MOB_LOGO_SRC} alt="A$AP MOB FC crest" /><p className="eyebrow">Pre-game setup</p><h2>Choose local or online, then confirm the session.</h2><div className="summary-grid"><div><span>Mode</span><strong>{setupMode === 'online' ? 'Online' : 'Local'}</strong></div><div><span>Players</span><strong>{players.length}</strong></div><div><span>Set</span><strong>{category}</strong></div><div><span>Words</span><strong>{selectedWordCount}</strong></div></div></section><section className="panel-card"><div className="section-title-row"><div><p className="eyebrow">Play mode</p><h3>Local or Online</h3></div><Sparkles size={20} /></div><div className="setup-mode-switch"><button type="button" className={setupMode === 'local' ? 'selected' : ''} onClick={() => setSetupMode('local')}><strong>Local</strong><small>One phone pass-and-play.</small></button><button type="button" className={setupMode === 'online' ? 'selected' : ''} onClick={() => setSetupMode('online')}><strong>Online beta</strong><small>Create or join with a code.</small></button></div></section>{setupMode === 'online' && <OnlineSessionPanel defaultHostName={hostName} category={category} impostorCount={impostorCount} settings={settings} />}<section className="panel-card settings-card priority-card"><div className="section-title-row"><div><p className="eyebrow">Game setup</p><h3>Session</h3></div><Sparkles size={20} /></div><label><span>Category / set</span><select value={category} onChange={(event) => setCategory(event.target.value)}><option value="Random">Random</option>{categoryNames.map((name) => <option key={name} value={name}>{name}</option>)}</select></label><label><span>Impostors</span><select value={impostorCount} onChange={(event) => setImpostorCount(Number(event.target.value))}>{Array.from({ length: maxImpostors }, (_, index) => index + 1).map((count) => <option key={count} value={count}>{count}</option>)}</select></label><div className="score-row"><span>Words used</span><strong>{usedWordCount} / {totalWords}</strong></div><button className="secondary-action" type="button" onClick={resetUsedWords}>Reset Word History</button></section><section className="panel-card"><div className="section-title-row"><div><p className="eyebrow">Phone pass order</p><h3>Players</h3></div><Users size={20} /></div><p className="helper-text">Add players and reorder exactly who gets the phone next.</p><div className="pass-order-list">{players.map((player, index) => <div key={player} className="pass-order-row"><span className="order-number">{index + 1}</span><strong>{player}</strong><div className="order-actions"><button type="button" onClick={() => movePlayer(index, -1)} disabled={index === 0}>↑</button><button type="button" onClick={() => movePlayer(index, 1)} disabled={index === players.length - 1}>↓</button><button type="button" className="remove-order" onClick={() => removePlayer(player)}>×</button></div></div>)}</div><div className="input-row"><input value={newPlayer} onChange={(event) => setNewPlayer(event.target.value)} onKeyDown={(event) => { if (event.key === 'Enter') addPlayer(); }} placeholder="Add player name" /><button type="button" onClick={addPlayer}>Add</button></div></section><section className="panel-card"><div className="section-title-row"><div><p className="eyebrow">Rules</p><h3>Customisation</h3></div><Trophy size={20} /></div><div className="preset-row">{Object.entries(SESSION_PRESETS).map(([key, preset]) => <button key={key} type="button" className="preset-button" onClick={() => applyPreset(key)}><strong>{preset.name}</strong><small>{preset.description}</small></button>)}</div><div className="settings-grid"><label><span>Clue rounds before vote</span><select value={settings.guessRounds} onChange={(event) => patchSettings({ guessRounds: Number(event.target.value) })}>{[0, 1, 2, 3, 4].map((value) => <option key={value} value={value}>{value === 0 ? 'Skip straight to vote' : `${value} round${value > 1 ? 's' : ''}`}</option>)}</select></label><label><span>Discussion timer</span><select value={settings.discussionSeconds} onChange={(event) => patchSettings({ discussionSeconds: Number(event.target.value) })}>{[0, 30, 60, 90, 120, 180].map((value) => <option key={value} value={value}>{value === 0 ? 'No timer' : `${value} seconds`}</option>)}</select></label><label><span>MOB win points</span><select value={settings.pointsMobWin} onChange={(event) => patchSettings({ pointsMobWin: Number(event.target.value) })}>{[1, 2, 3].map((value) => <option key={value} value={value}>{value}</option>)}</select></label><label><span>Impostor win points</span><select value={settings.pointsImpostorWin} onChange={(event) => patchSettings({ pointsImpostorWin: Number(event.target.value) })}>{[1, 2, 3, 4].map((value) => <option key={value} value={value}>{value}</option>)}</select></label></div><div className="toggle-list"><Toggle label="Show category to impostor" checked={settings.showCategoryToImpostor} onChange={(value) => patchSettings({ showCategoryToImpostor: value })} /><Toggle label="Impostor final guess after being caught" checked={settings.allowImpostorFinalGuess} onChange={(value) => patchSettings({ allowImpostorFinalGuess: value })} /><Toggle label="Randomise pass order at start" checked={settings.randomisePassOrder} onChange={(value) => patchSettings({ randomisePassOrder: value })} /></div></section><section className="panel-card"><div className="section-title-row"><div><p className="eyebrow">Custom library</p><h3>Build a Set</h3></div><Sparkles size={20} /></div><div className="settings-grid"><label><span>Set name</span><input value={customSetName} onChange={(event) => setCustomSetName(event.target.value)} placeholder="e.g. Le Mans Trip" /></label><label><span>Start from existing set</span><select value={customSetBase} onChange={(event) => setCustomSetBase(event.target.value)}><option value="Blank">Blank set</option>{categoryNames.map((name) => <option key={name} value={name}>{name}</option>)}</select></label><label><span>Add new words</span><textarea value={customSetWords} onChange={(event) => setCustomSetWords(event.target.value)} placeholder="One word per line, or separated by commas" rows="5" /></label></div><button className="primary-action" type="button" onClick={saveCustomSet}>Save Custom Set</button>{customSetNames.length > 0 && <div className="custom-set-list">{customSetNames.map((name) => <div className="score-row" key={name}><span>{name}</span><button className="mini-button" type="button" onClick={() => deleteCustomSet(name)}>Delete</button></div>)}</div>}</section>{hasScores && <section className="panel-card score-card"><div className="section-title-row"><div><p className="eyebrow">Season table</p><h3>Scores</h3></div><button className="mini-button" type="button" onClick={resetScores}>Reset</button></div><div className="score-list">{Object.entries(scores).sort((a, b) => b[1] - a[1]).filter(([name]) => players.includes(name)).map(([name, score]) => <div className="score-row" key={name}><span>{name}</span><strong>{score}</strong></div>)}</div></section>}{!canStart && <p className="warning-text">You need at least 3 players, and impostors must be fewer than players.</p>}<button className="primary-action bottom-start" type="button" disabled={!canStart} onClick={startRound}><Sparkles size={20} /> Review & Start</button></div>;
 }
 
 function ConfirmScreen({ players, category, selectedWordCount, impostorCount, settings, totalWords, usedWordCount, onBack, onConfirm }) {

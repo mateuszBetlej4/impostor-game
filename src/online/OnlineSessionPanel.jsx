@@ -1,9 +1,11 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
+import { WORD_BANK } from '../wordBank.js';
 import { isSupabaseConfigured } from './supabaseClient.js';
 import { createSession, joinSession } from './sessionService.js';
 import { loadSessionSnapshot, reconnectSession, subscribeToSession } from './reconnectService.js';
 import { canReconnect, clearReconnectIdentity, loadReconnectIdentity } from './reconnect.js';
 import { normalizeCode } from './sessionCodes.js';
+import { startOnlineRound } from './onlineRoundService.js';
 
 export function OnlineSessionPanel({ defaultHostName, category, impostorCount, settings }) {
   const [hostName, setHostName] = useState(defaultHostName || 'Host');
@@ -12,8 +14,12 @@ export function OnlineSessionPanel({ defaultHostName, category, impostorCount, s
   const [reconnectIdentity, setReconnectIdentity] = useState(null);
   const [onlineState, setOnlineState] = useState(null);
   const [lobbyPlayers, setLobbyPlayers] = useState([]);
+  const [onlineRound, setOnlineRound] = useState(null);
   const [error, setError] = useState('');
   const [busy, setBusy] = useState(false);
+
+  const connectedPlayers = useMemo(() => lobbyPlayers.filter((player) => player.connected !== false), [lobbyPlayers]);
+  const canHostStart = Boolean(onlineState?.identity?.isHost && onlineState?.session?.status === 'lobby' && connectedPlayers.length >= 3);
 
   useEffect(() => {
     const identity = loadReconnectIdentity();
@@ -60,11 +66,40 @@ export function OnlineSessionPanel({ defaultHostName, category, impostorCount, s
     }
   }
 
+  async function refreshCurrentLobby() {
+    if (!onlineState?.session?.id) return;
+    const snapshot = await loadSessionSnapshot(onlineState.session.id);
+    setOnlineState((current) => current ? { ...current, session: snapshot.session } : current);
+    setLobbyPlayers(snapshot.players);
+  }
+
+  async function hostStartOnlineRound() {
+    if (!onlineState?.session || !onlineState?.identity) return;
+    setBusy(true);
+    setError('');
+    try {
+      const result = await startOnlineRound({
+        session: onlineState.session,
+        identity: onlineState.identity,
+        players: lobbyPlayers,
+        wordBank: WORD_BANK,
+      });
+      setOnlineRound(result.round);
+      setOnlineState((current) => current ? { ...current, session: result.session } : current);
+      await refreshCurrentLobby();
+    } catch (err) {
+      setError(err.message || 'Could not start online round.');
+    } finally {
+      setBusy(false);
+    }
+  }
+
   function forgetReconnect() {
     clearReconnectIdentity();
     setReconnectIdentity(null);
     setOnlineState(null);
     setLobbyPlayers([]);
+    setOnlineRound(null);
   }
 
   async function copyCode() {
@@ -98,7 +133,7 @@ export function OnlineSessionPanel({ defaultHostName, category, impostorCount, s
           <small>{onlineState.player?.name} · {onlineState.identity?.isHost ? 'Host' : 'Player'} · {onlineState.session.status}</small>
           <div className="online-action-row">
             <button type="button" onClick={copyCode}>Copy Code</button>
-            <button type="button" className="ghost-button" onClick={() => loadSessionSnapshot(onlineState.session.id).then((snapshot) => { setOnlineState((current) => current ? { ...current, session: snapshot.session } : current); setLobbyPlayers(snapshot.players); }).catch((err) => setError(err.message))}>Refresh</button>
+            <button type="button" className="ghost-button" onClick={() => refreshCurrentLobby().catch((err) => setError(err.message))}>Refresh</button>
           </div>
         </div>
       )}
@@ -114,11 +149,28 @@ export function OnlineSessionPanel({ defaultHostName, category, impostorCount, s
               <div className="online-player-row" key={player.id}>
                 <span>{index + 1}</span>
                 <strong>{player.name}</strong>
-                <small>{player.is_host ? 'Host' : 'Player'} · {player.connected ? 'Online' : 'Away'}</small>
+                <small>{player.is_host ? 'Host' : 'Player'} · {player.connected ? 'Online' : 'Away'}{player.role ? ` · ${player.role}` : ''}</small>
               </div>
             ))}
           </div>
-          {onlineState.identity?.isHost && <p className="helper-text online-helper">Host controls for online round start are next. This lobby already reconnects and updates live.</p>}
+
+          {onlineState.identity?.isHost && onlineState.session.status === 'lobby' && (
+            <button className="online-start-button" type="button" disabled={busy || !canHostStart} onClick={hostStartOnlineRound}>
+              Start Online Round
+            </button>
+          )}
+
+          {onlineState.identity?.isHost && onlineState.session.status === 'lobby' && !canHostStart && (
+            <p className="helper-text online-helper">Need at least 3 connected players before starting.</p>
+          )}
+
+          {onlineState.session.status === 'reveal' && (
+            <div className="online-phase-card">
+              <span>Round started</span>
+              <strong>Reveal phase</strong>
+              <small>{onlineRound ? `${onlineRound.category} selected` : 'Players can now reveal their roles in the online flow.'}</small>
+            </div>
+          )}
         </div>
       )}
 

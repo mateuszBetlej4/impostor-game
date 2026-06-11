@@ -63,6 +63,7 @@ export async function loadSessionSnapshot(sessionId) {
   if (roundResult.error) throw roundResult.error;
 
   let votes = [];
+  let skipVotes = [];
   if (roundResult.data?.id) {
     const votesResult = await client
       .from('online_votes')
@@ -71,6 +72,14 @@ export async function loadSessionSnapshot(sessionId) {
 
     if (votesResult.error) throw votesResult.error;
     votes = votesResult.data || [];
+
+    const skipVotesResult = await client
+      .from('online_skip_votes')
+      .select('*')
+      .eq('round_id', roundResult.data.id);
+
+    if (skipVotesResult.error) throw skipVotesResult.error;
+    skipVotes = skipVotesResult.data || [];
   }
 
   return {
@@ -78,6 +87,7 @@ export async function loadSessionSnapshot(sessionId) {
     players: playersResult.data || [],
     round: roundResult.data || null,
     votes,
+    skipVotes,
   };
 }
 
@@ -89,6 +99,7 @@ export function subscribeToSession(sessionId, onChange) {
     .on('postgres_changes', { event: '*', schema: 'public', table: 'online_players', filter: `session_id=eq.${sessionId}` }, onChange)
     .on('postgres_changes', { event: '*', schema: 'public', table: 'online_rounds', filter: `session_id=eq.${sessionId}` }, onChange)
     .on('postgres_changes', { event: '*', schema: 'public', table: 'online_votes', filter: `session_id=eq.${sessionId}` }, onChange)
+    .on('postgres_changes', { event: '*', schema: 'public', table: 'online_skip_votes', filter: `session_id=eq.${sessionId}` }, onChange)
     .subscribe();
 
   return () => client.removeChannel(channel);

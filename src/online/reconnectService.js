@@ -62,10 +62,22 @@ export async function loadSessionSnapshot(sessionId) {
 
   if (roundResult.error) throw roundResult.error;
 
+  let votes = [];
+  if (roundResult.data?.id) {
+    const votesResult = await client
+      .from('online_votes')
+      .select('*')
+      .eq('round_id', roundResult.data.id);
+
+    if (votesResult.error) throw votesResult.error;
+    votes = votesResult.data || [];
+  }
+
   return {
     session: sessionResult.data,
     players: playersResult.data || [],
     round: roundResult.data || null,
+    votes,
   };
 }
 
@@ -76,6 +88,7 @@ export function subscribeToSession(sessionId, onChange) {
     .on('postgres_changes', { event: '*', schema: 'public', table: 'online_sessions', filter: `id=eq.${sessionId}` }, onChange)
     .on('postgres_changes', { event: '*', schema: 'public', table: 'online_players', filter: `session_id=eq.${sessionId}` }, onChange)
     .on('postgres_changes', { event: '*', schema: 'public', table: 'online_rounds', filter: `session_id=eq.${sessionId}` }, onChange)
+    .on('postgres_changes', { event: '*', schema: 'public', table: 'online_votes', filter: `session_id=eq.${sessionId}` }, onChange)
     .subscribe();
 
   return () => client.removeChannel(channel);

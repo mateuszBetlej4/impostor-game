@@ -71,36 +71,88 @@
 
 .settings-grid {
   display: grid;
-  gap: 12px;
+  gap: 14px;
   margin-top: 10px;
 }
 
 .settings-grid label {
   display: grid;
-  gap: 7px;
+  gap: 8px;
 }
 
 .settings-grid label > span {
   color: var(--mob-muted);
   font-size: 12px;
-  font-weight: 900;
+  font-weight: 950;
   letter-spacing: 0.12em;
   text-transform: uppercase;
 }
 
+.settings-grid input,
+.settings-grid textarea,
 .settings-grid select {
   width: 100%;
-  min-height: 50px;
-  border: 1px solid var(--mob-border-soft);
-  border-radius: 17px;
-  padding: 0 14px;
+  border: 1px solid rgba(244, 208, 111, 0.18);
+  border-radius: 18px;
   color: var(--mob-text);
-  background: rgba(0, 0, 0, 0.24);
+  background: linear-gradient(180deg, rgba(255, 247, 223, 0.07), rgba(0, 0, 0, 0.28));
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.05), 0 10px 24px rgba(0, 0, 0, 0.18);
   outline: none;
+  -webkit-appearance: none;
+  appearance: none;
+}
+
+.settings-grid input,
+.settings-grid select {
+  min-height: 54px;
+  padding: 0 16px;
+}
+
+.settings-grid textarea {
+  min-height: 126px;
+  resize: vertical;
+  padding: 15px 16px;
+  line-height: 1.45;
+}
+
+.settings-grid input::placeholder,
+.settings-grid textarea::placeholder {
+  color: rgba(255, 247, 223, 0.42);
+}
+
+.settings-grid input:focus,
+.settings-grid textarea:focus,
+.settings-grid select:focus {
+  border-color: rgba(244, 208, 111, 0.7);
+  box-shadow: 0 0 0 3px rgba(244, 208, 111, 0.11), inset 0 1px 0 rgba(255, 255, 255, 0.06);
+}
+
+.settings-grid select {
+  padding-right: 44px;
+  background-image: linear-gradient(45deg, transparent 50%, var(--mob-gold-bright) 50%), linear-gradient(135deg, var(--mob-gold-bright) 50%, transparent 50%), linear-gradient(180deg, rgba(255, 247, 223, 0.07), rgba(0, 0, 0, 0.28));
+  background-position: calc(100% - 22px) 50%, calc(100% - 15px) 50%, 0 0;
+  background-size: 7px 7px, 7px 7px, 100% 100%;
+  background-repeat: no-repeat;
 }
 
 .settings-grid option {
   color: #111;
+}
+
+.panel-card .settings-grid + .primary-action,
+.panel-card .settings-grid + .secondary-action {
+  width: 100%;
+  margin-top: 16px;
+}
+
+.custom-set-list {
+  display: grid;
+  gap: 8px;
+  margin-top: 14px;
+}
+
+.custom-set-list .score-row {
+  min-height: 48px;
 }
 
 .toggle-list {

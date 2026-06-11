@@ -52,9 +52,20 @@ export async function loadSessionSnapshot(sessionId) {
 
   if (playersResult.error) throw playersResult.error;
 
+  const roundResult = await client
+    .from('online_rounds')
+    .select('*')
+    .eq('session_id', sessionId)
+    .order('created_at', { ascending: false })
+    .limit(1)
+    .maybeSingle();
+
+  if (roundResult.error) throw roundResult.error;
+
   return {
     session: sessionResult.data,
     players: playersResult.data || [],
+    round: roundResult.data || null,
   };
 }
 
@@ -64,6 +75,7 @@ export function subscribeToSession(sessionId, onChange) {
     .channel(`session-${sessionId}`)
     .on('postgres_changes', { event: '*', schema: 'public', table: 'online_sessions', filter: `id=eq.${sessionId}` }, onChange)
     .on('postgres_changes', { event: '*', schema: 'public', table: 'online_players', filter: `session_id=eq.${sessionId}` }, onChange)
+    .on('postgres_changes', { event: '*', schema: 'public', table: 'online_rounds', filter: `session_id=eq.${sessionId}` }, onChange)
     .subscribe();
 
   return () => client.removeChannel(channel);

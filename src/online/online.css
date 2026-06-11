@@ -7,7 +7,8 @@
   background: linear-gradient(180deg, rgba(244, 208, 111, 0.08), rgba(0, 0, 0, 0.22));
 }
 
-.online-guess-card span {
+.online-guess-card span,
+.online-skip-box span {
   color: var(--mob-muted);
   font-size: 12px;
   font-weight: 950;
@@ -23,7 +24,8 @@
   text-transform: uppercase;
 }
 
-.online-guess-card small {
+.online-guess-card small,
+.online-skip-box small {
   color: rgba(255, 247, 223, 0.68);
   line-height: 1.35;
 }
@@ -43,7 +45,8 @@
   color: rgba(255, 247, 223, 0.42);
 }
 
-.online-guess-card button {
+.online-guess-card button,
+.online-skip-box button {
   min-height: 48px;
   border: 0;
   border-radius: 16px;
@@ -52,7 +55,18 @@
   font-weight: 950;
 }
 
-.online-guess-card button:disabled {
+.online-guess-card button:disabled,
+.online-skip-box button:disabled {
   opacity: 0.45;
   filter: grayscale(0.5);
+}
+
+.online-skip-box {
+  display: grid;
+  gap: 8px;
+  margin-top: 12px;
+  padding: 12px;
+  border: 1px solid rgba(244, 208, 111, 0.18);
+  border-radius: 16px;
+  background: rgba(0, 0, 0, 0.22);
 }

@@ -1,0 +1,19 @@
+{
+  "name": "A$AP MOB Impostor",
+  "short_name": "MOB Impostor",
+  "description": "A mobile impostor party game for A$AP MOB.",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#080604",
+  "theme_color": "#080604",
+  "icons": [
+    {
+      "src": "/app-icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}

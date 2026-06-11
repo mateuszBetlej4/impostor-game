@@ -172,7 +172,8 @@
 .online-status-card,
 .online-lobby-card,
 .online-phase-card,
-.online-reveal-card {
+.online-reveal-card,
+.online-vote-card {
   display: grid;
   gap: 10px;
   padding: 14px;
@@ -199,7 +200,8 @@
 .online-status-card span,
 .online-lobby-header span,
 .online-phase-card span,
-.online-reveal-card span {
+.online-reveal-card span,
+.online-vote-card span {
   color: var(--mob-muted);
   font-size: 12px;
   font-weight: 950;
@@ -210,7 +212,8 @@
 .online-card button,
 .online-action-row button,
 .online-start-button,
-.online-reveal-card button {
+.online-reveal-card button,
+.online-vote-grid button {
   min-height: 48px;
   border: 0;
   border-radius: 16px;
@@ -222,7 +225,8 @@
 .online-card button:disabled,
 .online-action-row button:disabled,
 .online-start-button:disabled,
-.online-reveal-card button:disabled {
+.online-reveal-card button:disabled,
+.online-vote-grid button:disabled {
   opacity: 0.45;
   filter: grayscale(0.5);
 }
@@ -243,7 +247,8 @@
 
 .online-status-card small,
 .online-phase-card small,
-.online-reveal-card small {
+.online-reveal-card small,
+.online-vote-card small {
   color: rgba(255, 247, 223, 0.68);
   line-height: 1.35;
 }
@@ -260,12 +265,22 @@
 }
 
 .online-phase-card strong,
-.online-reveal-card strong {
+.online-reveal-card strong,
+.online-vote-card strong {
   font-family: 'Barlow Condensed', Inter, sans-serif;
   color: var(--mob-text);
   font-size: 42px;
   line-height: 0.9;
   text-transform: uppercase;
+}
+
+.online-vote-card {
+  border-color: rgba(244, 208, 111, 0.26);
+}
+
+.online-vote-grid {
+  display: grid;
+  gap: 8px;
 }
 
 .online-action-row {

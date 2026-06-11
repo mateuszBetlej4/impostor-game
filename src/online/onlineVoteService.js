@@ -89,7 +89,7 @@ export function calculateOnlineVoteResult({ players, votes }) {
   };
 }
 
-export async function finishOnlineVote({ session, identity, round, players, votes }) {
+export async function finishOnlineVote({ session, identity, round, players, votes, allowFinalGuess }) {
   const client = getClient();
 
   if (!identity?.isHost || identity.hostSecret !== session.host_key) {
@@ -97,10 +97,12 @@ export async function finishOnlineVote({ session, identity, round, players, vote
   }
 
   const result = calculateOnlineVoteResult({ players, votes });
+  const nextStatus = result.impostorCaught && allowFinalGuess ? 'guess' : 'results';
+  const outcome = nextStatus === 'guess' ? null : result.winner;
 
   const roundResult = await client
     .from('online_rounds')
-    .update({ outcome: result.winner })
+    .update({ outcome })
     .eq('id', round.id)
     .select()
     .single();
@@ -109,7 +111,7 @@ export async function finishOnlineVote({ session, identity, round, players, vote
 
   const sessionResult = await client
     .from('online_sessions')
-    .update({ status: 'results', last_active_at: new Date().toISOString() })
+    .update({ status: nextStatus, last_active_at: new Date().toISOString() })
     .eq('id', session.id)
     .eq('host_key', identity.hostSecret)
     .select()
@@ -121,5 +123,38 @@ export async function finishOnlineVote({ session, identity, round, players, vote
     session: sessionResult.data,
     round: roundResult.data,
     result,
+  };
+}
+
+export async function submitOnlineImpostorGuess({ session, identity, round, guess }) {
+  const client = getClient();
+  const normalisedGuess = guess.trim().toLowerCase();
+  const actual = String(round.word || '').trim().toLowerCase();
+  const impostorWins = normalisedGuess === actual || (normalisedGuess.length > 2 && actual.includes(normalisedGuess));
+
+  const roundResult = await client
+    .from('online_rounds')
+    .update({
+      impostor_guess: guess.trim(),
+      outcome: impostorWins ? 'impostors' : 'mob',
+    })
+    .eq('id', round.id)
+    .select()
+    .single();
+
+  if (roundResult.error) throw roundResult.error;
+
+  const sessionResult = await client
+    .from('online_sessions')
+    .update({ status: 'results', last_active_at: new Date().toISOString() })
+    .eq('id', session.id)
+    .select()
+    .single();
+
+  if (sessionResult.error) throw sessionResult.error;
+
+  return {
+    session: sessionResult.data,
+    round: roundResult.data,
   };
 }

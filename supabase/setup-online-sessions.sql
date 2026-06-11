@@ -50,16 +50,28 @@ create table if not exists online_votes (
   unique(round_id, voter_player_id)
 );
 
+create table if not exists online_skip_votes (
+  id uuid primary key default gen_random_uuid(),
+  session_id uuid not null references online_sessions(id) on delete cascade,
+  round_id uuid not null references online_rounds(id) on delete cascade,
+  voter_player_id uuid not null references online_players(id) on delete cascade,
+  created_at timestamptz not null default now(),
+  unique(round_id, voter_player_id)
+);
+
 create index if not exists online_sessions_code_idx on online_sessions(code);
 create index if not exists online_players_session_idx on online_players(session_id);
 create index if not exists online_rounds_session_idx on online_rounds(session_id);
 create index if not exists online_votes_round_idx on online_votes(round_id);
 create index if not exists online_votes_session_idx on online_votes(session_id);
+create index if not exists online_skip_votes_round_idx on online_skip_votes(round_id);
+create index if not exists online_skip_votes_session_idx on online_skip_votes(session_id);
 
 alter table online_sessions enable row level security;
 alter table online_players enable row level security;
 alter table online_rounds enable row level security;
 alter table online_votes enable row level security;
+alter table online_skip_votes enable row level security;
 
 -- MVP policies for no-login testing.
 -- These intentionally allow anonymous read/write for room-code testing.
@@ -100,5 +112,14 @@ create policy "online_votes_insert" on online_votes for insert with check (true)
 create policy "online_votes_update" on online_votes for update using (true) with check (true);
 create policy "online_votes_delete" on online_votes for delete using (true);
 
+drop policy if exists "online_skip_votes_select" on online_skip_votes;
+drop policy if exists "online_skip_votes_insert" on online_skip_votes;
+drop policy if exists "online_skip_votes_update" on online_skip_votes;
+drop policy if exists "online_skip_votes_delete" on online_skip_votes;
+create policy "online_skip_votes_select" on online_skip_votes for select using (true);
+create policy "online_skip_votes_insert" on online_skip_votes for insert with check (true);
+create policy "online_skip_votes_update" on online_skip_votes for update using (true) with check (true);
+create policy "online_skip_votes_delete" on online_skip_votes for delete using (true);
+
 -- Enable realtime from Supabase dashboard after running this SQL:
--- Database > Replication > supabase_realtime > enable online_sessions, online_players, online_rounds, online_votes.
+-- Database > Replication > supabase_realtime > enable online_sessions, online_players, online_rounds, online_votes, online_skip_votes.

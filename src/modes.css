@@ -173,7 +173,8 @@
 .online-lobby-card,
 .online-phase-card,
 .online-reveal-card,
-.online-vote-card {
+.online-vote-card,
+.online-result-card {
   display: grid;
   gap: 10px;
   padding: 14px;
@@ -201,7 +202,8 @@
 .online-lobby-header span,
 .online-phase-card span,
 .online-reveal-card span,
-.online-vote-card span {
+.online-vote-card span,
+.online-result-card span {
   color: var(--mob-muted);
   font-size: 12px;
   font-weight: 950;
@@ -248,25 +250,29 @@
 .online-status-card small,
 .online-phase-card small,
 .online-reveal-card small,
-.online-vote-card small {
+.online-vote-card small,
+.online-result-card small {
   color: rgba(255, 247, 223, 0.68);
   line-height: 1.35;
 }
 
 .online-phase-card,
-.online-reveal-card.is-mob {
+.online-reveal-card.is-mob,
+.online-result-card.is-mob {
   border-color: rgba(34, 197, 94, 0.28);
   background: linear-gradient(180deg, rgba(34, 197, 94, 0.08), rgba(0, 0, 0, 0.22));
 }
 
-.online-reveal-card.is-impostor {
+.online-reveal-card.is-impostor,
+.online-result-card.is-impostor {
   border-color: rgba(239, 68, 68, 0.34);
   background: linear-gradient(180deg, rgba(239, 68, 68, 0.1), rgba(0, 0, 0, 0.22));
 }
 
 .online-phase-card strong,
 .online-reveal-card strong,
-.online-vote-card strong {
+.online-vote-card strong,
+.online-result-card > strong {
   font-family: 'Barlow Condensed', Inter, sans-serif;
   color: var(--mob-text);
   font-size: 42px;
@@ -278,9 +284,26 @@
   border-color: rgba(244, 208, 111, 0.26);
 }
 
-.online-vote-grid {
+.online-vote-grid,
+.online-result-list {
   display: grid;
   gap: 8px;
+}
+
+.online-result-list div {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  min-height: 42px;
+  padding: 8px 10px;
+  border: 1px solid rgba(244, 208, 111, 0.12);
+  border-radius: 14px;
+  background: rgba(255, 255, 255, 0.035);
+}
+
+.online-result-list strong {
+  color: var(--mob-gold-bright);
 }
 
 .online-action-row {

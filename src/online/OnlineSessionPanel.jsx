@@ -6,6 +6,7 @@ import { loadSessionSnapshot, reconnectSession, subscribeToSession } from './rec
 import { canReconnect, clearReconnectIdentity, loadReconnectIdentity } from './reconnect.js';
 import { normalizeCode } from './sessionCodes.js';
 import { startOnlineRound } from './onlineRoundService.js';
+import { markRoleSeen } from './onlineRevealService.js';
 
 export function OnlineSessionPanel({ defaultHostName, category, impostorCount, settings }) {
   const [hostName, setHostName] = useState(defaultHostName || 'Host');
@@ -15,10 +16,12 @@ export function OnlineSessionPanel({ defaultHostName, category, impostorCount, s
   const [onlineState, setOnlineState] = useState(null);
   const [lobbyPlayers, setLobbyPlayers] = useState([]);
   const [onlineRound, setOnlineRound] = useState(null);
+  const [roleVisible, setRoleVisible] = useState(false);
   const [error, setError] = useState('');
   const [busy, setBusy] = useState(false);
 
   const connectedPlayers = useMemo(() => lobbyPlayers.filter((player) => player.connected !== false), [lobbyPlayers]);
+  const currentPlayer = useMemo(() => lobbyPlayers.find((player) => player.id === onlineState?.identity?.playerId) || onlineState?.player, [lobbyPlayers, onlineState]);
   const canHostStart = Boolean(onlineState?.identity?.isHost && onlineState?.session?.status === 'lobby' && connectedPlayers.length >= 3);
 
   useEffect(() => {
@@ -36,6 +39,7 @@ export function OnlineSessionPanel({ defaultHostName, category, impostorCount, s
         if (!active) return;
         setOnlineState((current) => current ? { ...current, session: snapshot.session } : current);
         setLobbyPlayers(snapshot.players);
+        setOnlineRound(snapshot.round);
       } catch (err) {
         if (active) setError(err.message || 'Could not refresh online lobby.');
       }
@@ -59,6 +63,7 @@ export function OnlineSessionPanel({ defaultHostName, category, impostorCount, s
       setReconnectIdentity(result.identity);
       const snapshot = await loadSessionSnapshot(result.session.id);
       setLobbyPlayers(snapshot.players);
+      setOnlineRound(snapshot.round);
     } catch (err) {
       setError(err.message || 'Online session action failed.');
     } finally {
@@ -71,6 +76,7 @@ export function OnlineSessionPanel({ defaultHostName, category, impostorCount, s
     const snapshot = await loadSessionSnapshot(onlineState.session.id);
     setOnlineState((current) => current ? { ...current, session: snapshot.session } : current);
     setLobbyPlayers(snapshot.players);
+    setOnlineRound(snapshot.round);
   }
 
   async function hostStartOnlineRound() {
@@ -86,11 +92,24 @@ export function OnlineSessionPanel({ defaultHostName, category, impostorCount, s
       });
       setOnlineRound(result.round);
       setOnlineState((current) => current ? { ...current, session: result.session } : current);
+      setRoleVisible(false);
       await refreshCurrentLobby();
     } catch (err) {
       setError(err.message || 'Could not start online round.');
     } finally {
       setBusy(false);
+    }
+  }
+
+  async function revealMyRole() {
+    if (!onlineState?.identity?.playerId || !onlineState?.identity?.playerSecret) return;
+    setRoleVisible(true);
+    try {
+      const updated = await markRoleSeen({ playerId: onlineState.identity.playerId, playerSecret: onlineState.identity.playerSecret });
+      setLobbyPlayers((current) => current.map((player) => player.id === updated.id ? updated : player));
+      setOnlineState((current) => current ? { ...current, player: updated } : current);
+    } catch (err) {
+      setError(err.message || 'Could not mark role as seen.');
     }
   }
 
@@ -100,6 +119,7 @@ export function OnlineSessionPanel({ defaultHostName, category, impostorCount, s
     setOnlineState(null);
     setLobbyPlayers([]);
     setOnlineRound(null);
+    setRoleVisible(false);
   }
 
   async function copyCode() {
@@ -149,7 +169,7 @@ export function OnlineSessionPanel({ defaultHostName, category, impostorCount, s
               <div className="online-player-row" key={player.id}>
                 <span>{index + 1}</span>
                 <strong>{player.name}</strong>
-                <small>{player.is_host ? 'Host' : 'Player'} · {player.connected ? 'Online' : 'Away'}{player.role ? ` · ${player.role}` : ''}</small>
+                <small>{player.is_host ? 'Host' : 'Player'} · {player.connected ? 'Online' : 'Away'}{player.has_seen_role ? ' · seen' : ''}</small>
               </div>
             ))}
           </div>
@@ -164,11 +184,18 @@ export function OnlineSessionPanel({ defaultHostName, category, impostorCount, s
             <p className="helper-text online-helper">Need at least 3 connected players before starting.</p>
           )}
 
-          {onlineState.session.status === 'reveal' && (
-            <div className="online-phase-card">
-              <span>Round started</span>
-              <strong>Reveal phase</strong>
-              <small>{onlineRound ? `${onlineRound.category} selected` : 'Players can now reveal their roles in the online flow.'}</small>
+          {onlineState.session.status === 'reveal' && currentPlayer && (
+            <div className={`online-reveal-card ${currentPlayer.role === 'impostor' ? 'is-impostor' : 'is-mob'}`}>
+              <span>Your private role</span>
+              {!roleVisible && !currentPlayer.has_seen_role ? (
+                <button type="button" onClick={revealMyRole}>Tap to Reveal</button>
+              ) : (
+                <>
+                  <strong>{currentPlayer.role === 'impostor' ? 'Impostor' : 'MOB'}</strong>
+                  <small>{currentPlayer.role === 'impostor' ? 'Blend in. You do not see the secret word.' : `Secret word: ${onlineRound?.word || 'loading...'}`}</small>
+                  <small>Category: {onlineRound?.category || 'loading...'}</small>
+                </>
+              )}
             </div>
           )}
         </div>

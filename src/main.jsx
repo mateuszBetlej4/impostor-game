@@ -10,7 +10,6 @@ import './logoTweaks.css';
 import './setupTabs.css';
 import './gameGuards.css';
 import './revealFit.css';
-import './kioskMode.css';
 
 const WORD_AUDIT_HASH = '#breadcrumb-words';
 

@@ -170,7 +170,8 @@
 
 .online-card,
 .online-status-card,
-.online-lobby-card {
+.online-lobby-card,
+.online-phase-card {
   display: grid;
   gap: 10px;
   padding: 14px;
@@ -195,7 +196,8 @@
 
 .online-card label span,
 .online-status-card span,
-.online-lobby-header span {
+.online-lobby-header span,
+.online-phase-card span {
   color: var(--mob-muted);
   font-size: 12px;
   font-weight: 950;
@@ -204,7 +206,8 @@
 }
 
 .online-card button,
-.online-action-row button {
+.online-action-row button,
+.online-start-button {
   min-height: 48px;
   border: 0;
   border-radius: 16px;
@@ -214,9 +217,16 @@
 }
 
 .online-card button:disabled,
-.online-action-row button:disabled {
+.online-action-row button:disabled,
+.online-start-button:disabled {
   opacity: 0.45;
   filter: grayscale(0.5);
+}
+
+.online-start-button {
+  width: 100%;
+  margin-top: 4px;
+  box-shadow: 0 14px 28px rgba(214, 169, 58, 0.18);
 }
 
 .online-status-card strong {
@@ -227,9 +237,20 @@
   letter-spacing: 0.08em;
 }
 
-.online-status-card small {
+.online-status-card small,
+.online-phase-card small {
   color: rgba(255, 247, 223, 0.68);
   line-height: 1.35;
+}
+
+.online-phase-card {
+  border-color: rgba(34, 197, 94, 0.28);
+  background: linear-gradient(180deg, rgba(34, 197, 94, 0.08), rgba(0, 0, 0, 0.22));
+}
+
+.online-phase-card strong {
+  color: var(--mob-text);
+  font-weight: 950;
 }
 
 .online-action-row {

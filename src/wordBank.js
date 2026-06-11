@@ -1,133 +1,143 @@
-const unique = (items) => [...new Set(items)];
-
-const makePhrases = (modifiers, nouns, limit = 45) => {
-  const words = [];
-  modifiers.forEach((modifier) => {
-    nouns.forEach((noun) => words.push(`${modifier} ${noun}`));
-  });
-  return unique(words).slice(0, limit);
-};
-
 export const WORD_BANK = {
-  'Public Places': makePhrases(
-    ['Hidden', 'Abandoned', 'Luxury', 'Crowded', 'Underground', 'Private', 'Old', 'Secret', 'Busy'],
-    ['Embassy', 'Courthouse', 'Observatory', 'Auction House', 'Opera House', 'Harbour', 'Lighthouse', 'Train Platform', 'Casino Floor', 'University Library', 'Hotel Lobby', 'Emergency Room']
-  ),
+  'Public Places': [
+    'Airport', 'Museum', 'Hospital', 'Library', 'Cinema', 'Theatre', 'School', 'University', 'Stadium', 'Station',
+    'Hotel', 'Restaurant', 'Cafe', 'Bank', 'Market', 'Beach', 'Park', 'Church', 'Mosque', 'Temple',
+    'Harbour', 'Casino', 'Gym', 'Zoo', 'Mall', 'Office', 'Embassy', 'Courthouse', 'Pharmacy', 'Garage',
+    'Bakery', 'Butcher', 'Pub', 'Club', 'Salon', 'Barber', 'Warehouse', 'Factory', 'Gallery', 'Castle'
+  ],
 
-  'Hidden Places': makePhrases(
-    ['Forgotten', 'Locked', 'Underground', 'Private', 'Restricted', 'Silent', 'Remote', 'Hidden', 'Backroom'],
-    ['Bunker', 'Basement', 'Vault', 'Tunnel', 'Warehouse', 'Archive', 'Chapel', 'Wine Cellar', 'Control Room', 'Safe House', 'Rooftop', 'Service Corridor']
-  ),
+  'Hidden Places': [
+    'Bunker', 'Basement', 'Attic', 'Tunnel', 'Vault', 'Cave', 'Cellar', 'Dungeon', 'Hideout', 'Cabin',
+    'Shed', 'Closet', 'Locker', 'Rooftop', 'Balcony', 'Backroom', 'Archive', 'Chapel', 'Den', 'Shelter',
+    'Crypt', 'Lab', 'Pantry', 'Alley', 'Hut', 'Nest', 'Burrow', 'Mine', 'Pit', 'Chamber',
+    'Booth', 'Compartment', 'Trapdoor', 'Passage', 'Crawlspace', 'Container', 'Barge', 'Loft', 'Pod', 'Vault'
+  ],
 
-  'Situations': makePhrases(
-    ['Awkward', 'Unexpected', 'Last-Minute', 'Secret', 'Messy', 'Suspicious', 'Chaotic', 'Embarrassing', 'Risky'],
-    ['First Date', 'Job Interview', 'Family Dinner', 'Power Cut', 'Missed Flight', 'Surprise Party', 'Flat Tyre', 'Wedding Speech', 'Exam Day', 'Group Holiday', 'Late Arrival', 'Double Booking']
-  ),
+  'Objects': [
+    'Phone', 'Wallet', 'Key', 'Passport', 'Ticket', 'Ring', 'Watch', 'Bottle', 'Envelope', 'Photo',
+    'Laptop', 'Camera', 'Charger', 'Remote', 'Lamp', 'Mirror', 'Chair', 'Table', 'Sofa', 'Pillow',
+    'Blanket', 'Knife', 'Fork', 'Spoon', 'Plate', 'Cup', 'Glass', 'Bag', 'Suitcase', 'Backpack',
+    'Umbrella', 'Helmet', 'Mask', 'Glove', 'Scarf', 'Hat', 'Coin', 'Receipt', 'Map', 'Book'
+  ],
 
-  'Social Drama': makePhrases(
-    ['Fake', 'Public', 'Private', 'Messy', 'Silent', 'Unexpected', 'Old', 'Online', 'Drunken'],
-    ['Apology', 'Rumour', 'Argument', 'Breakup', 'Confession', 'Group Chat', 'Voice Note', 'Excuse', 'Secret', 'Screenshot', 'Complaint', 'Reunion']
-  ),
+  'Food & Drink': [
+    'Pizza', 'Burger', 'Pasta', 'Noodles', 'Rice', 'Chicken', 'Steak', 'Soup', 'Salad', 'Curry',
+    'Sushi', 'Taco', 'Kebab', 'Sandwich', 'Toast', 'Cheese', 'Bread', 'Butter', 'Egg', 'Bacon',
+    'Sausage', 'Fish', 'Shrimp', 'Apple', 'Banana', 'Orange', 'Lemon', 'Cake', 'Cookie', 'Chocolate',
+    'Coffee', 'Tea', 'Water', 'Juice', 'Milk', 'Beer', 'Wine', 'Cola', 'Sauce', 'Honey'
+  ],
 
-  'Emotions & Vibes': makePhrases(
-    ['Quiet', 'Sudden', 'Deep', 'Fake', 'Hidden', 'Strong', 'Unspoken', 'Public', 'Private'],
-    ['Suspicion', 'Relief', 'Jealousy', 'Confidence', 'Embarrassment', 'Nostalgia', 'Panic', 'Awkwardness', 'Temptation', 'Regret', 'Excitement', 'Disappointment']
-  ),
+  'Animals': [
+    'Dog', 'Cat', 'Horse', 'Cow', 'Pig', 'Sheep', 'Goat', 'Chicken', 'Duck', 'Goose',
+    'Mouse', 'Rat', 'Rabbit', 'Fox', 'Wolf', 'Bear', 'Lion', 'Tiger', 'Monkey', 'Gorilla',
+    'Elephant', 'Giraffe', 'Zebra', 'Camel', 'Snake', 'Lizard', 'Frog', 'Shark', 'Whale', 'Dolphin',
+    'Octopus', 'Penguin', 'Eagle', 'Owl', 'Parrot', 'Spider', 'Bee', 'Ant', 'Butterfly', 'Crab'
+  ],
 
-  'Actions': makePhrases(
-    ['Careful', 'Desperate', 'Secret', 'Public', 'Awkward', 'Confident', 'Risky', 'Silent', 'Last-Minute'],
-    ['Negotiating', 'Bluffing', 'Sneaking', 'Celebrating', 'Apologising', 'Investigating', 'Pretending', 'Escaping', 'Overthinking', 'Interrupting', 'Whispering', 'Bargaining']
-  ),
+  'Characters': [
+    'Detective', 'Doctor', 'Nurse', 'Teacher', 'Chef', 'Pilot', 'Driver', 'Lawyer', 'Judge', 'Police',
+    'Firefighter', 'Soldier', 'Spy', 'Thief', 'Artist', 'Singer', 'Actor', 'Dancer', 'Magician', 'Clown',
+    'Tourist', 'Bouncer', 'Mechanic', 'Plumber', 'Electrician', 'Builder', 'Farmer', 'Waiter', 'Bartender', 'Guard',
+    'Referee', 'Coach', 'Student', 'Boss', 'Neighbour', 'Celebrity', 'Pirate', 'Wizard', 'Knight', 'Queen'
+  ],
 
-  'Mystery Objects': makePhrases(
-    ['Hidden', 'Missing', 'Broken', 'Fake', 'Old', 'Burned', 'Locked', 'Golden', 'Suspicious'],
-    ['Envelope', 'Receipt', 'Keycard', 'Photograph', 'Box', 'Passport', 'Phone', 'Map', 'Ring', 'USB Stick', 'Briefcase', 'Mask']
-  ),
+  'Sports': [
+    'Football', 'Tennis', 'Rugby', 'Cricket', 'Basketball', 'Baseball', 'Golf', 'Boxing', 'Hockey', 'Volleyball',
+    'Cycling', 'Running', 'Swimming', 'Skiing', 'Surfing', 'Skating', 'Wrestling', 'Darts', 'Snooker', 'Bowling',
+    'Penalty', 'Goal', 'Referee', 'Captain', 'Coach', 'Stadium', 'Medal', 'Trophy', 'Whistle', 'Helmet',
+    'Gloves', 'Boots', 'Racket', 'Ball', 'Net', 'Pitch', 'Court', 'Track', 'Gym', 'Score'
+  ],
 
-  'Characters': makePhrases(
-    ['Nervous', 'Famous', 'Fake', 'Retired', 'Suspicious', 'Rich', 'Lost', 'Silent', 'Angry'],
-    ['Detective', 'Bodyguard', 'Celebrity', 'Neighbour', 'Tourist', 'Referee', 'Bouncer', 'Magician', 'Lawyer', 'Journalist', 'Chef', 'Mechanic']
-  ),
+  'Travel': [
+    'Plane', 'Train', 'Bus', 'Taxi', 'Car', 'Ferry', 'Ship', 'Cruise', 'Metro', 'Tram',
+    'Ticket', 'Passport', 'Luggage', 'Suitcase', 'Hotel', 'Hostel', 'Beach', 'Mountain', 'Island', 'Airport',
+    'Station', 'Map', 'Guide', 'Tourist', 'Souvenir', 'Border', 'Customs', 'Holiday', 'Camping', 'Tent',
+    'Cabin', 'Resort', 'Pool', 'Balcony', 'Flight', 'Delay', 'Queue', 'Gate', 'Road', 'Bridge'
+  ],
 
-  'Media & Culture': makePhrases(
-    ['Viral', 'Deleted', 'Famous', 'Controversial', 'Unexpected', 'Final', 'Secret', 'Bad', 'Classic'],
-    ['Plot Twist', 'Villain Arc', 'Opening Scene', 'Final Episode', 'Soundtrack', 'Spoiler', 'Red Carpet', 'Reality Show', 'Documentary', 'Trailer', 'Oscar Speech', 'Deleted Scene']
-  ),
+  'Technology': [
+    'Phone', 'Laptop', 'Tablet', 'Computer', 'Keyboard', 'Mouse', 'Screen', 'Camera', 'Router', 'Wifi',
+    'Password', 'Email', 'Message', 'App', 'Website', 'Browser', 'Server', 'Robot', 'Drone', 'Console',
+    'Battery', 'Charger', 'Cable', 'Speaker', 'Headphones', 'Microphone', 'Printer', 'Scanner', 'Algorithm', 'Database',
+    'Video', 'Photo', 'Selfie', 'Profile', 'Avatar', 'Emoji', 'Hashtag', 'Stream', 'Podcast', 'Game'
+  ],
 
-  'Sports & Competition': makePhrases(
-    ['Last-Minute', 'Controversial', 'Historic', 'Embarrassing', 'Home', 'Away', 'Secret', 'Intense', 'Unfair'],
-    ['Penalty Shootout', 'Derby Day', 'VAR Check', 'Transfer Rumour', 'Underdog Win', 'Team Captain', 'Changing Room', 'Press Conference', 'Injury Time', 'Home Advantage', 'Red Card', 'Comeback']
-  ),
+  'Nature': [
+    'Forest', 'River', 'Ocean', 'Lake', 'Mountain', 'Valley', 'Desert', 'Island', 'Beach', 'Cave',
+    'Tree', 'Flower', 'Grass', 'Leaf', 'Stone', 'Rock', 'Sand', 'Mud', 'Snow', 'Ice',
+    'Rain', 'Storm', 'Thunder', 'Lightning', 'Wind', 'Fog', 'Cloud', 'Sun', 'Moon', 'Star',
+    'Fire', 'Smoke', 'Volcano', 'Waterfall', 'Jungle', 'Meadow', 'Cliff', 'Pond', 'Wave', 'Tide'
+  ],
 
-  'Food & Drink': makePhrases(
-    ['Midnight', 'Burnt', 'Secret', 'Fancy', 'Cheap', 'Spicy', 'Cold', 'Forgotten', 'Shared'],
-    ['Snack', 'Toast', 'Recipe', 'Room Service', 'Energy Drink', 'Birthday Cake', 'Leftovers', 'Sauce', 'Buffet', 'Takeaway', 'Coffee Break', 'Picnic Basket']
-  ),
+  'Household': [
+    'Kitchen', 'Bedroom', 'Bathroom', 'Garden', 'Garage', 'Sofa', 'Chair', 'Table', 'Bed', 'Pillow',
+    'Blanket', 'Fridge', 'Oven', 'Kettle', 'Toaster', 'Microwave', 'Sink', 'Shower', 'Toilet', 'Mirror',
+    'Curtain', 'Window', 'Door', 'Key', 'Lock', 'Drawer', 'Cupboard', 'Lamp', 'Remote', 'Carpet',
+    'Vacuum', 'Broom', 'Mop', 'Bin', 'Soap', 'Towel', 'Candle', 'Clock', 'Plant', 'Shelf'
+  ],
 
-  'Travel & Holiday': makePhrases(
-    ['Lost', 'Delayed', 'Luxury', 'Wrong', 'Secret', 'Cheap', 'Remote', 'Crowded', 'Rainy'],
-    ['Passport Control', 'Luggage', 'Hotel Upgrade', 'Tour Guide', 'City Break', 'Road Trip', 'Flight', 'Beach Resort', 'Ski Lodge', 'Camping Trip', 'Cruise Ship', 'Souvenir Shop']
-  ),
+  'Transport': [
+    'Car', 'Bus', 'Train', 'Plane', 'Taxi', 'Bicycle', 'Motorbike', 'Scooter', 'Boat', 'Ship',
+    'Ferry', 'Tram', 'Metro', 'Ambulance', 'Lorry', 'Van', 'Truck', 'Helicopter', 'Jet', 'Submarine',
+    'Rocket', 'Tractor', 'Trailer', 'Skateboard', 'Wheelchair', 'Engine', 'Wheel', 'Tyre', 'Brake', 'Horn',
+    'Seatbelt', 'Helmet', 'Petrol', 'Diesel', 'Battery', 'Garage', 'Road', 'Tunnel', 'Bridge', 'Roundabout'
+  ],
 
-  'Technology': makePhrases(
-    ['Deleted', 'Private', 'Fake', 'Broken', 'Hidden', 'Suspicious', 'Old', 'Encrypted', 'Leaked'],
-    ['Group Chat', 'Voice Note', 'Message', 'Battery', 'Face ID', 'Wi-Fi Password', 'Profile', 'Online Status', 'Screen Recording', 'Browser Tab', 'Video Call', 'Algorithm']
-  ),
+  'Health': [
+    'Doctor', 'Nurse', 'Patient', 'Hospital', 'Clinic', 'Medicine', 'Tablet', 'Syringe', 'Bandage', 'Plaster',
+    'Xray', 'Scan', 'Tooth', 'Eye', 'Ear', 'Nose', 'Hand', 'Foot', 'Knee', 'Back',
+    'Headache', 'Fever', 'Cough', 'Cold', 'Allergy', 'Bruise', 'Scar', 'Cramp', 'Pulse', 'Blood',
+    'Heart', 'Brain', 'Bone', 'Muscle', 'Skin', 'Mask', 'Glove', 'Ambulance', 'Pharmacy', 'Vaccine'
+  ],
 
-  'Abstract Concepts': makePhrases(
-    ['Lost', 'Fake', 'Hidden', 'Public', 'Fragile', 'Dangerous', 'Sudden', 'Unspoken', 'Powerful'],
-    ['Reputation', 'Luck', 'Power', 'Loyalty', 'Betrayal', 'Freedom', 'Justice', 'Chaos', 'Routine', 'Ambition', 'Tradition', 'Risk']
-  ),
+  'Fantasy': [
+    'Dragon', 'Wizard', 'Witch', 'Knight', 'King', 'Queen', 'Prince', 'Princess', 'Castle', 'Sword',
+    'Shield', 'Potion', 'Spell', 'Wand', 'Crown', 'Ghost', 'Zombie', 'Vampire', 'Werewolf', 'Goblin',
+    'Troll', 'Elf', 'Dwarf', 'Fairy', 'Giant', 'Mermaid', 'Unicorn', 'Phoenix', 'Griffin', 'Demon',
+    'Angel', 'Portal', 'Treasure', 'Dungeon', 'Kingdom', 'Prophecy', 'Curse', 'Temple', 'Cave', 'Throne'
+  ],
 
-  'Night Out': makePhrases(
-    ['Messy', 'Expensive', 'Secret', 'Awkward', 'Loud', 'Late-Night', 'Unexpected', 'Fake', 'Private'],
-    ['Taxi Ride', 'VIP Table', 'Bar Tab', 'Lost Jacket', 'Queue Jump', 'Club Stamp', 'Afterparty', 'Kebab Stop', 'Bathroom Mirror', 'Bouncer Chat', 'Last Round', 'Group Photo']
-  ),
+  'Emotions': [
+    'Anger', 'Fear', 'Joy', 'Sadness', 'Love', 'Hate', 'Panic', 'Relief', 'Jealousy', 'Pride',
+    'Shame', 'Guilt', 'Regret', 'Hope', 'Trust', 'Doubt', 'Shock', 'Confusion', 'Boredom', 'Excitement',
+    'Nostalgia', 'Confidence', 'Suspicion', 'Curiosity', 'Loneliness', 'Stress', 'Calm', 'Awkwardness', 'Embarrassment', 'Disgust',
+    'Patience', 'Courage', 'Anxiety', 'Admiration', 'Surprise', 'Comfort', 'Grief', 'Peace', 'Rage', 'Mercy'
+  ],
 
-  'Work & School': makePhrases(
-    ['Late', 'Fake', 'Urgent', 'Private', 'Awkward', 'Secret', 'Stressful', 'Forgotten', 'Unexpected'],
-    ['Meeting', 'Deadline', 'Presentation', 'Exam', 'Homework', 'Email', 'Shift', 'Promotion', 'Sick Note', 'Lunch Break', 'Office Rumour', 'Team Project']
-  ),
+  'Everyday': [
+    'Alarm', 'Birthday', 'Appointment', 'Delivery', 'Package', 'Bill', 'Receipt', 'Password', 'Charger', 'Umbrella',
+    'Laundry', 'Shopping', 'Queue', 'Parking', 'Traffic', 'Weather', 'Dinner', 'Breakfast', 'Homework', 'Meeting',
+    'Email', 'Message', 'Call', 'Photo', 'Mirror', 'Shower', 'Coffee', 'Snack', 'Wallet', 'Keys',
+    'Doorbell', 'Neighbour', 'Noise', 'Holiday', 'Weekend', 'Monday', 'Sleep', 'Dream', 'Routine', 'Problem'
+  ],
 
-  'Crime & Mystery': makePhrases(
-    ['Missing', 'Hidden', 'Fake', 'Cold', 'Secret', 'Suspicious', 'Unmarked', 'Locked', 'Silent'],
-    ['Alibi', 'Witness', 'Fingerprint', 'Evidence Bag', 'Security Footage', 'Getaway Car', 'Ransom Note', 'Crime Scene', 'Blackmail', 'Safe Code', 'Disguise', 'Footstep']
-  ),
+  'Money': [
+    'Cash', 'Card', 'Coin', 'Bank', 'Loan', 'Debt', 'Salary', 'Bonus', 'Invoice', 'Receipt',
+    'Tax', 'Rent', 'Mortgage', 'Budget', 'Profit', 'Loss', 'Price', 'Discount', 'Sale', 'Tip',
+    'Wallet', 'Purse', 'Safe', 'Diamond', 'Gold', 'Silver', 'Watch', 'Ring', 'Auction', 'Casino',
+    'Jackpot', 'Lottery', 'Prize', 'Gift', 'Refund', 'Deposit', 'Account', 'Bill', 'Cheque', 'Cryptocurrency'
+  ],
 
-  'Luxury & Money': makePhrases(
-    ['Fake', 'Expensive', 'Hidden', 'Private', 'Golden', 'Stolen', 'Designer', 'Exclusive', 'Overpriced'],
-    ['Watch', 'Invoice', 'Penthouse', 'Membership', 'Auction Bid', 'Credit Card', 'Diamond Ring', 'Safe Deposit', 'First Class Seat', 'Champagne Bottle', 'Black Card', 'Business Deal']
-  ),
+  'Crime': [
+    'Detective', 'Thief', 'Robber', 'Spy', 'Witness', 'Suspect', 'Victim', 'Alibi', 'Evidence', 'Fingerprint',
+    'Footprint', 'Weapon', 'Knife', 'Gun', 'Poison', 'Mask', 'Disguise', 'Camera', 'Footage', 'Password',
+    'Vault', 'Safe', 'Jail', 'Prison', 'Court', 'Judge', 'Lawyer', 'Police', 'Guard', 'Clue',
+    'Secret', 'Blackmail', 'Ransom', 'Escape', 'Chase', 'Trap', 'Tunnel', 'Hideout', 'Case', 'Motive'
+  ],
 
-  'Nature & Weather': makePhrases(
-    ['Heavy', 'Silent', 'Sudden', 'Frozen', 'Wild', 'Hidden', 'Dangerous', 'Beautiful', 'Unusual'],
-    ['Storm', 'Fog', 'Forest', 'River', 'Mountain', 'Cave', 'Thunder', 'Heatwave', 'Snowfall', 'Tide', 'Waterfall', 'Desert']
-  ),
+  'Media': [
+    'Movie', 'Series', 'Episode', 'Trailer', 'Spoiler', 'Actor', 'Singer', 'Album', 'Song', 'Podcast',
+    'Radio', 'Camera', 'Photo', 'Video', 'Stream', 'Meme', 'Hashtag', 'Influencer', 'Celebrity', 'Journalist',
+    'Newspaper', 'Magazine', 'Book', 'Novel', 'Comic', 'Cartoon', 'Animation', 'Poster', 'Advert', 'Channel',
+    'Interview', 'Microphone', 'Stage', 'Cinema', 'Theatre', 'Festival', 'Award', 'Oscar', 'Review', 'Rating'
+  ],
 
-  'Household': makePhrases(
-    ['Broken', 'Hidden', 'Old', 'Noisy', 'Missing', 'Secret', 'Burnt', 'Leaking', 'Forgotten'],
-    ['Remote', 'Doorbell', 'Sofa', 'Washing Machine', 'Fridge', 'Curtain', 'Spare Key', 'Mirror', 'Vacuum', 'Oven', 'Lamp', 'Drawer']
-  ),
-
-  'Transport': makePhrases(
-    ['Late', 'Crowded', 'Broken', 'Luxury', 'Stolen', 'Wrong', 'Night', 'Empty', 'Secret'],
-    ['Bus', 'Taxi', 'Train', 'Ferry', 'Plane', 'Metro', 'Motorbike', 'Rental Car', 'Lift', 'Ambulance', 'Police Car', 'Private Jet']
-  ),
-
-  'Health & Body': makePhrases(
-    ['Fake', 'Sudden', 'Awkward', 'Painful', 'Private', 'Embarrassing', 'Minor', 'Mysterious', 'Serious'],
-    ['Cough', 'Scar', 'Allergy', 'Bruise', 'Headache', 'Toothache', 'Checkup', 'Prescription', 'Bandage', 'X-Ray', 'Fever', 'Cramp']
-  ),
-
-  'Fantasy & Myth': makePhrases(
-    ['Cursed', 'Ancient', 'Hidden', 'Royal', 'Dark', 'Lost', 'Golden', 'Forbidden', 'Haunted'],
-    ['Sword', 'Castle', 'Dragon', 'Wizard', 'Potion', 'Crown', 'Forest', 'Prophecy', 'Portal', 'Treasure', 'Ghost', 'Kingdom']
-  ),
-
-  'Everyday Problems': makePhrases(
-    ['Lost', 'Broken', 'Forgotten', 'Awkward', 'Late', 'Wrong', 'Expensive', 'Annoying', 'Unexpected'],
-    ['Charger', 'Password', 'Appointment', 'Delivery', 'Bill', 'Parking Spot', 'Receipt', 'Alarm', 'Reservation', 'Address', 'Umbrella', 'Birthday Gift']
-  ),
+  'Work & School': [
+    'Teacher', 'Student', 'Classroom', 'Homework', 'Exam', 'Book', 'Pencil', 'Pen', 'Desk', 'Chair',
+    'Computer', 'Email', 'Meeting', 'Deadline', 'Project', 'Presentation', 'Boss', 'Manager', 'Office', 'Factory',
+    'Shift', 'Break', 'Lunch', 'Uniform', 'Printer', 'Report', 'Contract', 'Invoice', 'Salary', 'Promotion',
+    'Interview', 'Training', 'College', 'Campus', 'Library', 'Notebook', 'Folder', 'Calendar', 'Whiteboard', 'Marker'
+  ]
 };
 
 export const CATEGORY_NAMES = Object.keys(WORD_BANK);

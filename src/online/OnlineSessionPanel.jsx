@@ -8,6 +8,7 @@ import { normalizeCode } from './sessionCodes.js';
 import { startOnlineRound } from './onlineRoundService.js';
 import { markRoleSeen } from './onlineRevealService.js';
 import { calculateOnlineVoteResult, finishOnlineVote, setOnlinePhase, submitOnlineImpostorGuess, submitOnlineVote } from './onlineVoteService.js';
+import './online.css';
 
 export function OnlineSessionPanel({ defaultHostName, category, impostorCount, settings }) {
   const [hostName, setHostName] = useState(defaultHostName || 'Host');

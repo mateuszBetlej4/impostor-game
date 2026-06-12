@@ -296,7 +296,7 @@ function App() {
   }
 
   function submitBonusVote(target) { if (!round) return; setRound({ ...round, bonusCandidates: [], bonusReason: '', bonusWinner: target }); resolveVotedOut(target); }
-  function submitImpostorGuess() { if (!round) return; const guess = normalisePlayerName(guessValue).toLowerCase(); const actual = round.word.toLowerCase(); const impostorWins = guess === actual || (guess.length > 2 && actual.includes(guess)); setRound({ ...round, impostorGuess: guessValue, outcome: impostors ? 'impostors' : 'mob' }); applyScores(impostorWins ? 'impostors' : 'mob'); setScreen('result'); }
+  function submitImpostorGuess() { if (!round) return; const guess = normalisePlayerName(guessValue).toLowerCase(); const actual = round.word.toLowerCase(); const impostorWins = guess === actual || (guess.length > 2 && actual.includes(guess)); setRound({ ...round, impostorGuess: guessValue, outcome: impostorWins ? 'impostors' : 'mob' }); applyScores(impostorWins ? 'impostors' : 'mob'); setScreen('result'); }
   function skipGuess() { if (!round) return; setRound({ ...round, outcome: 'mob' }); applyScores('mob'); setScreen('result'); }
   function resetGame() { setRound(null); setRoundStartIndex(0); setRoleVisible(false); setVotingPlayerIndex(0); setGuessValue(''); setScreen('home'); }
 

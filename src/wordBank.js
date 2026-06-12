@@ -1,142 +1,158 @@
 export const WORD_BANK = {
-  'Public Places': [
-    'Airport', 'Museum', 'Hospital', 'Library', 'Cinema', 'Theatre', 'School', 'University', 'Stadium', 'Station',
-    'Hotel', 'Restaurant', 'Cafe', 'Bank', 'Market', 'Beach', 'Park', 'Church', 'Mosque', 'Temple',
-    'Harbour', 'Casino', 'Gym', 'Zoo', 'Mall', 'Office', 'Embassy', 'Courthouse', 'Pharmacy', 'Garage',
-    'Bakery', 'Butcher', 'Pub', 'Club', 'Salon', 'Barber', 'Warehouse', 'Factory', 'Gallery', 'Castle'
+  'Air Travel': [
+    'Airport', 'Plane', 'Pilot', 'Passport', 'Boarding Pass', 'Gate', 'Runway', 'Terminal', 'Cabin Crew', 'Luggage',
+    'Security Check', 'Customs', 'Flight Delay', 'Jet', 'Seatbelt', 'Overhead Locker', 'Turbulence', 'Window Seat', 'Aisle Seat', 'Duty Free',
+    'Boarding Queue', 'Departure Board', 'Landing', 'Takeoff', 'Baggage Claim', 'Flight Attendant', 'Airline', 'Check-in Desk', 'Carry-on Bag', 'Control Tower'
   ],
 
-  'Hidden Places': [
-    'Bunker', 'Basement', 'Attic', 'Tunnel', 'Vault', 'Cave', 'Cellar', 'Dungeon', 'Hideout', 'Cabin',
-    'Shed', 'Closet', 'Locker', 'Rooftop', 'Balcony', 'Backroom', 'Archive', 'Chapel', 'Den', 'Shelter',
-    'Crypt', 'Lab', 'Pantry', 'Alley', 'Hut', 'Nest', 'Burrow', 'Mine', 'Pit', 'Chamber',
-    'Booth', 'Compartment', 'Trapdoor', 'Passage', 'Crawlspace', 'Container', 'Barge', 'Loft', 'Pod', 'Vault'
+  'Road Travel': [
+    'Car', 'Bus', 'Taxi', 'Motorbike', 'Scooter', 'Bicycle', 'Lorry', 'Van', 'Truck', 'Tractor',
+    'Traffic', 'Roundabout', 'Bridge', 'Tunnel', 'Parking', 'Garage', 'Petrol Station', 'Motorway', 'Roadworks', 'Speed Camera',
+    'Seatbelt', 'Steering Wheel', 'Tyre', 'Brake', 'Horn', 'Indicator', 'Number Plate', 'Traffic Lights', 'Bus Stop', 'Service Station'
   ],
 
-  'Objects': [
-    'Phone', 'Wallet', 'Key', 'Passport', 'Ticket', 'Ring', 'Watch', 'Bottle', 'Envelope', 'Photo',
-    'Laptop', 'Camera', 'Charger', 'Remote', 'Lamp', 'Mirror', 'Chair', 'Table', 'Sofa', 'Pillow',
-    'Blanket', 'Knife', 'Fork', 'Spoon', 'Plate', 'Cup', 'Glass', 'Bag', 'Suitcase', 'Backpack',
-    'Umbrella', 'Helmet', 'Mask', 'Glove', 'Scarf', 'Hat', 'Coin', 'Receipt', 'Map', 'Book'
+  'Rail & Public Transit': [
+    'Train', 'Tram', 'Metro', 'Station', 'Platform', 'Ticket Machine', 'Conductor', 'Carriage', 'Delay', 'Timetable',
+    'Railway Track', 'Underground', 'Escalator', 'Turnstile', 'Oyster Card', 'Train Driver', 'Signal', 'Sleeper Train', 'Commuter', 'Replacement Bus',
+    'Last Train', 'First Class', 'Quiet Coach', 'Train Door', 'Platform Edge', 'Interchange', 'Announcement', 'Ticket Inspector', 'Railcard', 'Departure Board'
   ],
 
-  'Food & Drink': [
-    'Pizza', 'Burger', 'Pasta', 'Noodles', 'Rice', 'Chicken', 'Steak', 'Soup', 'Salad', 'Curry',
-    'Sushi', 'Taco', 'Kebab', 'Sandwich', 'Toast', 'Cheese', 'Bread', 'Butter', 'Egg', 'Bacon',
-    'Sausage', 'Fish', 'Shrimp', 'Apple', 'Banana', 'Orange', 'Lemon', 'Cake', 'Cookie', 'Chocolate',
-    'Coffee', 'Tea', 'Water', 'Juice', 'Milk', 'Beer', 'Wine', 'Cola', 'Sauce', 'Honey'
+  'Water Travel': [
+    'Boat', 'Ship', 'Ferry', 'Cruise', 'Submarine', 'Harbour', 'Port', 'Dock', 'Anchor', 'Sail',
+    'Captain', 'Deck', 'Cabin', 'Lifeboat', 'Life Jacket', 'Wave', 'Tide', 'Seasick', 'Boarding Ramp', 'Cargo Ship',
+    'Marina', 'Canal', 'Pier', 'Fishing Boat', 'Yacht', 'Speedboat', 'Buoy', 'Compass', 'Crew', 'Overboard'
   ],
 
-  'Animals': [
-    'Dog', 'Cat', 'Horse', 'Cow', 'Pig', 'Sheep', 'Goat', 'Chicken', 'Duck', 'Goose',
-    'Mouse', 'Rat', 'Rabbit', 'Fox', 'Wolf', 'Bear', 'Lion', 'Tiger', 'Monkey', 'Gorilla',
-    'Elephant', 'Giraffe', 'Zebra', 'Camel', 'Snake', 'Lizard', 'Frog', 'Shark', 'Whale', 'Dolphin',
-    'Octopus', 'Penguin', 'Eagle', 'Owl', 'Parrot', 'Spider', 'Bee', 'Ant', 'Butterfly', 'Crab'
+  'Safety & Protection': [
+    'Helmet', 'Seatbelt', 'Life Jacket', 'Fire Alarm', 'First Aid Kit', 'Bandage', 'Plaster', 'Mask', 'Glove', 'Shield',
+    'Padlock', 'Password', 'Security Guard', 'CCTV', 'Smoke Detector', 'High-vis Vest', 'Hard Hat', 'Airbag', 'Emergency Exit', 'Safety Cone',
+    'Warning Sign', 'Barrier', 'Reflector', 'Rescue Rope', 'Torch', 'Siren', 'Whistle', 'Protective Glasses', 'Knee Pads', 'Fire Extinguisher'
   ],
 
-  'Characters': [
-    'Detective', 'Doctor', 'Nurse', 'Teacher', 'Chef', 'Pilot', 'Driver', 'Lawyer', 'Judge', 'Police',
-    'Firefighter', 'Soldier', 'Spy', 'Thief', 'Artist', 'Singer', 'Actor', 'Dancer', 'Magician', 'Clown',
-    'Tourist', 'Bouncer', 'Mechanic', 'Plumber', 'Electrician', 'Builder', 'Farmer', 'Waiter', 'Bartender', 'Guard',
-    'Referee', 'Coach', 'Student', 'Boss', 'Neighbour', 'Celebrity', 'Pirate', 'Wizard', 'Knight', 'Queen'
+  'Medical & Emergency': [
+    'Doctor', 'Nurse', 'Patient', 'Hospital', 'Clinic', 'Ambulance', 'Medicine', 'Tablet', 'Syringe', 'Vaccine',
+    'Xray', 'Scan', 'Stethoscope', 'Thermometer', 'Pulse', 'Blood', 'Heart', 'Brain', 'Bone', 'Muscle',
+    'Fever', 'Cough', 'Allergy', 'Bruise', 'Scar', 'Cramp', 'Pharmacy', 'Emergency Room', 'Paramedic', 'Prescription'
   ],
 
-  'Sports': [
-    'Football', 'Tennis', 'Rugby', 'Cricket', 'Basketball', 'Baseball', 'Golf', 'Boxing', 'Hockey', 'Volleyball',
-    'Cycling', 'Running', 'Swimming', 'Skiing', 'Surfing', 'Skating', 'Wrestling', 'Darts', 'Snooker', 'Bowling',
-    'Penalty', 'Goal', 'Referee', 'Captain', 'Coach', 'Stadium', 'Medal', 'Trophy', 'Whistle', 'Helmet',
-    'Gloves', 'Boots', 'Racket', 'Ball', 'Net', 'Pitch', 'Court', 'Track', 'Gym', 'Score'
+  'Kitchen & Cooking': [
+    'Kitchen', 'Oven', 'Kettle', 'Toaster', 'Microwave', 'Fridge', 'Freezer', 'Sink', 'Knife', 'Fork',
+    'Spoon', 'Plate', 'Cup', 'Glass', 'Pan', 'Pot', 'Chopping Board', 'Recipe', 'Apron', 'Sauce',
+    'Salt', 'Pepper', 'Oil', 'Butter', 'Mixer', 'Blender', 'Dishwasher', 'Tea Towel', 'Baking Tray', 'Rolling Pin'
   ],
 
-  'Travel': [
-    'Plane', 'Train', 'Bus', 'Taxi', 'Car', 'Ferry', 'Ship', 'Cruise', 'Metro', 'Tram',
-    'Ticket', 'Passport', 'Luggage', 'Suitcase', 'Hotel', 'Hostel', 'Beach', 'Mountain', 'Island', 'Airport',
-    'Station', 'Map', 'Guide', 'Tourist', 'Souvenir', 'Border', 'Customs', 'Holiday', 'Camping', 'Tent',
-    'Cabin', 'Resort', 'Pool', 'Balcony', 'Flight', 'Delay', 'Queue', 'Gate', 'Road', 'Bridge'
+  'Fast Food & Takeaway': [
+    'Pizza', 'Burger', 'Fries', 'Kebab', 'Taco', 'Sandwich', 'Hot Dog', 'Chicken Wings', 'Noodles', 'Curry',
+    'Sushi', 'Fried Chicken', 'Milkshake', 'Cola', 'Sauce', 'Delivery Driver', 'Takeaway Box', 'Menu', 'Drive-through', 'Meal Deal',
+    'Garlic Bread', 'Onion Rings', 'Wrap', 'Doner', 'Nachos', 'Chicken Nuggets', 'Ice Cream', 'Receipt', 'Queue', 'Order Number'
   ],
 
-  'Technology': [
+  'Breakfast & Cafe': [
+    'Coffee', 'Tea', 'Toast', 'Egg', 'Bacon', 'Sausage', 'Pancake', 'Croissant', 'Cereal', 'Porridge',
+    'Jam', 'Honey', 'Milk', 'Orange Juice', 'Mug', 'Cafe', 'Barista', 'Espresso', 'Latte', 'Cappuccino',
+    'Teapot', 'Sugar', 'Butter', 'Bagel', 'Muffin', 'Hash Brown', 'Beans', 'Breakfast Roll', 'Napkin', 'Tip Jar'
+  ],
+
+  'Home Rooms': [
+    'Bedroom', 'Bathroom', 'Living Room', 'Garden', 'Garage', 'Attic', 'Basement', 'Balcony', 'Kitchen', 'Hallway',
+    'Toilet', 'Shower', 'Wardrobe', 'Cupboard', 'Drawer', 'Shed', 'Loft', 'Pantry', 'Dining Room', 'Office',
+    'Laundry Room', 'Guest Room', 'Porch', 'Stairs', 'Landing', 'Cellar', 'Conservatory', 'Driveway', 'Patio', 'Roof'
+  ],
+
+  'Home Objects': [
+    'Sofa', 'Chair', 'Table', 'Bed', 'Pillow', 'Blanket', 'Mirror', 'Curtain', 'Window', 'Door',
+    'Key', 'Lock', 'Lamp', 'Remote', 'Carpet', 'Vacuum', 'Broom', 'Mop', 'Bin', 'Soap',
+    'Towel', 'Candle', 'Clock', 'Plant', 'Shelf', 'Cushion', 'Plug', 'Extension Lead', 'Laundry Basket', 'Doorbell'
+  ],
+
+  'Phones & Computers': [
     'Phone', 'Laptop', 'Tablet', 'Computer', 'Keyboard', 'Mouse', 'Screen', 'Camera', 'Router', 'Wifi',
-    'Password', 'Email', 'Message', 'App', 'Website', 'Browser', 'Server', 'Robot', 'Drone', 'Console',
-    'Battery', 'Charger', 'Cable', 'Speaker', 'Headphones', 'Microphone', 'Printer', 'Scanner', 'Algorithm', 'Database',
-    'Video', 'Photo', 'Selfie', 'Profile', 'Avatar', 'Emoji', 'Hashtag', 'Stream', 'Podcast', 'Game'
+    'Password', 'Email', 'Message', 'App', 'Website', 'Browser', 'Server', 'Battery', 'Charger', 'Cable',
+    'Headphones', 'Microphone', 'Printer', 'Scanner', 'Database', 'Video', 'Photo', 'Selfie', 'Profile', 'Cloud Storage'
   ],
 
-  'Nature': [
+  'Gaming & Streaming': [
+    'Console', 'Controller', 'Headset', 'Lobby', 'Matchmaking', 'Lag', 'Streamer', 'Chat', 'Emote', 'Skin',
+    'Battle Pass', 'Checkpoint', 'Boss Fight', 'Save File', 'Achievement', 'Leaderboard', 'Spawn', 'Respawn', 'Loot', 'Quest',
+    'Level Up', 'Patch Notes', 'Download', 'Update', 'Server', 'Game Clip', 'Microphone', 'Party Chat', 'Spectator', 'Controller Drift'
+  ],
+
+  'Football Match': [
+    'Football', 'Goal', 'Penalty', 'Referee', 'Captain', 'Coach', 'Stadium', 'Medal', 'Trophy', 'Whistle',
+    'Boots', 'Ball', 'Net', 'Pitch', 'Score', 'Corner', 'Free Kick', 'Offside', 'VAR', 'Goalkeeper',
+    'Striker', 'Defender', 'Midfielder', 'Red Card', 'Yellow Card', 'Substitution', 'Fans', 'Chant', 'Half Time', 'Extra Time'
+  ],
+
+  'Gym & Fitness': [
+    'Gym', 'Dumbbell', 'Treadmill', 'Protein Shake', 'Bench Press', 'Squat', 'Yoga Mat', 'Pull-up Bar', 'Skipping Rope', 'Water Bottle',
+    'Locker', 'Changing Room', 'Personal Trainer', 'Membership', 'Warm-up', 'Stretch', 'Sweat', 'Spin Class', 'Exercise Bike', 'Rowing Machine',
+    'Kettlebell', 'Resistance Band', 'Gloves', 'Workout Plan', 'Rest Day', 'Calorie', 'Mirror', 'Towel', 'Playlist', 'Step Counter'
+  ],
+
+  'Wild Animals': [
+    'Lion', 'Tiger', 'Bear', 'Wolf', 'Fox', 'Elephant', 'Giraffe', 'Zebra', 'Camel', 'Snake',
+    'Lizard', 'Frog', 'Shark', 'Whale', 'Dolphin', 'Octopus', 'Penguin', 'Eagle', 'Owl', 'Parrot',
+    'Spider', 'Bee', 'Ant', 'Butterfly', 'Crab', 'Crocodile', 'Rhino', 'Kangaroo', 'Seal', 'Bat'
+  ],
+
+  'Pets & Farm Animals': [
+    'Dog', 'Cat', 'Horse', 'Cow', 'Pig', 'Sheep', 'Goat', 'Chicken', 'Duck', 'Goose',
+    'Rabbit', 'Hamster', 'Guinea Pig', 'Goldfish', 'Parrot', 'Donkey', 'Pony', 'Turkey', 'Rooster', 'Lamb',
+    'Calf', 'Stable', 'Kennel', 'Leash', 'Collar', 'Pet Food', 'Litter Tray', 'Farmyard', 'Egg', 'Milk'
+  ],
+
+  'Weather & Nature': [
     'Forest', 'River', 'Ocean', 'Lake', 'Mountain', 'Valley', 'Desert', 'Island', 'Beach', 'Cave',
     'Tree', 'Flower', 'Grass', 'Leaf', 'Stone', 'Rock', 'Sand', 'Mud', 'Snow', 'Ice',
-    'Rain', 'Storm', 'Thunder', 'Lightning', 'Wind', 'Fog', 'Cloud', 'Sun', 'Moon', 'Star',
-    'Fire', 'Smoke', 'Volcano', 'Waterfall', 'Jungle', 'Meadow', 'Cliff', 'Pond', 'Wave', 'Tide'
+    'Rain', 'Storm', 'Thunder', 'Lightning', 'Wind', 'Fog', 'Cloud', 'Sun', 'Moon', 'Rainbow'
   ],
 
-  'Household': [
-    'Kitchen', 'Bedroom', 'Bathroom', 'Garden', 'Garage', 'Sofa', 'Chair', 'Table', 'Bed', 'Pillow',
-    'Blanket', 'Fridge', 'Oven', 'Kettle', 'Toaster', 'Microwave', 'Sink', 'Shower', 'Toilet', 'Mirror',
-    'Curtain', 'Window', 'Door', 'Key', 'Lock', 'Drawer', 'Cupboard', 'Lamp', 'Remote', 'Carpet',
-    'Vacuum', 'Broom', 'Mop', 'Bin', 'Soap', 'Towel', 'Candle', 'Clock', 'Plant', 'Shelf'
+  'Dangerous Nature': [
+    'Volcano', 'Avalanche', 'Earthquake', 'Tornado', 'Hurricane', 'Flood', 'Wildfire', 'Landslide', 'Tsunami', 'Blizzard',
+    'Lightning Strike', 'Poison Ivy', 'Quicksand', 'Shark Attack', 'Bear Trap', 'Cactus', 'Cliff Edge', 'Deep Water', 'Riptide', 'Iceberg',
+    'Cave-in', 'Sandstorm', 'Heatwave', 'Drought', 'Mudslide', 'Frostbite', 'Rockfall', 'Swamp', 'Rapids', 'Falling Tree'
   ],
 
-  'Transport': [
-    'Car', 'Bus', 'Train', 'Plane', 'Taxi', 'Bicycle', 'Motorbike', 'Scooter', 'Boat', 'Ship',
-    'Ferry', 'Tram', 'Metro', 'Ambulance', 'Lorry', 'Van', 'Truck', 'Helicopter', 'Jet', 'Submarine',
-    'Rocket', 'Tractor', 'Trailer', 'Skateboard', 'Wheelchair', 'Engine', 'Wheel', 'Tyre', 'Brake', 'Horn',
-    'Seatbelt', 'Helmet', 'Petrol', 'Diesel', 'Battery', 'Garage', 'Road', 'Tunnel', 'Bridge', 'Roundabout'
+  'Crime Investigation': [
+    'Detective', 'Witness', 'Suspect', 'Victim', 'Alibi', 'Evidence', 'Fingerprint', 'Footprint', 'Weapon', 'Knife',
+    'Poison', 'Disguise', 'Camera', 'Footage', 'Vault', 'Safe', 'Jail', 'Prison', 'Court', 'Judge',
+    'Lawyer', 'Police', 'Clue', 'Secret', 'Blackmail', 'Ransom', 'Escape', 'Chase', 'Trap', 'Motive'
   ],
 
-  'Health': [
-    'Doctor', 'Nurse', 'Patient', 'Hospital', 'Clinic', 'Medicine', 'Tablet', 'Syringe', 'Bandage', 'Plaster',
-    'Xray', 'Scan', 'Tooth', 'Eye', 'Ear', 'Nose', 'Hand', 'Foot', 'Knee', 'Back',
-    'Headache', 'Fever', 'Cough', 'Cold', 'Allergy', 'Bruise', 'Scar', 'Cramp', 'Pulse', 'Blood',
-    'Heart', 'Brain', 'Bone', 'Muscle', 'Skin', 'Mask', 'Glove', 'Ambulance', 'Pharmacy', 'Vaccine'
-  ],
-
-  'Fantasy': [
-    'Dragon', 'Wizard', 'Witch', 'Knight', 'King', 'Queen', 'Prince', 'Princess', 'Castle', 'Sword',
-    'Shield', 'Potion', 'Spell', 'Wand', 'Crown', 'Ghost', 'Zombie', 'Vampire', 'Werewolf', 'Goblin',
-    'Troll', 'Elf', 'Dwarf', 'Fairy', 'Giant', 'Mermaid', 'Unicorn', 'Phoenix', 'Griffin', 'Demon',
-    'Angel', 'Portal', 'Treasure', 'Dungeon', 'Kingdom', 'Prophecy', 'Curse', 'Temple', 'Cave', 'Throne'
-  ],
-
-  'Emotions': [
-    'Anger', 'Fear', 'Joy', 'Sadness', 'Love', 'Hate', 'Panic', 'Relief', 'Jealousy', 'Pride',
-    'Shame', 'Guilt', 'Regret', 'Hope', 'Trust', 'Doubt', 'Shock', 'Confusion', 'Boredom', 'Excitement',
-    'Nostalgia', 'Confidence', 'Suspicion', 'Curiosity', 'Loneliness', 'Stress', 'Calm', 'Awkwardness', 'Embarrassment', 'Disgust',
-    'Patience', 'Courage', 'Anxiety', 'Admiration', 'Surprise', 'Comfort', 'Grief', 'Peace', 'Rage', 'Mercy'
-  ],
-
-  'Everyday': [
-    'Alarm', 'Birthday', 'Appointment', 'Delivery', 'Package', 'Bill', 'Receipt', 'Password', 'Charger', 'Umbrella',
-    'Laundry', 'Shopping', 'Queue', 'Parking', 'Traffic', 'Weather', 'Dinner', 'Breakfast', 'Homework', 'Meeting',
-    'Email', 'Message', 'Call', 'Photo', 'Mirror', 'Shower', 'Coffee', 'Snack', 'Wallet', 'Keys',
-    'Doorbell', 'Neighbour', 'Noise', 'Holiday', 'Weekend', 'Monday', 'Sleep', 'Dream', 'Routine', 'Problem'
-  ],
-
-  'Money': [
+  'Money & Banking': [
     'Cash', 'Card', 'Coin', 'Bank', 'Loan', 'Debt', 'Salary', 'Bonus', 'Invoice', 'Receipt',
     'Tax', 'Rent', 'Mortgage', 'Budget', 'Profit', 'Loss', 'Price', 'Discount', 'Sale', 'Tip',
-    'Wallet', 'Purse', 'Safe', 'Diamond', 'Gold', 'Silver', 'Watch', 'Ring', 'Auction', 'Casino',
-    'Jackpot', 'Lottery', 'Prize', 'Gift', 'Refund', 'Deposit', 'Account', 'Bill', 'Cheque', 'Cryptocurrency'
+    'Wallet', 'Purse', 'Safe', 'Diamond', 'Gold', 'Auction', 'Jackpot', 'Lottery', 'Refund', 'Cryptocurrency'
   ],
 
-  'Crime': [
-    'Detective', 'Thief', 'Robber', 'Spy', 'Witness', 'Suspect', 'Victim', 'Alibi', 'Evidence', 'Fingerprint',
-    'Footprint', 'Weapon', 'Knife', 'Gun', 'Poison', 'Mask', 'Disguise', 'Camera', 'Footage', 'Password',
-    'Vault', 'Safe', 'Jail', 'Prison', 'Court', 'Judge', 'Lawyer', 'Police', 'Guard', 'Clue',
-    'Secret', 'Blackmail', 'Ransom', 'Escape', 'Chase', 'Trap', 'Tunnel', 'Hideout', 'Case', 'Motive'
-  ],
-
-  'Media': [
-    'Movie', 'Series', 'Episode', 'Trailer', 'Spoiler', 'Actor', 'Singer', 'Album', 'Song', 'Podcast',
-    'Radio', 'Camera', 'Photo', 'Video', 'Stream', 'Meme', 'Hashtag', 'Influencer', 'Celebrity', 'Journalist',
-    'Newspaper', 'Magazine', 'Book', 'Novel', 'Comic', 'Cartoon', 'Animation', 'Poster', 'Advert', 'Channel',
-    'Interview', 'Microphone', 'Stage', 'Cinema', 'Theatre', 'Festival', 'Award', 'Oscar', 'Review', 'Rating'
-  ],
-
-  'Work & School': [
+  'School & Office': [
     'Teacher', 'Student', 'Classroom', 'Homework', 'Exam', 'Book', 'Pencil', 'Pen', 'Desk', 'Chair',
     'Computer', 'Email', 'Meeting', 'Deadline', 'Project', 'Presentation', 'Boss', 'Manager', 'Office', 'Factory',
-    'Shift', 'Break', 'Lunch', 'Uniform', 'Printer', 'Report', 'Contract', 'Invoice', 'Salary', 'Promotion',
-    'Interview', 'Training', 'College', 'Campus', 'Library', 'Notebook', 'Folder', 'Calendar', 'Whiteboard', 'Marker'
+    'Shift', 'Break', 'Lunch', 'Uniform', 'Printer', 'Report', 'Contract', 'Interview', 'Training', 'Whiteboard'
+  ],
+
+  'Movies & Music': [
+    'Movie', 'Series', 'Episode', 'Trailer', 'Spoiler', 'Actor', 'Singer', 'Album', 'Song', 'Podcast',
+    'Radio', 'Camera', 'Photo', 'Video', 'Stream', 'Meme', 'Influencer', 'Celebrity', 'Journalist', 'Newspaper',
+    'Magazine', 'Novel', 'Comic', 'Animation', 'Poster', 'Advert', 'Interview', 'Microphone', 'Stage', 'Festival'
+  ],
+
+  'Fantasy Adventure': [
+    'Dragon', 'Wizard', 'Witch', 'Knight', 'King', 'Queen', 'Prince', 'Princess', 'Castle', 'Sword',
+    'Shield', 'Potion', 'Spell', 'Wand', 'Crown', 'Ghost', 'Zombie', 'Vampire', 'Werewolf', 'Goblin',
+    'Troll', 'Elf', 'Dwarf', 'Fairy', 'Giant', 'Mermaid', 'Unicorn', 'Phoenix', 'Portal', 'Treasure'
+  ],
+
+  'Feelings & Reactions': [
+    'Anger', 'Fear', 'Joy', 'Sadness', 'Love', 'Panic', 'Relief', 'Jealousy', 'Pride', 'Shame',
+    'Guilt', 'Regret', 'Hope', 'Trust', 'Doubt', 'Shock', 'Confusion', 'Boredom', 'Excitement', 'Nostalgia',
+    'Confidence', 'Suspicion', 'Curiosity', 'Loneliness', 'Stress', 'Calm', 'Awkwardness', 'Embarrassment', 'Disgust', 'Anxiety'
+  ],
+
+  'Daily Problems': [
+    'Alarm', 'Appointment', 'Delivery', 'Package', 'Bill', 'Receipt', 'Password', 'Charger', 'Umbrella', 'Laundry',
+    'Shopping', 'Queue', 'Parking', 'Traffic', 'Weather', 'Dinner', 'Breakfast', 'Homework', 'Meeting', 'Email',
+    'Message', 'Call', 'Doorbell', 'Neighbour', 'Noise', 'Weekend', 'Monday', 'Sleep', 'Routine', 'Problem'
   ]
 };
 

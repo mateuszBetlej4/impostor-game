@@ -27,6 +27,11 @@ export function WordAuditPage() {
   const [copied, setCopied] = useState(false);
 
   const categories = useMemo(() => Object.keys(WORD_BANK), []);
+  const categorySummaries = useMemo(() => categories.map((category) => ({
+    category,
+    count: WORD_BANK[category].length,
+    preview: WORD_BANK[category].slice(0, 4).join(', '),
+  })), [categories]);
   const rows = useMemo(() => categories.flatMap((category) => WORD_BANK[category].map((word) => ({ category, word, key: makeKey(category, word) }))), [categories]);
   const filteredRows = useMemo(() => rows.filter((row) => {
     const matchesCategory = activeCategory === 'All' || row.category === activeCategory;
@@ -65,11 +70,33 @@ export function WordAuditPage() {
       <section className="word-audit-hero">
         <p className="eyebrow">Hidden dev page</p>
         <h1>Word Audit</h1>
-        <p>Tap every word that feels too hard, awkward, too adult, too vague, or not acceptable for the game. When finished, copy the removal list and send it back.</p>
+        <p>Updated to the new specific category system. Tap a category card to filter it, then tap words that feel too hard, awkward, too vague, or not acceptable for the game.</p>
         <div className="word-audit-stats">
-          <div><span>Total</span><strong>{rows.length}</strong></div>
+          <div><span>Categories</span><strong>{categories.length}</strong></div>
+          <div><span>Total words</span><strong>{rows.length}</strong></div>
           <div><span>Selected</span><strong>{rejectedRows.length}</strong></div>
           <div><span>Visible</span><strong>{filteredRows.length}</strong></div>
+        </div>
+      </section>
+
+      <section className="word-audit-categories">
+        <div className="word-audit-section-title">
+          <p className="eyebrow">Current categories</p>
+          <h2>New word bank</h2>
+        </div>
+        <div className="word-audit-category-grid">
+          <button type="button" className={activeCategory === 'All' ? 'active' : ''} onClick={() => setActiveCategory('All')}>
+            <strong>All categories</strong>
+            <span>{rows.length} words</span>
+            <small>Show everything</small>
+          </button>
+          {categorySummaries.map(({ category, count, preview }) => (
+            <button key={category} type="button" className={activeCategory === category ? 'active' : ''} onClick={() => setActiveCategory(category)}>
+              <strong>{category}</strong>
+              <span>{count} words</span>
+              <small>{preview}</small>
+            </button>
+          ))}
         </div>
       </section>
 

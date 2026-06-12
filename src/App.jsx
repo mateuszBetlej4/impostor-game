@@ -20,6 +20,12 @@ function shuffle(items) {
   return next;
 }
 
+function rotatePassOrder(items, startIndex) {
+  if (!items.length) return [];
+  const safeIndex = ((startIndex % items.length) + items.length) % items.length;
+  return [...items.slice(safeIndex), ...items.slice(0, safeIndex)];
+}
+
 function pickRandom(items) {
   return items[Math.floor(Math.random() * items.length)];
 }
@@ -85,10 +91,10 @@ function selectWord(selectedCategory, usedWords, wordBank, categoryNames) {
   };
 }
 
-function makeRound({ players, category, word, impostorCount, settings, impostors }) {
+function makeRound({ players, passOrder, category, word, impostorCount, settings, impostors }) {
   return {
     settings,
-    passOrder: settings.randomisePassOrder ? shuffle(players) : [...players],
+    passOrder: passOrder || (settings.randomisePassOrder ? shuffle(players) : [...players]),
     category,
     word,
     impostors: impostors || new Set(shuffle(players).slice(0, impostorCount)),
@@ -123,6 +129,7 @@ function App() {
   const [settings, setSettings] = useState(DEFAULT_SETTINGS);
   const [impostorCount, setImpostorCount] = useState(1);
   const [round, setRound] = useState(null);
+  const [roundStartIndex, setRoundStartIndex] = useState(0);
   const [roleVisible, setRoleVisible] = useState(false);
   const [votingPlayerIndex, setVotingPlayerIndex] = useState(0);
   const [guessValue, setGuessValue] = useState('');
@@ -161,10 +168,16 @@ function App() {
   function patchSettings(patch) { setSettings((current) => ({ ...current, ...patch })); }
   function confirmStart() { if (canStart) setScreen('confirm'); }
 
+  function getNextPassOrder() {
+    return settings.randomisePassOrder ? shuffle(players) : rotatePassOrder(players, roundStartIndex);
+  }
+
   function startNewRound() {
     const selected = selectWord(category, usedWords, allWordBank, categoryNames);
+    const passOrder = getNextPassOrder();
     setUsedWords(selected.nextUsedWords);
-    setRound(makeRound({ players, category: selected.category, word: selected.word, impostorCount, settings }));
+    setRound(makeRound({ players, passOrder, category: selected.category, word: selected.word, impostorCount, settings }));
+    if (!settings.randomisePassOrder) setRoundStartIndex((current) => (players.length ? (current + 1) % players.length : 0));
     setRoleVisible(false); setVotingPlayerIndex(0); setGuessValue(''); setScreen('reveal');
   }
 
@@ -172,7 +185,7 @@ function App() {
     if (!round) return;
     const selected = selectWord(category, usedWords, allWordBank, categoryNames);
     setUsedWords(selected.nextUsedWords);
-    setRound(makeRound({ players, category: selected.category, word: selected.word, impostorCount, settings, impostors: round.impostors }));
+    setRound(makeRound({ players, passOrder: round.passOrder, category: selected.category, word: selected.word, impostorCount, settings, impostors: round.impostors }));
     setRoleVisible(false); setVotingPlayerIndex(0); setGuessValue(''); setScreen('reveal');
   }
 
@@ -211,6 +224,7 @@ function App() {
   function removePlayer(name) {
     const nextPlayers = players.filter((player) => player !== name);
     setPlayers(nextPlayers);
+    setRoundStartIndex((current) => (nextPlayers.length ? current % nextPlayers.length : 0));
     setImpostorCount((current) => Math.min(current, Math.max(1, nextPlayers.length - 1)));
   }
 
@@ -282,9 +296,9 @@ function App() {
   }
 
   function submitBonusVote(target) { if (!round) return; setRound({ ...round, bonusCandidates: [], bonusReason: '', bonusWinner: target }); resolveVotedOut(target); }
-  function submitImpostorGuess() { if (!round) return; const guess = normalisePlayerName(guessValue).toLowerCase(); const actual = round.word.toLowerCase(); const impostorWins = guess === actual || (guess.length > 2 && actual.includes(guess)); setRound({ ...round, impostorGuess: guessValue, outcome: impostorWins ? 'impostors' : 'mob' }); applyScores(impostorWins ? 'impostors' : 'mob'); setScreen('result'); }
+  function submitImpostorGuess() { if (!round) return; const guess = normalisePlayerName(guessValue).toLowerCase(); const actual = round.word.toLowerCase(); const impostorWins = guess === actual || (guess.length > 2 && actual.includes(guess)); setRound({ ...round, impostorGuess: guessValue, outcome: impostors ? 'impostors' : 'mob' }); applyScores(impostorWins ? 'impostors' : 'mob'); setScreen('result'); }
   function skipGuess() { if (!round) return; setRound({ ...round, outcome: 'mob' }); applyScores('mob'); setScreen('result'); }
-  function resetGame() { setRound(null); setRoleVisible(false); setVotingPlayerIndex(0); setGuessValue(''); setScreen('home'); }
+  function resetGame() { setRound(null); setRoundStartIndex(0); setRoleVisible(false); setVotingPlayerIndex(0); setGuessValue(''); setScreen('home'); }
 
   return (
     <main className="app-shell">

@@ -20,11 +20,17 @@ function makeKey(category, word) {
   return `${category}:::${word}`;
 }
 
+function pickRandom(items) {
+  return items[Math.floor(Math.random() * items.length)];
+}
+
 export function WordAuditPage() {
   const [rejected, setRejected] = useState(loadRejected);
   const [query, setQuery] = useState('');
   const [activeCategory, setActiveCategory] = useState('All');
   const [copied, setCopied] = useState(false);
+  const [rolledCategory, setRolledCategory] = useState('');
+  const [rolledWord, setRolledWord] = useState('');
 
   const categories = useMemo(() => Object.keys(WORD_BANK), []);
   const categorySummaries = useMemo(() => categories.map((category) => ({
@@ -41,6 +47,18 @@ export function WordAuditPage() {
   const rejectedRows = useMemo(() => rows.filter((row) => rejected.has(row.key)), [rows, rejected]);
   const groupedRemovalList = useMemo(() => rejectedRows.reduce((acc, row) => ({ ...acc, [row.category]: [...(acc[row.category] || []), row.word] }), {}), [rejectedRows]);
   const removalText = useMemo(() => JSON.stringify(groupedRemovalList, null, 2), [groupedRemovalList]);
+
+  function rollCategory() {
+    const nextCategory = pickRandom(categories);
+    setRolledCategory(nextCategory);
+    setRolledWord('');
+    setActiveCategory(nextCategory);
+  }
+
+  function rollWord() {
+    if (!rolledCategory) return;
+    setRolledWord(pickRandom(WORD_BANK[rolledCategory] || []));
+  }
 
   function toggle(row) {
     setCopied(false);
@@ -70,13 +88,35 @@ export function WordAuditPage() {
       <section className="word-audit-hero">
         <p className="eyebrow">Hidden dev page</p>
         <h1>Word Audit</h1>
-        <p>Updated to the new specific category system. Tap a category card to filter it, then tap words that feel too hard, awkward, too vague, or not acceptable for the game.</p>
+        <p>Updated to the new specific category system. Tap a category card to filter it, or use the car-game randomiser to roll a category first, then roll a word from that category.</p>
         <div className="word-audit-stats">
           <div><span>Categories</span><strong>{categories.length}</strong></div>
           <div><span>Total words</span><strong>{rows.length}</strong></div>
           <div><span>Selected</span><strong>{rejectedRows.length}</strong></div>
           <div><span>Visible</span><strong>{filteredRows.length}</strong></div>
         </div>
+      </section>
+
+      <section className="word-randomiser-card">
+        <div className="word-audit-section-title">
+          <p className="eyebrow">Le Mans car game</p>
+          <h2>Roll category, then word</h2>
+        </div>
+        <div className="randomiser-result-grid">
+          <div>
+            <span>Category</span>
+            <strong>{rolledCategory || 'Roll first'}</strong>
+          </div>
+          <div>
+            <span>Word</span>
+            <strong>{rolledWord || 'Roll after category'}</strong>
+          </div>
+        </div>
+        <div className="randomiser-actions">
+          <button type="button" onClick={rollCategory}>Roll Category</button>
+          <button type="button" onClick={rollWord} disabled={!rolledCategory}>Roll Word</button>
+        </div>
+        <p className="randomiser-help">Use it like: roll a category, everyone thinks/says guesses, then roll the word from that exact category.</p>
       </section>
 
       <section className="word-audit-categories">

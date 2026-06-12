@@ -6,6 +6,7 @@
 }
 
 .word-audit-hero,
+.word-randomiser-card,
 .word-audit-categories,
 .word-audit-controls,
 .word-audit-actions,
@@ -16,6 +17,11 @@
   border: 1px solid rgba(244, 208, 111, 0.18);
   border-radius: 22px;
   background: rgba(0, 0, 0, 0.3);
+}
+
+.word-randomiser-card {
+  border-color: rgba(244, 208, 111, 0.32);
+  background: radial-gradient(circle at top left, rgba(244, 208, 111, 0.16), transparent 36%), rgba(0, 0, 0, 0.36);
 }
 
 .word-audit-hero h1 {
@@ -32,14 +38,16 @@
   line-height: 1.45;
 }
 
-.word-audit-stats {
+.word-audit-stats,
+.randomiser-result-grid {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
   gap: 8px;
   margin-top: 14px;
 }
 
-.word-audit-stats div {
+.word-audit-stats div,
+.randomiser-result-grid div {
   display: grid;
   gap: 4px;
   padding: 12px;
@@ -48,7 +56,13 @@
   background: rgba(255, 255, 255, 0.04);
 }
 
+.randomiser-result-grid div {
+  min-height: 106px;
+  align-content: center;
+}
+
 .word-audit-stats span,
+.randomiser-result-grid span,
 .word-audit-list button span,
 .word-audit-category-grid button span {
   color: var(--mob-muted);
@@ -63,6 +77,16 @@
   font-size: 28px;
 }
 
+.randomiser-result-grid strong {
+  color: var(--mob-gold-bright);
+  font-family: 'Barlow Condensed', Inter, sans-serif;
+  font-size: clamp(32px, 9vw, 58px);
+  line-height: 0.9;
+  letter-spacing: -0.04em;
+  text-transform: uppercase;
+  overflow-wrap: anywhere;
+}
+
 .word-audit-section-title {
   margin-bottom: 12px;
 }
@@ -73,6 +97,32 @@
   font-size: 38px;
   line-height: 0.9;
   text-transform: uppercase;
+}
+
+.randomiser-actions {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  margin-top: 12px;
+}
+
+.randomiser-actions button {
+  min-height: 56px;
+  border: 0;
+  border-radius: 16px;
+  color: #120d03;
+  background: linear-gradient(145deg, var(--mob-gold-bright), var(--mob-gold-dark));
+  font-weight: 950;
+}
+
+.randomiser-actions button:disabled {
+  opacity: 0.42;
+}
+
+.randomiser-help {
+  margin: 12px 0 0;
+  color: rgba(255, 247, 223, 0.66);
+  line-height: 1.4;
 }
 
 .word-audit-category-grid {

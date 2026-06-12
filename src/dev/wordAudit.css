@@ -6,6 +6,7 @@
 }
 
 .word-audit-hero,
+.word-audit-categories,
 .word-audit-controls,
 .word-audit-actions,
 .word-audit-output {
@@ -33,7 +34,7 @@
 
 .word-audit-stats {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  grid-template-columns: repeat(2, 1fr);
   gap: 8px;
   margin-top: 14px;
 }
@@ -48,7 +49,8 @@
 }
 
 .word-audit-stats span,
-.word-audit-list button span {
+.word-audit-list button span,
+.word-audit-category-grid button span {
   color: var(--mob-muted);
   font-size: 11px;
   font-weight: 950;
@@ -59,6 +61,51 @@
 .word-audit-stats strong {
   color: var(--mob-gold-bright);
   font-size: 28px;
+}
+
+.word-audit-section-title {
+  margin-bottom: 12px;
+}
+
+.word-audit-section-title h2 {
+  margin: 2px 0 0;
+  font-family: 'Barlow Condensed', Inter, sans-serif;
+  font-size: 38px;
+  line-height: 0.9;
+  text-transform: uppercase;
+}
+
+.word-audit-category-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 10px;
+}
+
+.word-audit-category-grid button {
+  min-height: 92px;
+  display: grid;
+  gap: 6px;
+  text-align: left;
+  padding: 13px;
+  border: 1px solid rgba(244, 208, 111, 0.16);
+  border-radius: 18px;
+  color: var(--mob-text);
+  background: rgba(255, 255, 255, 0.04);
+}
+
+.word-audit-category-grid button.active {
+  border-color: rgba(244, 208, 111, 0.62);
+  background: linear-gradient(180deg, rgba(244, 208, 111, 0.16), rgba(0, 0, 0, 0.25));
+}
+
+.word-audit-category-grid button strong {
+  font-size: 18px;
+  line-height: 1.1;
+}
+
+.word-audit-category-grid button small {
+  color: rgba(255, 247, 223, 0.64);
+  line-height: 1.35;
 }
 
 .word-audit-controls {
@@ -162,6 +209,14 @@
 @media (min-width: 640px) {
   .word-audit-controls {
     grid-template-columns: 1fr 240px;
+  }
+
+  .word-audit-stats {
+    grid-template-columns: repeat(4, 1fr);
+  }
+
+  .word-audit-category-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
   }
 
   .word-audit-list {

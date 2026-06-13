@@ -1,0 +1,920 @@
+/* Final mobile viewport contract: app screens fit inside one visible phone viewport. */
+html,
+body,
+#root {
+  width: 100%;
+  height: 100%;
+  min-height: 100%;
+  overflow: hidden;
+  overscroll-behavior: none;
+}
+
+body {
+  position: fixed;
+  inset: 0;
+  min-width: 320px;
+  touch-action: manipulation;
+}
+
+#root {
+  display: grid;
+}
+
+.app-shell {
+  width: 100%;
+  height: 100dvh;
+  min-height: 0;
+  max-height: 100dvh;
+  align-items: stretch;
+  padding: calc(8px + env(safe-area-inset-top)) 10px calc(10px + env(safe-area-inset-bottom));
+  overflow: hidden;
+}
+
+.phone-frame {
+  width: min(100%, 430px);
+  height: 100%;
+  max-height: 100%;
+  min-height: 0;
+  gap: 8px;
+  overflow: hidden;
+}
+
+.app-header {
+  flex: 0 0 56px;
+  min-height: 56px;
+  position: relative;
+  top: auto;
+  padding: 7px 10px;
+  border-radius: 19px;
+}
+
+.brand-lockup {
+  gap: 8px;
+}
+
+.crest-mark,
+.crest-image {
+  width: 38px;
+  height: 38px;
+  border-radius: 13px;
+}
+
+.brand-lockup h1 {
+  font-size: clamp(23px, 6.7vw, 30px);
+  line-height: 0.86;
+}
+
+.app-header .eyebrow {
+  font-size: 9px;
+  letter-spacing: 0.18em;
+}
+
+.header-start,
+.icon-button {
+  min-height: 38px;
+  height: 38px;
+}
+
+.header-start {
+  padding: 0 14px;
+}
+
+.screen-stack {
+  flex: 1 1 0;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  overflow: hidden;
+}
+
+.panel-card,
+.hero-card,
+.role-card,
+.result-card {
+  min-height: 0;
+  max-width: 100%;
+  padding: 12px;
+  border-radius: 20px;
+}
+
+.section-title-row {
+  min-height: 0;
+  margin-bottom: 6px;
+}
+
+.section-title-row h3 {
+  font-size: clamp(22px, 6.6vw, 32px);
+  line-height: 0.9;
+}
+
+.eyebrow {
+  font-size: 10px;
+}
+
+.helper-text,
+.warning-text,
+.hero-copy {
+  margin-bottom: 8px;
+  font-size: 12px;
+  line-height: 1.22;
+}
+
+.primary-action,
+.secondary-action {
+  flex: 0 0 auto;
+  min-height: 42px;
+  border-radius: 16px;
+  font-size: 14px;
+}
+
+.action-grid {
+  flex: 0 0 auto;
+  gap: 7px;
+  margin-top: auto;
+}
+
+.progress-pill {
+  flex: 0 0 auto;
+  min-height: 30px;
+  padding: 6px 10px;
+}
+
+/* Home shell */
+.home-tab-layout,
+.app-fit-home {
+  flex: 1 1 0;
+  height: auto;
+  min-height: 0;
+}
+
+.home-tab-content {
+  flex: 1 1 0;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+  overflow: hidden;
+}
+
+.app-fit-home .home-tab-content > * {
+  flex: 0 0 auto;
+  min-height: 0;
+}
+
+.setup-bottom-nav {
+  flex: 0 0 44px;
+  margin-top: auto;
+  padding: 4px;
+  border-radius: 17px;
+}
+
+.setup-bottom-nav button {
+  min-height: 34px;
+  font-size: 11px;
+  padding: 0 5px;
+}
+
+.compact-mode-card {
+  padding: 6px;
+}
+
+.compact-mode-switch {
+  gap: 6px;
+}
+
+.compact-mode-switch button {
+  min-height: 36px;
+  padding: 5px 8px;
+  text-align: center;
+}
+
+.compact-mode-switch small {
+  display: none;
+}
+
+.app-fit-home .priority-card,
+.app-fit-home .library-stats-card {
+  display: grid;
+  grid-template-columns: 1fr minmax(72px, 0.38fr);
+  align-items: end;
+  gap: 6px;
+  padding: 9px;
+}
+
+.app-fit-home .priority-card .section-title-row,
+.app-fit-home .library-stats-card .section-title-row {
+  grid-column: 1 / -1;
+  margin-bottom: 0;
+}
+
+.app-fit-home .priority-card label,
+.app-fit-home .library-stats-card label {
+  gap: 3px;
+}
+
+.app-fit-home .priority-card label > span,
+.app-fit-home .settings-grid label > span,
+.guess-field span,
+.final-guess-field span {
+  font-size: 9px;
+  letter-spacing: 0.08em;
+}
+
+.app-fit-home select,
+.app-fit-home input,
+.app-fit-home textarea,
+.guess-field input,
+.final-guess-input-wrap input {
+  min-height: 36px;
+  border-radius: 13px;
+  font-size: 15px;
+}
+
+.app-fit-home .bottom-start {
+  flex: 0 0 42px;
+  min-height: 42px;
+  margin: 0;
+}
+
+/* Online mode: show a compact state card rather than a long web panel. */
+.online-panel {
+  flex: 1 1 0 !important;
+  min-height: 0;
+  display: grid;
+  align-content: start;
+  gap: 6px;
+  padding: 9px;
+  overflow: hidden;
+}
+
+.online-panel .section-title-row h3 {
+  font-size: clamp(20px, 6vw, 28px);
+}
+
+.online-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 6px;
+}
+
+.online-card,
+.online-status-card,
+.online-lobby-card,
+.online-reveal-card,
+.online-phase-card,
+.online-vote-card,
+.online-guess-card,
+.online-result-card,
+.online-skip-box {
+  min-height: 0;
+  padding: 8px;
+  border-radius: 14px;
+}
+
+.online-card {
+  display: grid;
+  gap: 5px;
+}
+
+.online-card h4 {
+  margin: 0;
+  font-size: 13px;
+}
+
+.online-card label {
+  gap: 3px;
+}
+
+.online-card input,
+.online-guess-card input {
+  min-height: 34px;
+  padding: 0 9px;
+  border-radius: 12px;
+  font-size: 14px;
+}
+
+.online-card button,
+.online-action-row button,
+.online-start-button,
+.online-vote-grid button,
+.online-guess-card button,
+.online-skip-box button {
+  min-height: 34px;
+  border-radius: 12px;
+  font-size: 12px;
+}
+
+.online-action-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 6px;
+}
+
+.online-player-list,
+.online-vote-grid,
+.online-result-list {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 5px;
+  max-height: 118px;
+  overflow: hidden;
+}
+
+.online-player-row,
+.online-result-list > div {
+  min-height: 30px;
+  padding: 5px 6px;
+  border-radius: 11px;
+}
+
+.online-player-row small,
+.online-warning,
+.online-helper {
+  display: none;
+}
+
+.online-guess-card strong {
+  font-size: clamp(24px, 8vw, 34px);
+}
+
+/* Players tab */
+.player-editor-card {
+  flex: 1 1 0 !important;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.player-title-row {
+  flex: 0 0 auto;
+}
+
+.compact-count-row,
+.compact-pager {
+  flex: 0 0 auto;
+  min-height: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 5px 8px;
+  border: 1px solid var(--mob-border-soft);
+  border-radius: 12px;
+  background: rgba(0, 0, 0, 0.22);
+  color: var(--mob-muted);
+  font-size: 11px;
+  font-weight: 900;
+}
+
+.compact-count-row strong,
+.compact-pager span {
+  color: var(--mob-gold-bright);
+}
+
+.compact-pager button {
+  min-height: 26px;
+  padding: 0 10px;
+  border: 1px solid var(--mob-border-soft);
+  border-radius: 10px;
+  color: var(--mob-gold-bright);
+  background: rgba(0, 0, 0, 0.24);
+  font-size: 11px;
+  font-weight: 950;
+}
+
+.compact-pager button:disabled {
+  opacity: 0.35;
+}
+
+.compact-player-grid {
+  flex: 1 1 0;
+  min-height: 0;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  align-content: start;
+  gap: 5px;
+  overflow: hidden;
+}
+
+.compact-player-grid .pass-order-row {
+  min-height: 32px;
+  padding: 4px 5px;
+  gap: 5px;
+  border-radius: 12px;
+}
+
+.compact-player-grid .pass-order-row strong {
+  font-size: 12px;
+}
+
+.compact-player-grid .order-number,
+.compact-player-grid .order-actions button {
+  width: 24px;
+  height: 24px;
+  border-radius: 8px;
+  font-size: 12px;
+}
+
+.compact-player-grid .order-actions {
+  gap: 3px;
+}
+
+.player-add-row {
+  flex: 0 0 auto;
+  margin-top: 6px;
+}
+
+.player-add-row input,
+.player-add-row button {
+  min-height: 36px;
+}
+
+/* Rules */
+.app-fit-home .preset-row {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 5px;
+}
+
+.app-fit-home .preset-button {
+  min-height: 34px;
+  padding: 5px;
+  border-radius: 12px;
+}
+
+.app-fit-home .preset-button strong {
+  font-size: 11px;
+}
+
+.app-fit-home .preset-button small {
+  display: none;
+}
+
+.app-fit-home .settings-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 5px;
+}
+
+.app-fit-home .toggle-list {
+  display: grid;
+  gap: 4px;
+}
+
+.app-fit-home .toggle-row,
+.app-fit-home .toggle-list label {
+  min-height: 30px;
+  padding: 4px 7px;
+  border-radius: 12px;
+}
+
+/* Library */
+.library-stats-card {
+  align-self: stretch;
+}
+
+.library-stat-grid {
+  grid-column: 1 / -1;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 6px;
+}
+
+.library-actions-card {
+  padding: 10px;
+  text-align: center;
+}
+
+.library-actions-card .eyebrow {
+  margin-bottom: 8px;
+}
+
+.library-actions-card .primary-action {
+  min-height: 42px;
+}
+
+.library-back-action {
+  flex: 0 0 38px !important;
+  min-height: 38px;
+}
+
+.custom-set-builder-card {
+  flex: 1 1 0 !important;
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+  overflow: hidden;
+}
+
+.custom-set-grid {
+  flex: 0 0 auto;
+}
+
+.custom-set-builder-card textarea {
+  min-height: 58px !important;
+  max-height: 72px !important;
+  resize: none;
+  line-height: 1.25;
+}
+
+.custom-set-builder-card .primary-action {
+  margin-top: auto;
+}
+
+.custom-set-builder-card .custom-set-list {
+  display: none;
+}
+
+/* Confirm/reveal/clue/vote/result screens */
+.confirm-screen-fit,
+.reveal-layout,
+.clue-screen-fit,
+.vote-screen-fit,
+.result-screen-fit,
+.guess-screen {
+  height: auto;
+  flex: 1 1 0;
+  min-height: 0;
+}
+
+.confirm-review-card,
+.result-summary-card,
+.result-votes-card,
+.final-guess-card,
+.clue-player-card,
+.clue-history-card,
+.clue-entry-card,
+.compact-vote-panel {
+  overflow: hidden;
+}
+
+.confirm-review-card {
+  flex: 1 1 0;
+  display: grid;
+  align-content: start;
+  gap: 7px;
+}
+
+.confirm-title-row h3,
+.result-summary-card h2,
+.vote-panel h2,
+.guess-hero h2,
+.role-card h2,
+.clue-player-card h2 {
+  font-size: clamp(30px, 9vw, 46px);
+  line-height: 0.86;
+  margin: 0;
+}
+
+.confirm-primary-grid,
+.confirm-compact-list,
+.result-stat-grid {
+  gap: 6px;
+}
+
+.confirm-primary-grid > div,
+.confirm-compact-list > div,
+.result-stat-grid > div {
+  min-height: 36px;
+  padding: 6px 7px;
+  border-radius: 12px;
+}
+
+.confirm-action-grid,
+.result-action-grid {
+  flex: 0 0 auto;
+}
+
+.role-card {
+  flex: 1 1 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.hold-card {
+  flex: 1 1 0;
+  min-height: 132px;
+  padding: 12px;
+}
+
+.secret-card {
+  gap: 8px;
+  padding: 12px;
+}
+
+.secret-card svg {
+  width: 30px;
+  height: 30px;
+}
+
+.secret-card h3 {
+  padding: 12px 8px;
+  font-size: clamp(30px, 9vw, 48px);
+}
+
+.secret-card > p:not(.eyebrow),
+.secret-card > p:not(.eyebrow) strong {
+  font-size: 18px;
+}
+
+.reveal-layout > .panel-card:not(.role-card) {
+  flex: 0 0 auto;
+  padding: 9px;
+}
+
+.reveal-layout > .panel-card:not(.role-card) h3 {
+  margin: 2px 0 4px;
+  font-size: clamp(22px, 7vw, 30px);
+}
+
+.reveal-layout > .panel-card:not(.role-card) .helper-text {
+  display: none;
+}
+
+.clue-player-card {
+  flex: 0 0 auto;
+  padding: 10px;
+}
+
+.clue-history-card {
+  flex: 1 1 0;
+  min-height: 0;
+  padding: 9px;
+}
+
+.compact-clue-list {
+  gap: 4px;
+}
+
+.compact-clue-row {
+  min-height: 28px;
+  padding: 4px 6px;
+}
+
+.clue-entry-card {
+  flex: 0 0 auto;
+  padding: 9px;
+}
+
+.clue-entry-card input {
+  min-height: 36px;
+}
+
+.clue-bottom-action {
+  min-height: 40px;
+}
+
+.vote-screen-fit .progress-pill {
+  align-self: center;
+}
+
+.compact-vote-panel {
+  flex: 1 1 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.compact-target-grid,
+.vote-grid {
+  flex: 1 1 0;
+  min-height: 0;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  align-content: start;
+  gap: 6px;
+  overflow: hidden;
+}
+
+.vote-grid button,
+.compact-target-grid button {
+  min-height: 38px;
+  padding: 4px 8px;
+  border-radius: 14px;
+  font-size: 14px;
+}
+
+.guess-screen .compact-hero {
+  flex: 0 0 auto;
+  padding: 10px;
+}
+
+.guess-screen .hero-copy {
+  margin-bottom: 0;
+}
+
+.final-guess-card {
+  flex: 1 1 0;
+  display: grid;
+  align-content: center;
+  gap: 7px;
+}
+
+.final-guess-card h3 {
+  font-size: clamp(30px, 9vw, 44px);
+  margin: 0;
+}
+
+.final-guess-input-wrap input {
+  min-height: 44px;
+  font-size: 18px;
+}
+
+.result-summary-card {
+  flex: 0 0 auto;
+  gap: 7px;
+  padding: 10px;
+}
+
+.result-votes-card {
+  flex: 1 1 0;
+  min-height: 0;
+  padding: 9px;
+}
+
+.compact-vote-list {
+  gap: 4px;
+}
+
+.compact-vote-row {
+  min-height: 28px;
+  padding: 4px 6px;
+}
+
+/* Legacy exported clue screens get the same one-screen treatment if routed again. */
+.clue-screen,
+.clue-input-screen {
+  flex: 1 1 0;
+  min-height: 0;
+  overflow: hidden;
+}
+
+@media (min-width: 431px) {
+  .phone-frame {
+    width: min(100%, 430px);
+  }
+}
+
+@media (max-height: 760px) {
+  .app-shell {
+    padding-top: calc(6px + env(safe-area-inset-top));
+    padding-bottom: calc(8px + env(safe-area-inset-bottom));
+  }
+
+  .phone-frame {
+    gap: 6px;
+  }
+
+  .app-header {
+    flex-basis: 50px;
+    min-height: 50px;
+    padding: 6px 8px;
+  }
+
+  .crest-mark,
+  .crest-image {
+    width: 34px;
+    height: 34px;
+  }
+
+  .brand-lockup h1 {
+    font-size: clamp(21px, 6vw, 27px);
+  }
+
+  .header-start,
+  .icon-button {
+    min-height: 34px;
+    height: 34px;
+  }
+
+  .screen-stack,
+  .home-tab-content {
+    gap: 6px;
+  }
+
+  .panel-card,
+  .hero-card,
+  .role-card,
+  .result-card {
+    padding: 9px;
+    border-radius: 18px;
+  }
+
+  .primary-action,
+  .secondary-action {
+    min-height: 38px;
+  }
+
+  .setup-bottom-nav {
+    flex-basis: 40px;
+  }
+
+  .setup-bottom-nav button {
+    min-height: 31px;
+  }
+
+  .compact-mode-switch button {
+    min-height: 32px;
+  }
+
+  .section-title-row h3,
+  .confirm-title-row h3,
+  .result-summary-card h2,
+  .vote-panel h2,
+  .guess-hero h2,
+  .role-card h2,
+  .clue-player-card h2 {
+    font-size: clamp(24px, 7.5vw, 36px);
+  }
+
+  .compact-player-grid .pass-order-row,
+  .vote-grid button,
+  .compact-target-grid button {
+    min-height: 32px;
+  }
+
+  .hold-card {
+    min-height: 108px;
+  }
+
+  .secret-card h3 {
+    padding: 9px 6px;
+  }
+
+  .online-player-list,
+  .online-vote-grid,
+  .online-result-list {
+    max-height: 90px;
+  }
+}
+
+@media (max-height: 700px) {
+  .eyebrow,
+  .helper-text,
+  .hero-copy,
+  .online-panel .section-title-row,
+  .library-actions-card .eyebrow {
+    display: none;
+  }
+
+  .app-header {
+    flex-basis: 46px;
+    min-height: 46px;
+  }
+
+  .brand-lockup h1 {
+    font-size: 22px;
+  }
+
+  .screen-stack,
+  .home-tab-content {
+    gap: 5px;
+  }
+
+  .panel-card,
+  .hero-card,
+  .role-card,
+  .result-card {
+    padding: 7px;
+  }
+
+  .app-fit-home .priority-card .section-title-row,
+  .app-fit-home .library-stats-card .section-title-row,
+  .section-title-row svg {
+    display: none;
+  }
+
+  .app-fit-home .priority-card {
+    grid-template-columns: 1fr 62px;
+  }
+
+  .app-fit-home select,
+  .app-fit-home input,
+  .app-fit-home textarea,
+  .guess-field input,
+  .final-guess-input-wrap input {
+    min-height: 32px;
+  }
+
+  .primary-action,
+  .secondary-action,
+  .app-fit-home .bottom-start {
+    min-height: 34px;
+  }
+
+  .compact-player-grid .order-actions button,
+  .compact-player-grid .order-number {
+    width: 22px;
+    height: 22px;
+  }
+
+  .secret-card small,
+  .reveal-layout > .panel-card:not(.role-card) small,
+  .result-votes-card .section-title-row,
+  .clue-history-card .section-title-row,
+  .clue-player-card p {
+    display: none;
+  }
+}

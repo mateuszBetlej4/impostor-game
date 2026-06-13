@@ -11,6 +11,66 @@ import {
   WordLibraryStats,
 } from './home/index.js';
 
+function HomeBriefingCard({ homeTab, setupMode, players, category, impostorCount, settings, selectedWordCount, usedWordCount, totalWords, canStart, hasScores }) {
+  const panels = {
+    play: {
+      eyebrow: setupMode === 'online' ? 'Online lobby' : 'Local lobby',
+      title: canStart ? 'Ready to brief' : 'Build the crew',
+      chips: [
+        ['Players', players.length],
+        ['Set', category === 'Random' ? 'Random' : category.replace('Custom: ', '')],
+        ['Impostors', impostorCount],
+      ],
+    },
+    players: {
+      eyebrow: 'Roster control',
+      title: players.length >= 3 ? 'Crew assembled' : 'Need more players',
+      chips: [
+        ['Players', players.length],
+        ['Order', settings.randomisePassOrder ? 'Random' : 'Manual'],
+        ['Scores', hasScores ? 'Active' : 'Clean'],
+      ],
+    },
+    rules: {
+      eyebrow: 'Rules loadout',
+      title: 'Round modifiers',
+      chips: [
+        ['Clues', settings.guessRounds],
+        ['Final guess', settings.allowImpostorFinalGuess ? 'On' : 'Off'],
+        ['Hint', settings.showCategoryToImpostor ? 'On' : 'Off'],
+      ],
+    },
+    library: {
+      eyebrow: 'Word arsenal',
+      title: 'Secret pool',
+      chips: [
+        ['Selected', selectedWordCount],
+        ['Used', `${usedWordCount}/${totalWords}`],
+        ['Mode', category === 'Random' ? 'Random' : 'Custom'],
+      ],
+    },
+  };
+
+  const current = panels[homeTab] || panels.play;
+
+  return (
+    <section className={`home-briefing-card ${canStart ? 'is-ready' : 'is-locked'}`}>
+      <div className="briefing-main">
+        <span>{current.eyebrow}</span>
+        <strong>{current.title}</strong>
+      </div>
+      <div className="briefing-chip-grid">
+        {current.chips.map(([label, value]) => (
+          <div key={label}>
+            <span>{label}</span>
+            <strong>{value}</strong>
+          </div>
+        ))}
+      </div>
+    </section>
+  );
+}
+
 export function HomeScreen({
   homeTab,
   setHomeTab,
@@ -65,8 +125,24 @@ export function HomeScreen({
   }
 
   return (
-    <div className="screen-stack home-tab-layout app-fit-home">
+    <div className={`screen-stack home-tab-layout app-fit-home home-tab-${homeTab}${showSetBuilder ? ' is-building-set' : ''}`}>
       <div className="home-tab-content">
+        {!showSetBuilder && (
+          <HomeBriefingCard
+            homeTab={homeTab}
+            setupMode={setupMode}
+            players={players}
+            category={category}
+            impostorCount={impostorCount}
+            settings={settings}
+            selectedWordCount={selectedWordCount}
+            usedWordCount={usedWordCount}
+            totalWords={totalWords}
+            canStart={canStart}
+            hasScores={hasScores}
+          />
+        )}
+
         {homeTab === 'play' && (
           <>
             <PlayModeSelector setupMode={setupMode} setSetupMode={setSetupMode} />

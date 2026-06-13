@@ -11,6 +11,11 @@ export function ConfirmScreen({
 }) {
   const playerPreview = players.slice(0, 4).join(', ');
   const extraPlayers = Math.max(0, players.length - 4);
+  const enabledRules = [
+    settings.hotSeatDefense ? 'Hot Seat' : null,
+    settings.yesNoQuestionRound ? 'Question Round' : null,
+    settings.allowImpostorFinalGuess ? 'Final Guess' : null,
+  ].filter(Boolean);
 
   return (
     <div className="screen-stack confirm-screen-fit">
@@ -36,8 +41,8 @@ export function ConfirmScreen({
             <strong>{settings.guessRounds}</strong>
           </div>
           <div>
-            <span>Timer</span>
-            <strong>{settings.discussionSeconds ? `${settings.discussionSeconds}s` : 'Off'}</strong>
+            <span>Rules</span>
+            <strong>{enabledRules.length ? enabledRules.join(', ') : 'Classic'}</strong>
           </div>
         </div>
 

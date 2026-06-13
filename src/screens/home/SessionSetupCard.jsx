@@ -25,18 +25,9 @@ export function SessionSetupCard({
     });
   }
 
-  const fieldStyle = { minWidth: 0, display: 'grid', gap: 8 };
-  const selectStyle = { width: '100%', minWidth: 0 };
-
   return (
-    <section
-      className="panel-card settings-card priority-card"
-      style={{
-        overflow: 'visible',
-        gap: 12,
-      }}
-    >
-      <div className="section-title-row" style={{ marginBottom: 4 }}>
+    <section className="panel-card settings-card session-setup-card">
+      <div className="section-title-row session-setup-title">
         <div>
           <p className="eyebrow">Session</p>
           <h3>Game setup</h3>
@@ -44,10 +35,10 @@ export function SessionSetupCard({
         <Sparkles size={20} />
       </div>
 
-      <div style={{ display: 'grid', gap: 10, minWidth: 0 }}>
-        <label style={fieldStyle}>
+      <div className="session-setup-fields">
+        <label className="session-field session-field-full">
           <span>Category / set</span>
-          <select style={selectStyle} value={category} onChange={(event) => setCategory(event.target.value)}>
+          <select value={category} onChange={(event) => setCategory(event.target.value)}>
             <option value="Random">Random</option>
             {categoryNames.map((name) => (
               <option key={name} value={name}>{name}</option>
@@ -55,42 +46,26 @@ export function SessionSetupCard({
           </select>
         </label>
 
-        <div
-          style={{
-            display: 'grid',
-            gridTemplateColumns: 'minmax(0, 1fr) minmax(0, 1fr)',
-            gap: 10,
-            minWidth: 0,
-          }}
-        >
-          <label style={fieldStyle}>
-            <span>Impostors</span>
-            <select style={selectStyle} value={impostorCount} onChange={(event) => setImpostorCount(Number(event.target.value))}>
-              {Array.from({ length: maxImpostors }, (_, index) => index + 1).map((count) => (
-                <option key={count} value={count}>{count}</option>
-              ))}
-            </select>
-          </label>
+        <label className="session-field">
+          <span>Impostors</span>
+          <select value={impostorCount} onChange={(event) => setImpostorCount(Number(event.target.value))}>
+            {Array.from({ length: maxImpostors }, (_, index) => index + 1).map((count) => (
+              <option key={count} value={count}>{count}</option>
+            ))}
+          </select>
+        </label>
 
-          <label style={fieldStyle}>
-            <span>Clue rounds</span>
-            <select style={selectStyle} value={settings.guessRounds} onChange={(event) => patchSettings({ guessRounds: Number(event.target.value) })}>
-              {[0, 1, 2, 3, 4].map((value) => (
-                <option key={value} value={value}>{value === 0 ? 'Skip' : value}</option>
-              ))}
-            </select>
-          </label>
-        </div>
+        <label className="session-field">
+          <span>Clue rounds</span>
+          <select value={settings.guessRounds} onChange={(event) => patchSettings({ guessRounds: Number(event.target.value) })}>
+            {[0, 1, 2, 3, 4].map((value) => (
+              <option key={value} value={value}>{value === 0 ? 'Skip' : value}</option>
+            ))}
+          </select>
+        </label>
       </div>
 
-      <div
-        className="toggle-list"
-        style={{
-          display: 'grid',
-          gap: 8,
-          minWidth: 0,
-        }}
-      >
+      <div className="session-toggle-list">
         <Toggle
           label="Show category"
           checked={settings.showCategoryToImpostor}

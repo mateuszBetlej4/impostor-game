@@ -20,7 +20,6 @@ import {
 } from './game/index.js';
 import { DEFAULT_SETTINGS, SESSION_PRESETS } from './modeData.js';
 import {
-  BonusVoteScreen,
   ClueInputScreen,
   ConfirmScreen,
   GuessScreen,
@@ -29,7 +28,29 @@ import {
   RevealScreen,
   VoteScreen,
 } from './screens/index.js';
+import { HotSeatScreen } from './screens/HotSeatScreen.jsx';
+import { TieDuelScreen } from './screens/TieDuelScreen.jsx';
+import { YesNoQuestionScreen } from './screens/YesNoQuestionScreen.jsx';
 import { WORD_BANK } from './wordBank.js';
+
+const YES_NO_QUESTIONS = [
+  'Would you usually find this indoors?',
+  'Would you usually find this outdoors?',
+  'Can you buy this?',
+  'Is this alive?',
+  'Would a child know what this is?',
+  'Is this connected to food or drink?',
+  'Is this bigger than a person?',
+  'Would you use this every day?',
+  'Is this usually expensive?',
+  'Can you hold this in your hand?',
+  'Is this connected to travel?',
+  'Is this something people do for fun?',
+];
+
+function pickYesNoQuestion() {
+  return YES_NO_QUESTIONS[Math.floor(Math.random() * YES_NO_QUESTIONS.length)];
+}
 
 function App() {
   const [screen, setScreen] = useState('home');
@@ -44,8 +65,14 @@ function App() {
   const [roundStartIndex, setRoundStartIndex] = useState(0);
   const [roleVisible, setRoleVisible] = useState(false);
   const [votingPlayerIndex, setVotingPlayerIndex] = useState(0);
+  const [questionPlayerIndex, setQuestionPlayerIndex] = useState(0);
+  const [hotSeatVoterIndex, setHotSeatVoterIndex] = useState(0);
+  const [tieDuelClueIndex, setTieDuelClueIndex] = useState(0);
+  const [tieDuelVotingIndex, setTieDuelVotingIndex] = useState(0);
   const [guessValue, setGuessValue] = useState('');
   const [clueValue, setClueValue] = useState('');
+  const [hotSeatClueValue, setHotSeatClueValue] = useState('');
+  const [tieDuelClueValue, setTieDuelClueValue] = useState('');
   const [scores, setScores] = useState(() => loadJson(SCORE_KEY, {}));
   const [usedWords, setUsedWords] = useState(() => loadJson(USED_WORDS_KEY, {}));
   const [customSets, setCustomSets] = useState(() => loadJson(CUSTOM_SETS_KEY, {}));
@@ -60,6 +87,15 @@ function App() {
   const currentRevealPlayer = round ? round.passOrder[round.revealIndex] : null;
   const currentCluePlayer = round ? round.passOrder[round.cluePlayerIndex || 0] : null;
   const currentVotingPlayer = round ? round.passOrder[votingPlayerIndex] : null;
+  const currentQuestionPlayer = round ? round.passOrder[questionPlayerIndex] : null;
+  const hotSeatVoters = round ? round.passOrder.filter((player) => player !== round.hotSeatPlayer) : [];
+  const currentHotSeatVoter = hotSeatVoters[hotSeatVoterIndex];
+  const hotSeatRevoteVoters = round ? round.passOrder.filter((player) => player !== round.hotSeatPlayer) : [];
+  const currentHotSeatRevoteVoter = hotSeatRevoteVoters[votingPlayerIndex];
+  const tieDuelCandidates = round?.bonusCandidates || [];
+  const tieDuelCluePlayer = tieDuelCandidates[tieDuelClueIndex];
+  const tieDuelVoters = round ? getTieDuelVoters(round) : [];
+  const currentTieDuelVoter = tieDuelVoters[tieDuelVotingIndex];
   const totalWords = categoryNames.reduce((sum, name) => sum + allWordBank[name].length, 0);
   const usedWordCount = Object.entries(usedWords).reduce((sum, [name, words]) => sum + (allWordBank[name] ? words.length : 0), 0);
   const selectedWordCount = category === 'Random' ? totalWords : (allWordBank[category]?.length || 0);
@@ -75,12 +111,23 @@ function App() {
 
   const voteResult = useMemo(() => {
     if (!round) return null;
-    const result = countVotes(round.votes, players);
-    return { ...result, caught: result.top.some((name) => round.impostors.has(name)) };
+    const visibleVotes = round.hotSeatAccepted ? round.hotSeatRevoteVotes : round.votes;
+    const result = countVotes(visibleVotes || {}, players);
+    return { ...result, caught: Boolean(round.eliminatedPlayer && round.impostors.has(round.eliminatedPlayer)) };
   }, [players, round]);
 
+  function getTieDuelVoters(roundSnapshot) {
+    const candidates = roundSnapshot.bonusCandidates || [];
+    const nonCandidates = roundSnapshot.passOrder.filter((player) => !candidates.includes(player));
+    return nonCandidates.length > 0 ? nonCandidates : roundSnapshot.passOrder;
+  }
+
   function patchSettings(patch) {
-    setSettings((current) => ({ ...current, ...patch }));
+    setSettings((current) => {
+      const next = { ...current, ...patch };
+      if (next.hotSeatDefense) next.allowImpostorFinalGuess = false;
+      return next;
+    });
   }
 
   function confirmStart() {
@@ -91,21 +138,44 @@ function App() {
     return settings.randomisePassOrder ? shuffle(players) : rotatePassOrder(players, roundStartIndex);
   }
 
+  function resetRoundInputs() {
+    setRoleVisible(false);
+    setVotingPlayerIndex(0);
+    setQuestionPlayerIndex(0);
+    setHotSeatVoterIndex(0);
+    setTieDuelClueIndex(0);
+    setTieDuelVotingIndex(0);
+    setGuessValue('');
+    setClueValue('');
+    setHotSeatClueValue('');
+    setTieDuelClueValue('');
+  }
+
+  function buildRound({ selected, passOrder, impostors }) {
+    return makeRound({
+      players,
+      passOrder,
+      category: selected.category,
+      word: selected.word,
+      impostorCount,
+      settings,
+      impostors,
+      yesNoQuestion: settings.yesNoQuestionRound ? pickYesNoQuestion() : '',
+    });
+  }
+
   function startNewRound() {
     const selected = selectWord(category, usedWords, allWordBank, categoryNames);
     const passOrder = getNextPassOrder();
 
     setUsedWords(selected.nextUsedWords);
-    setRound(makeRound({ players, passOrder, category: selected.category, word: selected.word, impostorCount, settings }));
+    setRound(buildRound({ selected, passOrder }));
 
     if (!settings.randomisePassOrder) {
       setRoundStartIndex((current) => (players.length ? (current + 1) % players.length : 0));
     }
 
-    setRoleVisible(false);
-    setVotingPlayerIndex(0);
-    setGuessValue('');
-    setClueValue('');
+    resetRoundInputs();
     setScreen('reveal');
   }
 
@@ -114,20 +184,9 @@ function App() {
 
     const selected = selectWord(category, usedWords, allWordBank, categoryNames);
     setUsedWords(selected.nextUsedWords);
-    setRound(makeRound({
-      players,
-      passOrder: round.passOrder,
-      category: selected.category,
-      word: selected.word,
-      impostorCount,
-      settings,
-      impostors: round.impostors,
-    }));
+    setRound(buildRound({ selected, passOrder: round.passOrder, impostors: round.impostors }));
 
-    setRoleVisible(false);
-    setVotingPlayerIndex(0);
-    setGuessValue('');
-    setClueValue('');
+    resetRoundInputs();
     setScreen('reveal');
   }
 
@@ -202,18 +261,24 @@ function App() {
     });
   }
 
+  function nextScreenAfterClues(roundSnapshot) {
+    return roundSnapshot.settings.yesNoQuestionRound ? 'yesNoQuestion' : 'vote';
+  }
+
   function finishCurrentReveal() {
     if (!round) return;
 
     const nextIndex = round.revealIndex + 1;
     const revealedPlayers = [...round.revealedPlayers, currentRevealPlayer];
+    const nextRound = { ...round, revealedPlayers, revealIndex: nextIndex };
 
     setRoleVisible(false);
-    setRound({ ...round, revealedPlayers, revealIndex: nextIndex });
+    setRound(nextRound);
 
     if (nextIndex >= round.passOrder.length) {
       setClueValue('');
-      setScreen(round.settings.guessRounds > 0 ? 'clueInput' : 'vote');
+      setQuestionPlayerIndex(0);
+      setScreen(round.settings.guessRounds > 0 ? 'clueInput' : nextScreenAfterClues(nextRound));
     }
   }
 
@@ -234,8 +299,10 @@ function App() {
 
     if (nextPlayerIndex >= round.passOrder.length) {
       if (round.clueRound >= totalClueRounds) {
-        setRound({ ...round, clues: nextClues, cluePlayerIndex: 0 });
-        setScreen('vote');
+        const nextRound = { ...round, clues: nextClues, cluePlayerIndex: 0 };
+        setRound(nextRound);
+        setQuestionPlayerIndex(0);
+        setScreen(nextScreenAfterClues(nextRound));
         return;
       }
 
@@ -251,93 +318,302 @@ function App() {
     setRound({ ...round, clues: nextClues, cluePlayerIndex: nextPlayerIndex });
   }
 
-  function applyScores(winner) {
-    if (!round) return;
-    setScores((current) => applyRoundScore({ currentScores: current, players, round, winner }));
+  function submitYesNoAnswer(answer) {
+    if (!round || !currentQuestionPlayer) return;
+
+    const nextAnswers = { ...(round.yesNoAnswers || {}), [currentQuestionPlayer]: answer };
+    const nextIndex = questionPlayerIndex + 1;
+    const nextRound = { ...round, yesNoAnswers: nextAnswers };
+
+    setRound(nextRound);
+
+    if (nextIndex >= round.passOrder.length) {
+      setScreen('yesNoResults');
+      return;
+    }
+
+    setQuestionPlayerIndex(nextIndex);
   }
 
-  function resolveVotedOut(votedOut) {
-    if (!round) return;
+  function continueFromQuestionResults() {
+    setVotingPlayerIndex(0);
+    setScreen('vote');
+  }
 
-    const caught = round.impostors.has(votedOut);
-    if (caught && round.settings.allowImpostorFinalGuess) {
+  function finishRoundFrom(roundSnapshot, winner, updates = {}) {
+    const nextRound = { ...roundSnapshot, ...updates, outcome: winner };
+    setRound(nextRound);
+    setScores((current) => applyRoundScore({ currentScores: current, players, round: nextRound, winner }));
+    setScreen('result');
+  }
+
+  function startHotSeatFrom(roundSnapshot, player, extraUpdates = {}) {
+    setRound({
+      ...roundSnapshot,
+      ...extraUpdates,
+      hotSeatPlayer: player,
+      hotSeatUsed: true,
+      hotSeatFinalClue: '',
+      hotSeatVotes: {},
+      hotSeatAccepted: null,
+      hotSeatRevoteVotes: {},
+      bonusCandidates: [],
+      bonusReason: '',
+      bonusDuelClues: {},
+      bonusVotes: {},
+      bonusWinner: null,
+    });
+    setHotSeatClueValue('');
+    setHotSeatVoterIndex(0);
+    setVotingPlayerIndex(0);
+    setScreen('hotSeatClue');
+  }
+
+  function resolveVotedOutFrom(roundSnapshot, votedOut, sourcePhase = 'initial', extraUpdates = {}) {
+    const caught = roundSnapshot.impostors.has(votedOut);
+
+    if (roundSnapshot.settings.hotSeatDefense && !roundSnapshot.hotSeatUsed && sourcePhase === 'initial') {
+      startHotSeatFrom(roundSnapshot, votedOut, extraUpdates);
+      return;
+    }
+
+    if (caught && roundSnapshot.settings.allowImpostorFinalGuess && !roundSnapshot.settings.hotSeatDefense) {
+      setRound({ ...roundSnapshot, ...extraUpdates, eliminatedPlayer: votedOut });
       setScreen('guess');
       return;
     }
 
-    applyScores(caught ? 'mob' : 'impostors');
-    setScreen('result');
+    finishRoundFrom(roundSnapshot, caught ? 'mob' : 'impostors', {
+      ...extraUpdates,
+      eliminatedPlayer: votedOut,
+      resultReason: caught
+        ? `${votedOut} was an impostor.`
+        : `${votedOut} was MOB, so the impostors escaped.`,
+    });
   }
 
-  function handleFinalVotes(nextVotes) {
-    if (!round) return;
+  function startTieDuelFrom(roundSnapshot, candidates, sourcePhase, extraUpdates = {}) {
+    const reason = sourcePhase === 'hot-seat-revote'
+      ? 'Hot Seat revote tied. Tied players enter a Tie Duel.'
+      : 'Vote tied between MOB and impostor candidates. Tied players enter a Tie Duel.';
 
-    const result = countVotes(nextVotes, players);
-    const isEveryoneTied = result.top.length === players.length;
+    setRound({
+      ...roundSnapshot,
+      ...extraUpdates,
+      bonusCandidates: candidates,
+      bonusReason: reason,
+      bonusDuelClues: {},
+      bonusVotes: {},
+      bonusWinner: null,
+      bonusTieSource: sourcePhase,
+    });
+    setTieDuelClueIndex(0);
+    setTieDuelVotingIndex(0);
+    setTieDuelClueValue('');
+    setScreen('tieDuelClues');
+  }
 
-    if (isEveryoneTied || result.top.length > 1) {
-      setRound({
-        ...round,
-        votes: nextVotes,
-        bonusCandidates: result.top,
-        bonusReason: isEveryoneTied
-          ? 'Everybody tied. Discuss as a group and choose one final suspect.'
-          : 'Vote tied. Discuss as a group and choose one final suspect.',
+  function resolveTieFrom(roundSnapshot, tiedCandidates, sourcePhase, extraUpdates = {}) {
+    const tiedImpostors = tiedCandidates.filter((player) => roundSnapshot.impostors.has(player));
+    const tiedMob = tiedCandidates.filter((player) => !roundSnapshot.impostors.has(player));
+
+    if (tiedImpostors.length === 0) {
+      finishRoundFrom(roundSnapshot, 'impostors', {
+        ...extraUpdates,
+        resultReason: 'The top tied players were all MOB. No Tie Duel needed — impostors win.',
       });
-      setScreen('bonusVote');
       return;
     }
 
-    setRound({ ...round, votes: nextVotes, bonusCandidates: [], bonusReason: '' });
-    resolveVotedOut(result.top[0]);
+    if (tiedMob.length === 0) {
+      const selectedImpostor = tiedImpostors[0];
+      if (roundSnapshot.settings.hotSeatDefense && !roundSnapshot.hotSeatUsed && sourcePhase === 'initial') {
+        startHotSeatFrom(roundSnapshot, selectedImpostor, {
+          ...extraUpdates,
+          resultReason: 'All tied players were impostors. One enters the Hot Seat.',
+        });
+        return;
+      }
+
+      finishRoundFrom(roundSnapshot, 'mob', {
+        ...extraUpdates,
+        eliminatedPlayer: selectedImpostor,
+        resultReason: 'The top tied players were all impostors. MOB caught an impostor.',
+      });
+      return;
+    }
+
+    startTieDuelFrom(roundSnapshot, tiedCandidates, sourcePhase, extraUpdates);
+  }
+
+  function handleFinalVotesFrom(roundSnapshot, votes, sourcePhase = 'initial') {
+    const targetPlayers = sourcePhase === 'hot-seat-revote'
+      ? roundSnapshot.passOrder.filter((player) => player !== roundSnapshot.hotSeatPlayer)
+      : players;
+    const result = countVotes(votes, targetPlayers);
+
+    if (result.top.length > 1) {
+      resolveTieFrom(roundSnapshot, result.top, sourcePhase);
+      return;
+    }
+
+    resolveVotedOutFrom(roundSnapshot, result.top[0], sourcePhase);
   }
 
   function submitVote(target) {
-    if (!round) return;
+    if (!round || !currentVotingPlayer) return;
 
     const nextVotes = { ...round.votes, [currentVotingPlayer]: target };
     const nextIndex = votingPlayerIndex + 1;
+    const nextRound = { ...round, votes: nextVotes };
 
-    setRound({ ...round, votes: nextVotes });
+    setRound(nextRound);
 
     if (nextIndex >= round.passOrder.length) {
-      handleFinalVotes(nextVotes);
+      handleFinalVotesFrom(nextRound, nextVotes, 'initial');
       return;
     }
 
     setVotingPlayerIndex(nextIndex);
   }
 
-  function submitBonusVote(target) {
-    if (!round) return;
-    setRound({ ...round, bonusCandidates: [], bonusReason: '', bonusWinner: target });
-    resolveVotedOut(target);
+  function submitTieDuelClue() {
+    if (!round || !tieDuelCluePlayer) return;
+
+    const clue = normalisePlayerName(tieDuelClueValue);
+    if (!clue) return;
+
+    const nextClues = { ...(round.bonusDuelClues || {}), [tieDuelCluePlayer]: clue };
+    const nextIndex = tieDuelClueIndex + 1;
+    const nextRound = { ...round, bonusDuelClues: nextClues };
+
+    setTieDuelClueValue('');
+    setRound(nextRound);
+
+    if (nextIndex >= round.bonusCandidates.length) {
+      setTieDuelVotingIndex(0);
+      setScreen('tieDuelVote');
+      return;
+    }
+
+    setTieDuelClueIndex(nextIndex);
+  }
+
+  function submitTieDuelVote(target) {
+    if (!round || !currentTieDuelVoter) return;
+
+    const nextVotes = { ...(round.bonusVotes || {}), [currentTieDuelVoter]: target };
+    const nextIndex = tieDuelVotingIndex + 1;
+    const nextRound = { ...round, bonusVotes: nextVotes };
+
+    setRound(nextRound);
+
+    if (nextIndex < tieDuelVoters.length) {
+      setTieDuelVotingIndex(nextIndex);
+      return;
+    }
+
+    const result = countVotes(nextVotes, round.bonusCandidates);
+    const selected = result.top.length === 1
+      ? result.top[0]
+      : result.top[Math.floor(Math.random() * result.top.length)];
+    const sourcePhase = round.bonusTieSource || 'initial';
+
+    resolveVotedOutFrom(nextRound, selected, sourcePhase, {
+      bonusWinner: selected,
+      resultReason: result.top.length === 1
+        ? `${selected} was selected after the Tie Duel.`
+        : `Tie Duel was still tied. ${selected} was randomly selected from the tied players.`,
+    });
+  }
+
+  function submitHotSeatClue() {
+    if (!round || !round.hotSeatPlayer) return;
+
+    const clue = normalisePlayerName(hotSeatClueValue);
+    if (!clue) return;
+
+    setRound({ ...round, hotSeatFinalClue: clue });
+    setHotSeatClueValue('');
+    setHotSeatVoterIndex(0);
+    setScreen('hotSeatAcceptance');
+  }
+
+  function submitHotSeatAcceptanceVote(vote) {
+    if (!round || !currentHotSeatVoter) return;
+
+    const nextVotes = { ...(round.hotSeatVotes || {}), [currentHotSeatVoter]: vote };
+    const nextIndex = hotSeatVoterIndex + 1;
+    const nextRound = { ...round, hotSeatVotes: nextVotes };
+
+    setRound(nextRound);
+
+    if (nextIndex < hotSeatVoters.length) {
+      setHotSeatVoterIndex(nextIndex);
+      return;
+    }
+
+    const acceptVotes = Object.values(nextVotes).filter((value) => value === 'accept').length;
+    const rejectVotes = Object.values(nextVotes).filter((value) => value === 'reject').length;
+    const accepted = acceptVotes > rejectVotes;
+
+    if (!accepted) {
+      resolveVotedOutFrom(
+        { ...nextRound, hotSeatAccepted: false },
+        round.hotSeatPlayer,
+        'hot-seat-rejected',
+        { resultReason: `Hot Seat defense rejected ${acceptVotes}-${rejectVotes}.` },
+      );
+      return;
+    }
+
+    setRound({
+      ...nextRound,
+      hotSeatAccepted: true,
+      hotSeatRevoteVotes: {},
+      resultReason: `Hot Seat defense accepted ${acceptVotes}-${rejectVotes}. Redo vote without ${round.hotSeatPlayer}.`,
+    });
+    setVotingPlayerIndex(0);
+    setScreen('hotSeatRevote');
+  }
+
+  function submitHotSeatRevote(target) {
+    if (!round || !currentHotSeatRevoteVoter) return;
+
+    const nextVotes = { ...(round.hotSeatRevoteVotes || {}), [currentHotSeatRevoteVoter]: target };
+    const nextIndex = votingPlayerIndex + 1;
+    const nextRound = { ...round, hotSeatRevoteVotes: nextVotes };
+
+    setRound(nextRound);
+
+    if (nextIndex >= hotSeatRevoteVoters.length) {
+      handleFinalVotesFrom(nextRound, nextVotes, 'hot-seat-revote');
+      return;
+    }
+
+    setVotingPlayerIndex(nextIndex);
   }
 
   function submitImpostorGuess() {
     if (!round) return;
 
     const impostorWins = isCorrectSecretGuess(guessValue, round.word);
-    setRound({ ...round, impostorGuess: guessValue, outcome: impostorWins ? 'impostors' : 'mob' });
-    applyScores(impostorWins ? 'impostors' : 'mob');
-    setScreen('result');
+    finishRoundFrom(round, impostorWins ? 'impostors' : 'mob', {
+      impostorGuess: guessValue,
+      resultReason: impostorWins ? 'The impostor guessed the secret word.' : 'The final guess failed.',
+    });
   }
 
   function skipGuess() {
     if (!round) return;
 
-    setRound({ ...round, outcome: 'mob' });
-    applyScores('mob');
-    setScreen('result');
+    finishRoundFrom(round, 'mob', { resultReason: 'The impostor skipped the final guess.' });
   }
 
   function resetGame() {
     setRound(null);
     setRoundStartIndex(0);
-    setRoleVisible(false);
-    setVotingPlayerIndex(0);
-    setGuessValue('');
-    setClueValue('');
+    resetRoundInputs();
     setScreen('home');
   }
 
@@ -430,6 +706,25 @@ function App() {
             submitClue={submitClue}
           />
         )}
+
+        {screen === 'yesNoQuestion' && round && (
+          <YesNoQuestionScreen
+            mode="answer"
+            round={round}
+            player={currentQuestionPlayer}
+            questionPlayerIndex={questionPlayerIndex}
+            submitAnswer={submitYesNoAnswer}
+          />
+        )}
+
+        {screen === 'yesNoResults' && round && (
+          <YesNoQuestionScreen
+            mode="results"
+            round={round}
+            continueToVote={continueFromQuestionResults}
+          />
+        )}
+
         {screen === 'vote' && round && (
           <VoteScreen
             players={players}
@@ -439,7 +734,66 @@ function App() {
             submitVote={submitVote}
           />
         )}
-        {screen === 'bonusVote' && round && <BonusVoteScreen round={round} submitBonusVote={submitBonusVote} />}
+
+        {screen === 'tieDuelClues' && round && (
+          <TieDuelScreen
+            mode="clues"
+            round={round}
+            candidate={tieDuelCluePlayer}
+            clueIndex={tieDuelClueIndex}
+            clueValue={tieDuelClueValue}
+            setClueValue={setTieDuelClueValue}
+            submitClue={submitTieDuelClue}
+          />
+        )}
+
+        {screen === 'tieDuelVote' && round && (
+          <TieDuelScreen
+            mode="vote"
+            round={round}
+            voter={currentTieDuelVoter}
+            voterIndex={tieDuelVotingIndex}
+            totalVoters={tieDuelVoters.length}
+            voteTargets={round.bonusCandidates}
+            submitVote={submitTieDuelVote}
+          />
+        )}
+
+        {screen === 'hotSeatClue' && round && (
+          <HotSeatScreen
+            mode="clue"
+            round={round}
+            clueValue={hotSeatClueValue}
+            setClueValue={setHotSeatClueValue}
+            submitClue={submitHotSeatClue}
+          />
+        )}
+
+        {screen === 'hotSeatAcceptance' && round && (
+          <HotSeatScreen
+            mode="acceptance"
+            round={round}
+            voter={currentHotSeatVoter}
+            voterIndex={hotSeatVoterIndex}
+            totalVoters={hotSeatVoters.length}
+            submitAcceptanceVote={submitHotSeatAcceptanceVote}
+          />
+        )}
+
+        {screen === 'hotSeatRevote' && round && (
+          <VoteScreen
+            players={hotSeatRevoteVoters}
+            targetPlayers={hotSeatRevoteVoters}
+            currentVotingPlayer={currentHotSeatRevoteVoter}
+            votingPlayerIndex={votingPlayerIndex}
+            totalPlayers={hotSeatRevoteVoters.length}
+            submitVote={submitHotSeatRevote}
+            eyebrow="Hot Seat revote"
+            title={`${currentHotSeatRevoteVoter}, who is hiding now?`}
+            helperText={`${round.hotSeatPlayer} is safe and excluded from this vote.`}
+          />
+        )}
+
         {screen === 'guess' && round && (
           <GuessScreen
             impostors={[...round.impostors]}

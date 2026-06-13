@@ -1,6 +1,19 @@
 import { normalisePlayerName } from './playerUtils.js';
 import { pickRandom } from './random.js';
 
+export function getCategoryNames(wordBank) {
+  return Object.keys(wordBank);
+}
+
+export function pickWordFromBank({ category, wordBank }) {
+  const categoryNames = getCategoryNames(wordBank);
+  const chosenCategory = category === 'Random' || !wordBank[category]
+    ? pickRandom(categoryNames)
+    : category;
+  const words = wordBank[chosenCategory] || [];
+  return { category: chosenCategory, word: pickRandom(words) };
+}
+
 export function getUnusedWords(category, usedWords, wordBank) {
   const used = new Set(usedWords[category] || []);
   return (wordBank[category] || []).filter((word) => !used.has(word));
@@ -12,7 +25,7 @@ export function getSecretStructureHint(word) {
   return `${parts.length}-word secret`;
 }
 
-export function selectWord(selectedCategory, usedWords, wordBank, categoryNames) {
+export function selectWord(selectedCategory, usedWords, wordBank, categoryNames = getCategoryNames(wordBank)) {
   let category = selectedCategory;
   let nextUsedWords = { ...usedWords };
 

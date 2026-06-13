@@ -50,7 +50,7 @@ export async function loadRoundVotes(roundId, votePhase = null) {
   return result.data || [];
 }
 
-function getTieResolution({ players, votedOut }) {
+function getTieResolution({ votedOut }) {
   const hasImpostor = votedOut.some((player) => player.role === 'impostor');
   const hasMob = votedOut.some((player) => player.role !== 'impostor');
 
@@ -69,6 +69,7 @@ function getTieResolution({ players, votedOut }) {
       outcome: 'mob',
       reason: 'The top tied players were all impostors. MOB caught an impostor.',
       eliminatedPlayerId: votedOut[0]?.id || null,
+      selectedPlayer: votedOut[0] || null,
     };
   }
 
@@ -94,9 +95,29 @@ export async function finishOnlineVote({ session, identity, round, players, vote
   const result = getOnlineVoteResult({ players: eligiblePlayers, votes: phaseVotes });
 
   if (result.votedOut.length > 1) {
-    const tie = getTieResolution({ players: eligiblePlayers, votedOut: result.votedOut });
+    const tie = getTieResolution({ votedOut: result.votedOut });
 
     if (tie.resolved) {
+      if (tie.outcome === 'mob' && settings.hotSeatDefense && !round.hot_seat_used && votePhase === 'initial' && tie.selectedPlayer) {
+        const roundResult = await client
+          .from('online_rounds')
+          .update({
+            phase: 'hot_seat_clue',
+            hot_seat_player_id: tie.selectedPlayer.id,
+            hot_seat_used: true,
+            hot_seat_final_clue: null,
+            hot_seat_accepted: null,
+            result_reason: 'All tied players were impostors. One enters the Hot Seat.',
+          })
+          .eq('id', round.id)
+          .select()
+          .single();
+
+        if (roundResult.error) throw roundResult.error;
+        const sessionResult = await setOnlinePhase({ session, identity, status: 'hot_seat_clue' });
+        return { session: sessionResult, round: roundResult.data, result };
+      }
+
       const roundResult = await client
         .from('online_rounds')
         .update({
@@ -179,7 +200,7 @@ export async function finishOnlineVote({ session, identity, round, players, vote
       result_reason: votedOut
         ? (impostorCaught ? `${votedOut.name} was an impostor.` : `${votedOut.name} was MOB, so the impostors escaped.`)
         : 'No player received votes.',
-      phase: nextStatus === 'guess' ? 'result' : 'result',
+      phase: 'result',
     })
     .eq('id', round.id)
     .select()

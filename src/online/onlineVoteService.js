@@ -1,3 +1,4 @@
+import { isCorrectSecretGuess } from '../game/index.js';
 import { supabase, isSupabaseConfigured } from './supabaseClient.js';
 
 function getClient() {
@@ -128,9 +129,7 @@ export async function finishOnlineVote({ session, identity, round, players, vote
 
 export async function submitOnlineImpostorGuess({ session, identity, round, guess }) {
   const client = getClient();
-  const normalisedGuess = guess.trim().toLowerCase();
-  const actual = String(round.word || '').trim().toLowerCase();
-  const impostorWins = normalisedGuess === actual || (normalisedGuess.length > 2 && actual.includes(normalisedGuess));
+  const impostorWins = isCorrectSecretGuess(guess, round.word);
 
   const roundResult = await client
     .from('online_rounds')

@@ -42,7 +42,7 @@ Online mode requires Supabase configuration for production deployments.
 - Word history tracking and reset
 - Score tracking
 - Session presets: Casual, Chaos, Quickfire, Interrogation
-- Configurable clue rounds, discussion timer, points, pass order, category hints, and final impostor guess
+- Configurable clue rounds, points, pass order, category hints, and final impostor guess
 - Compact player management with paged mobile-friendly player lists
 - Compact voting with paged target lists for larger groups
 - Mobile viewport fit for iPhone-sized screens, including Safari safe-area constraints

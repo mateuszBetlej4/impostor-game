@@ -1,6 +1,6 @@
 import { shuffle } from './random.js';
 
-export function makeRound({ players, passOrder, category, word, impostorCount, settings, impostors }) {
+export function makeRound({ players, passOrder, category, word, impostorCount, settings, impostors, yesNoQuestion = '' }) {
   return {
     settings,
     passOrder: passOrder || (settings.randomisePassOrder ? shuffle(players) : [...players]),
@@ -14,8 +14,22 @@ export function makeRound({ players, passOrder, category, word, impostorCount, s
     clues: [],
     votes: {},
     skipVotes: {},
+    yesNoQuestion,
+    yesNoAnswers: {},
     bonusCandidates: [],
     bonusReason: '',
+    bonusDuelClues: {},
+    bonusVotes: {},
+    bonusWinner: null,
+    bonusTieSource: null,
+    hotSeatPlayer: null,
+    hotSeatFinalClue: '',
+    hotSeatVotes: {},
+    hotSeatAccepted: null,
+    hotSeatUsed: false,
+    hotSeatRevoteVotes: {},
+    eliminatedPlayer: null,
+    resultReason: '',
     impostorGuess: '',
     outcome: null,
   };

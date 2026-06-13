@@ -7,6 +7,13 @@
   "display": "standalone",
   "orientation": "portrait-primary",
   "background_color": "#050505",
-  "theme_color": "#080604",
-  "icons": []
+  "theme_color": "#050505",
+  "icons": [
+    {
+      "src": "/app-icon.svg?v=mob-logo-20260613",
+      "sizes": "512x512",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
 }

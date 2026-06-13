@@ -1,27 +1,10 @@
 import { isCorrectSecretGuess } from '../game/index.js';
 import { getClient } from './getClient.js';
+import { setOnlinePhase } from './phaseService.js';
 import { calculateOnlineVoteResult as getOnlineVoteResult } from './voteResult.js';
 
+export { setOnlinePhase } from './phaseService.js';
 export { calculateOnlineVoteResult } from './voteResult.js';
-
-export async function setOnlinePhase({ session, identity, status }) {
-  const client = getClient();
-
-  if (!identity?.isHost || identity.hostSecret !== session.host_key) {
-    throw new Error('Only the host can change the online phase.');
-  }
-
-  const result = await client
-    .from('online_sessions')
-    .update({ status, last_active_at: new Date().toISOString() })
-    .eq('id', session.id)
-    .eq('host_key', identity.hostSecret)
-    .select()
-    .single();
-
-  if (result.error) throw result.error;
-  return result.data;
-}
 
 export async function submitOnlineVote({ sessionId, roundId, voterPlayerId, playerSecret, targetPlayerId }) {
   const client = getClient();
@@ -82,18 +65,10 @@ export async function finishOnlineVote({ session, identity, round, players, vote
 
   if (roundResult.error) throw roundResult.error;
 
-  const sessionResult = await client
-    .from('online_sessions')
-    .update({ status: nextStatus, last_active_at: new Date().toISOString() })
-    .eq('id', session.id)
-    .eq('host_key', identity.hostSecret)
-    .select()
-    .single();
-
-  if (sessionResult.error) throw sessionResult.error;
+  const sessionResult = await setOnlinePhase({ session, identity, status: nextStatus });
 
   return {
-    session: sessionResult.data,
+    session: sessionResult,
     round: roundResult.data,
     result,
   };

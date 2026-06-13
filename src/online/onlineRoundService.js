@@ -1,3 +1,4 @@
+import { pickWordFromBank, shuffle } from '../game/index.js';
 import { supabase, isSupabaseConfigured } from './supabaseClient.js';
 
 function getClient() {
@@ -5,25 +6,6 @@ function getClient() {
     throw new Error('Supabase is not configured yet.');
   }
   return supabase;
-}
-
-function shuffle(items) {
-  const next = [...items];
-  for (let i = next.length - 1; i > 0; i -= 1) {
-    const j = Math.floor(Math.random() * (i + 1));
-    [next[i], next[j]] = [next[j], next[i]];
-  }
-  return next;
-}
-
-function pickWord({ category, wordBank }) {
-  const categoryNames = Object.keys(wordBank);
-  const chosenCategory = category === 'Random' || !wordBank[category]
-    ? categoryNames[Math.floor(Math.random() * categoryNames.length)]
-    : category;
-  const words = wordBank[chosenCategory] || [];
-  const word = words[Math.floor(Math.random() * words.length)];
-  return { category: chosenCategory, word };
 }
 
 export async function startOnlineRound({ session, identity, players, wordBank }) {
@@ -50,7 +32,7 @@ export async function startOnlineRound({ session, identity, players, wordBank })
 
   const impostorCount = Math.min(Number(session.impostor_count || 1), activePlayers.length - 1);
   const impostorIds = new Set(shuffle(activePlayers).slice(0, impostorCount).map((player) => player.id));
-  const selected = pickWord({ category: session.category || 'Random', wordBank });
+  const selected = pickWordFromBank({ category: session.category || 'Random', wordBank });
 
   const roundResult = await client
     .from('online_rounds')

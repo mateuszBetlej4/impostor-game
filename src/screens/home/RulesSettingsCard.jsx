@@ -1,7 +1,7 @@
 import { Trophy } from 'lucide-react';
 import { Toggle } from '../../components/index.js';
 
-export function RulesSettingsCard({ sessionPresets, settings, patchSettings, applyPreset }) {
+export function RulesSettingsCard({ settings, patchSettings }) {
   function toggleHotSeat(value) {
     patchSettings({
       hotSeatDefense: value,
@@ -24,14 +24,6 @@ export function RulesSettingsCard({ sessionPresets, settings, patchSettings, app
           <h3>Customisation</h3>
         </div>
         <Trophy size={20} />
-      </div>
-      <div className="preset-row">
-        {Object.entries(sessionPresets).map(([key, preset]) => (
-          <button key={key} type="button" className="preset-button" onClick={() => applyPreset(key)}>
-            <strong>{preset.name}</strong>
-            <small>{preset.description}</small>
-          </button>
-        ))}
       </div>
       <div className="settings-grid">
         <label>

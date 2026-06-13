@@ -1,9 +1,20 @@
 import { RotateCcw } from 'lucide-react';
 import { MOB_LOGO_SRC } from '../logoData.js';
 
+const SCREEN_LABELS = {
+  home: 'Setup',
+  confirm: 'Briefing',
+  reveal: 'Reveal',
+  clueInput: 'Clue',
+  vote: 'Vote',
+  bonusVote: 'Tie break',
+  guess: 'Final guess',
+  result: 'Result',
+};
+
 export function Header({ screen, onReset, onStart, canStart }) {
   return (
-    <header className="app-header">
+    <header className="app-header game-hud-header">
       <div className="brand-lockup">
         <img className="crest-mark crest-image" src={MOB_LOGO_SRC} alt="A$AP MOB FC crest" />
         <div>
@@ -12,6 +23,7 @@ export function Header({ screen, onReset, onStart, canStart }) {
         </div>
       </div>
       <div className="header-actions">
+        <span className="header-stage-badge">{SCREEN_LABELS[screen] || 'Game'}</span>
         {screen === 'home' && (
           <button className="header-start" type="button" disabled={!canStart} onClick={onStart}>
             Start

@@ -1,0 +1,9 @@
+.phone-frame::after,
+.panel-card::after,
+.hero-card::after,
+.role-card::after,
+.result-card::after,
+.home-briefing-card::after {
+  content: none !important;
+  display: none !important;
+}

@@ -1,11 +1,4 @@
-import { supabase, isSupabaseConfigured } from './supabaseClient.js';
-
-function getClient() {
-  if (!isSupabaseConfigured || !supabase) {
-    throw new Error('Supabase is not configured yet.');
-  }
-  return supabase;
-}
+import { getClient } from './getClient.js';
 
 export async function reconnectSession(identity) {
   const client = getClient();

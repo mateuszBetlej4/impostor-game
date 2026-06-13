@@ -11,37 +11,38 @@ import {
 } from './home/index.js';
 
 function HomeBriefingCard({ homeTab, setupMode, players, category, impostorCount, settings, selectedWordCount, usedWordCount, totalWords, canStart, hasScores }) {
+  const shortSet = category === 'Random' ? 'Random' : category.replace('Custom: ', '');
   const panels = {
     play: {
       eyebrow: setupMode === 'online' ? 'Online lobby' : 'Local lobby',
-      title: canStart ? 'Ready to configure' : 'Build the crew',
+      title: canStart ? 'Ready' : 'Need players',
       chips: [
         ['Players', players.length],
-        ['Set', category === 'Random' ? 'Random' : category.replace('Custom: ', '')],
-        ['Impostors', impostorCount],
+        ['Set', shortSet],
+        ['Imp.', impostorCount],
       ],
     },
     players: {
-      eyebrow: 'Roster control',
-      title: players.length >= 3 ? 'Crew assembled' : 'Need more players',
+      eyebrow: 'Roster',
+      title: players.length >= 3 ? 'Crew ready' : 'Need 3+',
       chips: [
         ['Players', players.length],
         ['Order', settings.randomisePassOrder ? 'Random' : 'Manual'],
-        ['Scores', hasScores ? 'Active' : 'Clean'],
+        ['Scores', hasScores ? 'On' : 'Off'],
       ],
     },
     rules: {
-      eyebrow: 'Rules loadout',
-      title: 'Round modifiers',
+      eyebrow: 'Rules',
+      title: 'Modifiers',
       chips: [
         ['Clues', settings.guessRounds],
-        ['Final guess', settings.allowImpostorFinalGuess ? 'On' : 'Off'],
+        ['Guess', settings.allowImpostorFinalGuess ? 'On' : 'Off'],
         ['Hint', settings.showCategoryToImpostor ? 'On' : 'Off'],
       ],
     },
     library: {
-      eyebrow: 'Word arsenal',
-      title: 'Secret pool',
+      eyebrow: 'Words',
+      title: 'Pool',
       chips: [
         ['Selected', selectedWordCount],
         ['Used', `${usedWordCount}/${totalWords}`],
@@ -53,16 +54,25 @@ function HomeBriefingCard({ homeTab, setupMode, players, category, impostorCount
   const current = panels[homeTab] || panels.play;
 
   return (
-    <section className={`home-briefing-card ${canStart ? 'is-ready' : 'is-locked'}`}>
-      <div className="briefing-main">
+    <section
+      className={`home-briefing-card ${canStart ? 'is-ready' : 'is-locked'}`}
+      style={{
+        display: 'grid',
+        gridTemplateColumns: 'minmax(0, 1.25fr) minmax(0, 2fr)',
+        gap: 10,
+        alignItems: 'stretch',
+        minWidth: 0,
+      }}
+    >
+      <div className="briefing-main" style={{ minWidth: 0 }}>
         <span>{current.eyebrow}</span>
-        <strong>{current.title}</strong>
+        <strong style={{ whiteSpace: 'normal', overflow: 'hidden', textOverflow: 'ellipsis', lineHeight: 0.95 }}>{current.title}</strong>
       </div>
-      <div className="briefing-chip-grid">
+      <div className="briefing-chip-grid" style={{ minWidth: 0, gridTemplateColumns: 'repeat(3, minmax(0, 1fr))' }}>
         {current.chips.map(([label, value]) => (
-          <div key={label}>
+          <div key={label} style={{ minWidth: 0, overflow: 'hidden' }}>
             <span>{label}</span>
-            <strong>{value}</strong>
+            <strong title={String(value)} style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{value}</strong>
           </div>
         ))}
       </div>
@@ -188,8 +198,8 @@ export function HomeScreen({
               selectedWordCount={selectedWordCount}
               resetUsedWords={resetUsedWords}
             />
-            <section className="panel-card library-actions-card">
-              <p className="eyebrow">Custom words</p>
+            <section className="panel-card library-actions-card" style={{ padding: 22 }}>
+              <p className="eyebrow" style={{ textAlign: 'center', marginBottom: 14 }}>Custom words</p>
               <button className="primary-action" type="button" onClick={() => setShowSetBuilder(true)}>
                 Build new set
               </button>

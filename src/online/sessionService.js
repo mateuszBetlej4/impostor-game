@@ -1,16 +1,9 @@
-import { supabase, isSupabaseConfigured } from './supabaseClient.js';
+import { getClient } from './getClient.js';
 import { makeId, saveReconnectIdentity } from './reconnect.js';
 import { makeSessionCode, normalizeCode } from './sessionCodes.js';
 
-function getClient() {
-  if (!isSupabaseConfigured || !supabase) {
-    throw new Error('Supabase is not configured yet. Add VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY.');
-  }
-  return supabase;
-}
-
 export async function createSession({ hostName, category, impostorCount, settings }) {
-  const client = getClient();
+  const client = getClient('Supabase is not configured yet. Add VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY.');
   const code = makeSessionCode();
   const hostKey = makeId('host');
   const playerKey = makeId('player');
@@ -45,7 +38,7 @@ export async function createSession({ hostName, category, impostorCount, setting
 }
 
 export async function joinSession({ code, playerName }) {
-  const client = getClient();
+  const client = getClient('Supabase is not configured yet. Add VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY.');
   const cleanCode = normalizeCode(code);
   const playerKey = makeId('player');
 

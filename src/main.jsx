@@ -21,6 +21,7 @@ import './gameScreenFit.css';
 import './mobileViewportFit.css';
 import './gameUiRefresh.css';
 import './removeDecorativeHandles.css';
+import './setupLayoutFixes.css';
 
 const WORD_AUDIT_HASH = '#breadcrumb-words';
 

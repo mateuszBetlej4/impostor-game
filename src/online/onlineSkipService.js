@@ -1,3 +1,4 @@
+import { pickWordFromBank } from '../game/index.js';
 import { supabase, isSupabaseConfigured } from './supabaseClient.js';
 
 function getClient() {
@@ -5,16 +6,6 @@ function getClient() {
     throw new Error('Supabase is not configured yet.');
   }
   return supabase;
-}
-
-function pickWord({ category, wordBank }) {
-  const categoryNames = Object.keys(wordBank);
-  const chosenCategory = category === 'Random' || !wordBank[category]
-    ? categoryNames[Math.floor(Math.random() * categoryNames.length)]
-    : category;
-  const words = wordBank[chosenCategory] || [];
-  const word = words[Math.floor(Math.random() * words.length)];
-  return { category: chosenCategory, word };
 }
 
 function skipVotesNeeded(players) {
@@ -68,7 +59,7 @@ export async function submitOnlineSecretSkipVote({ session, identity, round, pla
     return { skipped: false, votes };
   }
 
-  const selected = pickWord({ category: session.category || 'Random', wordBank });
+  const selected = pickWordFromBank({ category: session.category || 'Random', wordBank });
 
   await client
     .from('online_votes')

@@ -222,6 +222,59 @@ body {
   font-size: clamp(18px, 6vw, 24px);
 }
 
+/* Players tab: dense player lists must not push setup nav off-screen. */
+.app-fit-home .pass-order-list {
+  min-height: 0;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 5px;
+  overflow: hidden;
+}
+
+.app-fit-home .pass-order-row {
+  min-height: 34px;
+  padding: 4px 5px;
+  border-radius: 12px;
+  gap: 5px;
+}
+
+.app-fit-home .pass-order-row strong {
+  font-size: 12px;
+}
+
+.app-fit-home .order-number {
+  width: 24px;
+  height: 24px;
+  border-radius: 8px;
+  font-size: 12px;
+}
+
+.app-fit-home .order-actions {
+  gap: 3px;
+}
+
+.app-fit-home .order-actions button {
+  width: 26px;
+  height: 26px;
+  border-radius: 9px;
+  font-size: 12px;
+}
+
+.app-fit-home .input-row {
+  flex: 0 0 auto;
+  margin-top: 6px;
+  gap: 5px;
+}
+
+.app-fit-home .input-row input,
+.app-fit-home .input-row button {
+  min-height: 38px;
+}
+
+.app-fit-home .score-card {
+  display: none;
+}
+
 /* Rules tab: this is the densest setup screen, so flatten it aggressively. */
 .app-fit-home .preset-row {
   display: grid;
@@ -324,6 +377,16 @@ body {
   .setup-bottom-nav button {
     min-height: 32px;
   }
+
+  .app-fit-home .pass-order-row {
+    min-height: 30px;
+  }
+
+  .app-fit-home .order-number,
+  .app-fit-home .order-actions button {
+    width: 22px;
+    height: 22px;
+  }
 }
 
 @media (max-height: 680px) {
@@ -354,5 +417,19 @@ body {
 
   .app-fit-home textarea {
     max-height: 42px;
+  }
+
+  .app-fit-home .pass-order-list {
+    gap: 4px;
+  }
+
+  .app-fit-home .pass-order-row {
+    min-height: 27px;
+    padding: 3px 4px;
+  }
+
+  .app-fit-home .pass-order-row strong,
+  .app-fit-home .order-actions button {
+    font-size: 11px;
   }
 }

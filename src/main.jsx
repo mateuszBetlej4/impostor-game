@@ -18,6 +18,7 @@ import './setupResponsive.css';
 import './confirmFit.css';
 import './singleScreenPolish.css';
 import './gameScreenFit.css';
+import './mobileViewportFit.css';
 
 const WORD_AUDIT_HASH = '#breadcrumb-words';
 

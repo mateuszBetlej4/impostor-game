@@ -1,6 +1,6 @@
 import { Sparkles } from 'lucide-react';
 
-export function WordLibraryStats({ usedWordCount, totalWords, selectedWordCount }) {
+export function WordLibraryStats({ usedWordCount, totalWords, selectedWordCount, resetUsedWords }) {
   return (
     <section className="panel-card settings-card priority-card library-stats-card">
       <div className="section-title-row">
@@ -20,6 +20,9 @@ export function WordLibraryStats({ usedWordCount, totalWords, selectedWordCount 
           <strong>{selectedWordCount}</strong>
         </div>
       </div>
+      <button className="secondary-action" type="button" disabled={usedWordCount === 0} onClick={resetUsedWords}>
+        Reset word history
+      </button>
     </section>
   );
 }

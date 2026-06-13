@@ -1,5 +1,8 @@
 import { isCorrectSecretGuess } from '../game/index.js';
 import { getClient } from './getClient.js';
+import { calculateOnlineVoteResult as getOnlineVoteResult } from './voteResult.js';
+
+export { calculateOnlineVoteResult } from './voteResult.js';
 
 export async function setOnlinePhase({ session, identity, status }) {
   const client = getClient();
@@ -59,30 +62,6 @@ export async function loadRoundVotes(roundId) {
   return result.data || [];
 }
 
-export function calculateOnlineVoteResult({ players, votes }) {
-  const counts = players.reduce((acc, player) => ({ ...acc, [player.id]: 0 }), {});
-  votes.forEach((vote) => {
-    counts[vote.target_player_id] = (counts[vote.target_player_id] || 0) + 1;
-  });
-
-  const sorted = Object.entries(counts)
-    .map(([playerId, count]) => ({ player: players.find((item) => item.id === playerId), count }))
-    .filter((item) => item.player)
-    .sort((a, b) => b.count - a.count);
-
-  const highest = sorted[0]?.count || 0;
-  const votedOut = sorted.filter((item) => item.count === highest && highest > 0).map((item) => item.player);
-  const impostorCaught = votedOut.some((player) => player.role === 'impostor');
-
-  return {
-    sorted,
-    highest,
-    votedOut,
-    impostorCaught,
-    winner: impostorCaught ? 'mob' : 'impostors',
-  };
-}
-
 export async function finishOnlineVote({ session, identity, round, players, votes, allowFinalGuess }) {
   const client = getClient();
 
@@ -90,7 +69,7 @@ export async function finishOnlineVote({ session, identity, round, players, vote
     throw new Error('Only the host can finish the online vote.');
   }
 
-  const result = calculateOnlineVoteResult({ players, votes });
+  const result = getOnlineVoteResult({ players, votes });
   const nextStatus = result.impostorCaught && allowFinalGuess ? 'guess' : 'results';
   const outcome = nextStatus === 'guess' ? null : result.winner;
 

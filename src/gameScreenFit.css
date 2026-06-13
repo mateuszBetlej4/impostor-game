@@ -1,0 +1,279 @@
+/* Compact one-screen layouts for in-round clue and result screens. */
+.clue-screen-fit,
+.result-screen-fit {
+  height: 100%;
+  min-height: 0;
+}
+
+.clue-status-row {
+  flex: 0 0 auto;
+  min-height: 34px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 7px 10px;
+  border: 1px solid var(--mob-border-soft);
+  border-radius: 16px;
+  color: var(--mob-muted);
+  background: rgba(0, 0, 0, 0.28);
+  font-size: 12px;
+  font-weight: 950;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.clue-status-row strong {
+  color: var(--mob-gold-bright);
+}
+
+.clue-player-card {
+  flex: 0 0 auto;
+  display: grid;
+  gap: 6px;
+  padding: 12px;
+}
+
+.clue-player-card h2 {
+  margin: 0;
+  font-family: 'Barlow Condensed', Inter, sans-serif;
+  font-size: clamp(38px, 12vw, 58px);
+  line-height: 0.86;
+  text-transform: uppercase;
+}
+
+.clue-player-card p {
+  margin: 0;
+  color: var(--mob-muted);
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.clue-player-card .primary-action {
+  min-height: 42px;
+}
+
+.clue-live-header {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  align-items: start;
+  gap: 8px;
+}
+
+.clue-live-header .progress-pill {
+  min-width: 76px;
+  justify-content: center;
+  text-align: center;
+}
+
+.clue-history-card {
+  flex: 1 1 0;
+  min-height: 0;
+  padding: 10px;
+  overflow: hidden;
+}
+
+.clue-history-card .section-title-row {
+  margin-bottom: 6px;
+}
+
+.clue-history-card .section-title-row h3 {
+  font-size: clamp(22px, 7vw, 32px);
+}
+
+.compact-clue-list {
+  display: grid;
+  gap: 5px;
+  overflow: hidden;
+}
+
+.compact-clue-row {
+  min-height: 32px;
+  display: grid;
+  grid-template-columns: minmax(88px, 0.74fr) 1fr;
+  align-items: center;
+  gap: 7px;
+  padding: 5px 7px;
+  border: 1px solid var(--mob-border-soft);
+  border-radius: 12px;
+  background: rgba(0, 0, 0, 0.22);
+}
+
+.compact-clue-row span,
+.compact-vote-row span,
+.result-stat-grid span {
+  min-width: 0;
+  overflow: hidden;
+  color: var(--mob-muted);
+  font-size: 10px;
+  font-weight: 950;
+  letter-spacing: 0.06em;
+  text-overflow: ellipsis;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.compact-clue-row strong,
+.compact-vote-row strong,
+.result-stat-grid strong {
+  min-width: 0;
+  overflow: hidden;
+  color: var(--mob-text);
+  font-size: 13px;
+  font-weight: 950;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.clue-entry-card {
+  flex: 0 0 auto;
+  padding: 10px;
+}
+
+.clue-entry-card .guess-field {
+  gap: 4px;
+}
+
+.clue-entry-card input {
+  min-height: 40px;
+  font-size: 16px;
+}
+
+.clue-bottom-action {
+  flex: 0 0 auto;
+  min-height: 42px;
+  margin-top: auto;
+}
+
+.result-summary-card {
+  flex: 0 0 auto;
+  display: grid;
+  gap: 9px;
+  padding: 13px;
+}
+
+.result-summary-card h2 {
+  margin: 0;
+  font-family: 'Barlow Condensed', Inter, sans-serif;
+  font-size: clamp(42px, 13vw, 66px);
+  line-height: 0.84;
+  text-transform: uppercase;
+}
+
+.result-stat-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 6px;
+}
+
+.result-stat-grid div {
+  min-width: 0;
+  min-height: 42px;
+  display: grid;
+  align-content: center;
+  gap: 2px;
+  padding: 7px 8px;
+  border: 1px solid var(--mob-border-soft);
+  border-radius: 13px;
+  background: rgba(0, 0, 0, 0.22);
+}
+
+.result-votes-card {
+  flex: 1 1 0;
+  min-height: 0;
+  padding: 10px;
+  overflow: hidden;
+}
+
+.result-votes-card .section-title-row h3 {
+  font-size: clamp(22px, 7vw, 32px);
+}
+
+.compact-vote-list {
+  display: grid;
+  gap: 5px;
+  overflow: hidden;
+}
+
+.compact-vote-row {
+  min-height: 32px;
+  display: grid;
+  grid-template-columns: 1fr 34px;
+  align-items: center;
+  gap: 8px;
+  padding: 5px 7px;
+  border: 1px solid var(--mob-border-soft);
+  border-radius: 12px;
+  background: rgba(0, 0, 0, 0.22);
+}
+
+.compact-vote-row strong {
+  text-align: center;
+  color: var(--mob-gold-bright);
+}
+
+.result-action-grid {
+  flex: 0 0 auto;
+  margin-top: auto;
+}
+
+@media (max-height: 760px) {
+  .clue-player-card,
+  .result-summary-card {
+    padding: 10px;
+  }
+
+  .clue-player-card h2,
+  .result-summary-card h2 {
+    font-size: clamp(32px, 10vw, 48px);
+  }
+
+  .clue-player-card p {
+    font-size: 12px;
+  }
+
+  .clue-player-card .primary-action,
+  .clue-bottom-action,
+  .result-action-grid .primary-action,
+  .result-action-grid .secondary-action {
+    min-height: 38px;
+  }
+
+  .compact-clue-row,
+  .compact-vote-row {
+    min-height: 29px;
+  }
+
+  .result-stat-grid div {
+    min-height: 36px;
+  }
+}
+
+@media (max-height: 680px) {
+  .clue-player-card .eyebrow,
+  .clue-history-card .eyebrow,
+  .result-summary-card .eyebrow,
+  .result-votes-card .eyebrow {
+    display: none;
+  }
+
+  .clue-status-row {
+    min-height: 28px;
+    padding: 5px 8px;
+  }
+
+  .clue-player-card h2,
+  .result-summary-card h2 {
+    font-size: clamp(28px, 9vw, 40px);
+  }
+
+  .clue-history-card,
+  .result-votes-card,
+  .clue-entry-card {
+    padding: 8px;
+  }
+
+  .result-stat-grid div {
+    min-height: 31px;
+    padding: 5px 6px;
+  }
+}

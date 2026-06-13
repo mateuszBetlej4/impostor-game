@@ -29,8 +29,8 @@ export function TimedClueInputScreen({ round, player, nextPlayer, clueValue, set
         <section className="panel-card clue-player-card">
           <p className="eyebrow">Pass phone to</p>
           <h2>{player}</h2>
-          <p>Timer starts after they are ready.</p>
-          <button className="primary-action" type="button" onClick={() => setReadyKey(turnKey)}>Start clue timer</button>
+          <p>Enter one clue when they are ready.</p>
+          <button className="primary-action" type="button" onClick={() => setReadyKey(turnKey)}>Enter clue</button>
         </section>
       ) : (
         <section className={`panel-card clue-player-card ${expired ? 'expired' : ''}`}>

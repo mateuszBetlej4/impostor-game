@@ -7,7 +7,6 @@ import {
   RulesSettingsCard,
   ScoreCard,
   SessionSetupCard,
-  SetupSummary,
   WordLibraryStats,
 } from './home/index.js';
 
@@ -55,15 +54,7 @@ export function HomeScreen({
   const tabs = [['play', 'Play'], ['players', 'Players'], ['rules', 'Rules'], ['library', 'Library']];
 
   return (
-    <div className="screen-stack home-tab-layout">
-      <SetupSummary
-        homeTab={homeTab}
-        setupMode={setupMode}
-        playerCount={players.length}
-        category={category}
-        selectedWordCount={selectedWordCount}
-      />
-
+    <div className="screen-stack home-tab-layout app-fit-home">
       <div className="home-tab-content">
         {homeTab === 'play' && (
           <>

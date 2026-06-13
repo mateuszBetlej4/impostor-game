@@ -1,4 +1,4 @@
-import { Sparkles } from 'lucide-react';
+import { RotateCcw, Sparkles } from 'lucide-react';
 
 export function WordLibraryStats({ usedWordCount, totalWords, selectedWordCount, resetUsedWords }) {
   return (
@@ -20,9 +20,17 @@ export function WordLibraryStats({ usedWordCount, totalWords, selectedWordCount,
           <strong>{selectedWordCount}</strong>
         </div>
       </div>
-      <button className="secondary-action" type="button" disabled={usedWordCount === 0} onClick={resetUsedWords}>
-        Reset word history
-      </button>
+      <div style={{ display: 'flex', justifyContent: 'center', paddingTop: 4 }}>
+        <button
+          className="secondary-action"
+          type="button"
+          disabled={usedWordCount === 0}
+          onClick={resetUsedWords}
+          style={{ width: 'min(100%, 260px)', minHeight: 50, borderRadius: 18 }}
+        >
+          <RotateCcw size={18} /> Reset word history
+        </button>
+      </div>
     </section>
   );
 }

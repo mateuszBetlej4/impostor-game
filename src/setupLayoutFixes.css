@@ -10,6 +10,7 @@
 .library-stats-card::after,
 .player-editor-card::after,
 .session-setup-card::after,
+.custom-set-builder-card::after,
 .game-hud-header::before {
   content: none !important;
   display: none !important;
@@ -32,13 +33,78 @@
   background: rgba(0, 0, 0, 0.14) !important;
 }
 
+.home-tab-layout .panel-card,
+.home-tab-layout .settings-card,
 .session-setup-card,
 .player-editor-card,
 .library-stats-card,
-.library-actions-card {
+.library-actions-card,
+.custom-set-builder-card {
   border-radius: 28px !important;
   background: linear-gradient(180deg, rgba(24, 20, 13, 0.82), rgba(7, 6, 5, 0.92)) !important;
   box-shadow: 0 10px 26px rgba(0, 0, 0, 0.34), inset 0 1px 0 rgba(255, 255, 255, 0.045) !important;
+}
+
+.home-tab-layout .section-title-row {
+  margin-bottom: 0 !important;
+}
+
+.home-tab-layout .section-title-row h3,
+.session-setup-title h3,
+.player-title-row h3,
+.library-title-row h3 {
+  font-size: clamp(31px, 9vw, 42px) !important;
+}
+
+.home-tab-layout .settings-grid,
+.custom-set-grid {
+  display: grid !important;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) !important;
+  gap: 12px !important;
+  min-width: 0 !important;
+}
+
+.home-tab-layout .settings-grid label,
+.custom-set-grid label,
+.session-field {
+  min-width: 0 !important;
+  display: grid !important;
+  gap: 7px !important;
+}
+
+.home-tab-layout .settings-grid label:has(textarea),
+.custom-set-grid label:has(textarea),
+.custom-set-grid label:first-child,
+.custom-set-grid label:nth-child(2) {
+  grid-column: 1 / -1 !important;
+}
+
+.home-tab-layout .settings-card label > span,
+.home-tab-layout .guess-field span,
+.session-field > span {
+  color: var(--mob-muted) !important;
+  font-size: 11px !important;
+  font-weight: 950 !important;
+  letter-spacing: 0.12em !important;
+  text-transform: uppercase !important;
+}
+
+.home-tab-layout select,
+.home-tab-layout input,
+.home-tab-layout textarea,
+.session-field select {
+  width: 100% !important;
+  min-width: 0 !important;
+  min-height: 48px !important;
+  border-radius: 16px !important;
+  border-color: rgba(244, 208, 111, 0.14) !important;
+  background: rgba(0, 0, 0, 0.24) !important;
+  box-shadow: none !important;
+}
+
+.home-tab-layout textarea {
+  min-height: 96px !important;
+  padding: 13px 14px !important;
 }
 
 .session-setup-card {
@@ -56,12 +122,6 @@
   margin-bottom: -2px !important;
 }
 
-.session-setup-title h3,
-.player-title-row h3,
-.library-title-row h3 {
-  font-size: clamp(31px, 9vw, 42px) !important;
-}
-
 .session-setup-fields {
   display: grid !important;
   grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) !important;
@@ -73,29 +133,8 @@
   grid-column: 1 / -1 !important;
 }
 
-.session-field {
-  min-width: 0 !important;
-  display: grid !important;
-  gap: 7px !important;
-}
-
-.session-field > span {
-  color: var(--mob-muted) !important;
-  font-size: 11px !important;
-  font-weight: 950 !important;
-  letter-spacing: 0.12em !important;
-  text-transform: uppercase !important;
-}
-
-.session-field select {
-  width: 100% !important;
-  min-width: 0 !important;
-  min-height: 48px !important;
-  border-radius: 16px !important;
-  background: rgba(0, 0, 0, 0.24) !important;
-}
-
-.session-toggle-list {
+.session-toggle-list,
+.home-tab-rules .toggle-list {
   display: grid !important;
   grid-template-columns: 1fr !important;
   gap: 0 !important;
@@ -104,11 +143,13 @@
   border-top: 1px solid rgba(244, 208, 111, 0.12) !important;
 }
 
-.session-toggle-list > div {
+.session-toggle-list > div,
+.home-tab-rules .toggle-list > div {
   border-bottom: 1px solid rgba(244, 208, 111, 0.1) !important;
 }
 
-.session-toggle-list .toggle-row {
+.session-toggle-list .toggle-row,
+.home-tab-rules .toggle-list .toggle-row {
   width: 100% !important;
   min-height: 52px !important;
   padding: 12px 2px !important;
@@ -118,11 +159,13 @@
   box-shadow: none !important;
 }
 
-.session-toggle-list .toggle-row > span:first-child {
+.session-toggle-list .toggle-row > span:first-child,
+.home-tab-rules .toggle-list .toggle-row > span:first-child {
   max-width: calc(100% - 46px) !important;
 }
 
-.session-toggle-list .toggle-row strong {
+.session-toggle-list .toggle-row strong,
+.home-tab-rules .toggle-list .toggle-row strong {
   padding: 4px 9px !important;
   border-radius: 999px !important;
   background: rgba(244, 208, 111, 0.1) !important;
@@ -135,10 +178,6 @@
   gap: 10px !important;
   overflow: hidden !important;
   padding: 22px !important;
-}
-
-.player-editor-card .section-title-row {
-  margin-bottom: 0 !important;
 }
 
 .compact-count-row {
@@ -160,7 +199,8 @@
   border-bottom: 1px solid rgba(244, 208, 111, 0.11) !important;
 }
 
-.player-scroll-row {
+.player-scroll-row,
+.home-tab-layout .score-row {
   min-height: 54px !important;
   flex: 0 0 auto !important;
   border: 0 !important;
@@ -170,7 +210,8 @@
   padding: 8px 0 !important;
 }
 
-.player-scroll-row:last-child {
+.player-scroll-row:last-child,
+.home-tab-layout .score-row:last-child {
   border-bottom: 0 !important;
 }
 
@@ -192,17 +233,19 @@
   z-index: 2 !important;
 }
 
-.library-stats-card {
+.home-tab-layout .input-row {
+  margin-top: 0 !important;
+}
+
+.library-stats-card,
+.library-actions-card,
+.custom-set-builder-card {
   min-height: auto !important;
   display: grid !important;
   grid-template-columns: 1fr !important;
   gap: 14px !important;
   padding: 22px !important;
   overflow: visible !important;
-}
-
-.library-title-row {
-  margin-bottom: 0 !important;
 }
 
 .library-stats-card .library-stat-grid {
@@ -213,8 +256,27 @@
 }
 
 .library-stats-card .score-row {
-  border-color: rgba(244, 208, 111, 0.1) !important;
+  border: 1px solid rgba(244, 208, 111, 0.1) !important;
+  border-radius: 18px !important;
   background: rgba(0, 0, 0, 0.16) !important;
+  padding: 11px 12px !important;
+}
+
+.library-actions-card {
+  text-align: center !important;
+}
+
+.library-actions-card .primary-action,
+.custom-set-builder-card .primary-action,
+.library-back-action {
+  min-height: 50px !important;
+  border-radius: 18px !important;
+}
+
+.custom-set-list {
+  display: grid !important;
+  gap: 0 !important;
+  border-top: 1px solid rgba(244, 208, 111, 0.11) !important;
 }
 
 .reset-word-action-row {
@@ -258,15 +320,13 @@
     height: 42px !important;
   }
 
-  .panel-card,
-  .role-card,
-  .result-card {
-    padding: 20px !important;
-  }
-
+  .home-tab-layout .panel-card,
+  .home-tab-layout .settings-card,
   .session-setup-card,
   .player-editor-card,
-  .library-stats-card {
+  .library-stats-card,
+  .library-actions-card,
+  .custom-set-builder-card {
     padding: 20px !important;
   }
 

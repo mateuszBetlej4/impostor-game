@@ -86,10 +86,8 @@ export function HomeScreen({
   setCategory,
   categoryNames,
   customSetNames,
-  sessionPresets,
   settings,
   patchSettings,
-  applyPreset,
   impostorCount,
   setImpostorCount,
   canStart,
@@ -180,10 +178,8 @@ export function HomeScreen({
 
         {homeTab === 'rules' && (
           <RulesSettingsCard
-            sessionPresets={sessionPresets}
             settings={settings}
             patchSettings={patchSettings}
-            applyPreset={applyPreset}
           />
         )}
 

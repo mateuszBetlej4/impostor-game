@@ -58,91 +58,95 @@ body {
 .home-tab-layout,
 .app-fit-home {
   height: 100%;
+  min-height: 0;
 }
 
 .home-tab-content {
   min-height: 0;
-  flex: 1 1 auto;
+  flex: 1 1 0;
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 7px;
   overflow: hidden;
 }
 
 .home-tab-content > * {
-  flex-shrink: 0;
+  min-height: 0;
+  flex: 1 1 auto;
 }
 
 .home-tab-content .panel-card,
 .home-tab-content .hero-card {
-  padding: 14px;
+  padding: 12px;
+  min-height: 0;
 }
 
 .setup-bottom-nav {
-  flex: 0 0 auto;
+  flex: 0 0 44px;
   position: relative;
   bottom: auto;
-  padding: 5px;
-  border-radius: 18px;
+  padding: 4px;
+  border-radius: 17px;
+  margin-top: auto;
 }
 
 .setup-bottom-nav button {
-  min-height: 40px;
-  padding: 0 8px;
-  font-size: 12px;
+  min-height: 36px;
+  padding: 0 6px;
+  font-size: 11px;
 }
 
 .hero-card,
 .panel-card,
 .role-card,
 .result-card {
-  padding: 16px;
-  border-radius: 22px;
+  padding: 14px;
+  border-radius: 20px;
 }
 
 .compact-hero {
-  padding: 16px;
+  padding: 14px;
 }
 
 .hero-card h2,
 .role-card h2,
 .confirm-card h2 {
-  font-size: clamp(34px, 10vw, 48px);
-  margin: 6px 0 8px;
+  font-size: clamp(32px, 9vw, 44px);
+  margin: 5px 0 7px;
 }
 
 .section-title-row {
-  margin-bottom: 8px;
+  margin-bottom: 6px;
 }
 
 .section-title-row h3 {
-  font-size: clamp(27px, 8vw, 38px);
+  font-size: clamp(24px, 7vw, 34px);
 }
 
 .hero-copy,
 .helper-text,
 .warning-text {
-  font-size: 13px;
-  line-height: 1.28;
+  font-size: 12px;
+  line-height: 1.22;
 }
 
 .primary-action,
 .secondary-action {
-  min-height: 48px;
-  border-radius: 18px;
+  min-height: 46px;
+  border-radius: 17px;
   font-size: 14px;
 }
 
 .action-grid {
   flex: 0 0 auto;
-  gap: 8px;
+  gap: 7px;
 }
 
 .progress-pill {
   flex: 0 0 auto;
-  min-height: 34px;
-  padding: 8px 10px;
-  border-radius: 15px;
+  min-height: 32px;
+  padding: 7px 9px;
+  border-radius: 14px;
   font-size: 12px;
 }
 
@@ -152,7 +156,7 @@ body {
 .toggle-list,
 .settings-grid,
 .preset-row {
-  gap: 6px;
+  gap: 5px;
 }
 
 .confirm-list div,
@@ -161,13 +165,13 @@ body {
 .hero-stats span,
 .pass-order-row,
 .score-row {
-  min-height: 46px;
-  padding: 8px;
-  border-radius: 15px;
+  min-height: 42px;
+  padding: 7px;
+  border-radius: 14px;
 }
 
 .settings-card {
-  gap: 8px;
+  gap: 7px;
 }
 
 .settings-card select,
@@ -175,23 +179,23 @@ body {
 .guess-field input,
 .input-row input,
 .input-row button {
-  min-height: 44px;
-  border-radius: 14px;
+  min-height: 40px;
+  border-radius: 13px;
 }
 
 .setup-mode-switch {
-  gap: 7px;
+  gap: 6px;
 }
 
 .setup-mode-switch button {
-  min-height: 64px;
-  padding: 10px;
-  border-radius: 16px;
+  min-height: 58px;
+  padding: 9px;
+  border-radius: 15px;
 }
 
 .preset-button {
-  min-height: 50px;
-  padding: 9px;
+  min-height: 44px;
+  padding: 7px;
 }
 
 .pass-order-row strong {
@@ -200,22 +204,79 @@ body {
 
 .order-number,
 .order-actions button {
-  width: 34px;
-  height: 34px;
-  border-radius: 12px;
+  width: 32px;
+  height: 32px;
+  border-radius: 11px;
 }
 
 .final-guess-card {
-  padding: 16px;
+  padding: 14px;
 }
 
 .final-guess-card h3 {
-  font-size: clamp(34px, 10vw, 48px);
+  font-size: clamp(32px, 9vw, 44px);
 }
 
 .final-guess-input-wrap input {
-  min-height: 54px;
+  min-height: 52px;
   font-size: clamp(18px, 6vw, 24px);
+}
+
+/* Rules tab: this is the densest setup screen, so flatten it aggressively. */
+.app-fit-home .preset-row {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+}
+
+.app-fit-home .preset-button {
+  min-height: 42px;
+  align-content: center;
+}
+
+.app-fit-home .preset-button small {
+  display: none;
+}
+
+.app-fit-home .settings-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+}
+
+.app-fit-home .settings-grid label {
+  gap: 4px;
+}
+
+.app-fit-home .settings-grid label > span,
+.app-fit-home .toggle-list span,
+.app-fit-home .guess-field span {
+  font-size: 10px;
+  letter-spacing: 0.08em;
+}
+
+.app-fit-home .toggle-list {
+  display: grid;
+  grid-template-columns: 1fr;
+}
+
+.app-fit-home .toggle-row,
+.app-fit-home .toggle-list label {
+  min-height: 34px;
+}
+
+/* Library tab: keep nav visible by removing vertical bulk. */
+.app-fit-home textarea {
+  max-height: 54px;
+  min-height: 44px;
+  resize: none;
+}
+
+.app-fit-home .custom-set-list {
+  display: none;
+}
+
+.app-fit-home .score-row strong,
+.app-fit-home .score-row span {
+  font-size: 12px;
 }
 
 @media (max-height: 760px) {
@@ -224,43 +285,7 @@ body {
   .role-card,
   .result-card,
   .compact-hero {
-    padding: 12px;
-  }
-
-  .hero-card h2,
-  .role-card h2,
-  .confirm-card h2 {
-    font-size: clamp(30px, 9vw, 42px);
-  }
-
-  .section-title-row h3 {
-    font-size: clamp(24px, 7vw, 34px);
-  }
-
-  .hero-copy,
-  .helper-text,
-  .warning-text {
-    font-size: 12px;
-  }
-
-  .primary-action,
-  .secondary-action {
-    min-height: 44px;
-  }
-
-  .settings-card select,
-  .settings-card input,
-  .guess-field input,
-  .input-row input,
-  .input-row button {
-    min-height: 40px;
-  }
-}
-
-@media (max-height: 680px) {
-  .eyebrow,
-  .helper-text {
-    display: none;
+    padding: 10px;
   }
 
   .hero-card h2,
@@ -269,7 +294,65 @@ body {
     font-size: clamp(28px, 8vw, 38px);
   }
 
+  .section-title-row h3 {
+    font-size: clamp(22px, 6vw, 30px);
+  }
+
+  .hero-copy,
+  .helper-text,
+  .warning-text {
+    font-size: 11px;
+  }
+
+  .primary-action,
+  .secondary-action {
+    min-height: 40px;
+  }
+
+  .settings-card select,
+  .settings-card input,
+  .guess-field input,
+  .input-row input,
+  .input-row button {
+    min-height: 36px;
+  }
+
+  .setup-bottom-nav {
+    flex-basis: 40px;
+  }
+
+  .setup-bottom-nav button {
+    min-height: 32px;
+  }
+}
+
+@media (max-height: 680px) {
+  .eyebrow,
+  .helper-text,
   .setup-mode-switch button small {
     display: none;
+  }
+
+  .hero-card h2,
+  .role-card h2,
+  .confirm-card h2 {
+    font-size: clamp(26px, 7vw, 34px);
+  }
+
+  .home-tab-content {
+    gap: 5px;
+  }
+
+  .home-tab-content .panel-card,
+  .home-tab-content .hero-card {
+    padding: 8px;
+  }
+
+  .app-fit-home .settings-grid {
+    gap: 4px;
+  }
+
+  .app-fit-home textarea {
+    max-height: 42px;
   }
 }

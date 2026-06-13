@@ -29,14 +29,6 @@ export function RulesSettingsCard({ sessionPresets, settings, patchSettings, app
           </select>
         </label>
         <label>
-          <span>Discussion timer</span>
-          <select value={settings.discussionSeconds} onChange={(event) => patchSettings({ discussionSeconds: Number(event.target.value) })}>
-            {[0, 30, 60, 90, 120, 180].map((value) => (
-              <option key={value} value={value}>{value === 0 ? 'No timer' : `${value} seconds`}</option>
-            ))}
-          </select>
-        </label>
-        <label>
           <span>MOB win points</span>
           <select value={settings.pointsMobWin} onChange={(event) => patchSettings({ pointsMobWin: Number(event.target.value) })}>
             {[1, 2, 3].map((value) => <option key={value} value={value}>{value}</option>)}

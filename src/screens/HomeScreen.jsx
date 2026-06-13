@@ -208,7 +208,7 @@ export function HomeScreen({
               customSetBase={customSetBase}
               setCustomSetBase={setCustomSetBase}
               customSetWords={customSetWords}
-              setCustomSetWords={setCustomWords}
+              setCustomSetWords={setCustomSetWords}
               categoryNames={categoryNames}
               customSetNames={customSetNames}
               saveCustomSet={saveSetAndReturn}

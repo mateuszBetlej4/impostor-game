@@ -2,6 +2,7 @@ export * from './constants.js';
 export * from './playerUtils.js';
 export * from './random.js';
 export * from './round.js';
+export * from './scoring.js';
 export * from './secretGuess.js';
 export * from './storage.js';
 export * from './voting.js';

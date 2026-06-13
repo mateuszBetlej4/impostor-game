@@ -2,15 +2,22 @@ import { RotateCcw, Sparkles } from 'lucide-react';
 
 export function WordLibraryStats({ usedWordCount, totalWords, selectedWordCount, resetUsedWords }) {
   return (
-    <section className="panel-card settings-card priority-card library-stats-card">
-      <div className="section-title-row">
+    <section
+      className="panel-card settings-card priority-card library-stats-card"
+      style={{
+        minHeight: 'auto',
+        padding: 22,
+        gap: 14,
+      }}
+    >
+      <div className="section-title-row" style={{ marginBottom: 0 }}>
         <div>
           <p className="eyebrow">Word library</p>
           <h3>Current pool</h3>
         </div>
         <Sparkles size={20} />
       </div>
-      <div className="library-stat-grid">
+      <div className="library-stat-grid" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10 }}>
         <div className="score-row">
           <span>Used</span>
           <strong>{usedWordCount} / {totalWords}</strong>
@@ -20,14 +27,14 @@ export function WordLibraryStats({ usedWordCount, totalWords, selectedWordCount,
           <strong>{selectedWordCount}</strong>
         </div>
       </div>
-      <div style={{ width: '100%', display: 'grid', placeItems: 'center', paddingTop: 8 }}>
+      <div style={{ width: '100%', display: 'grid', placeItems: 'center', paddingTop: 2 }}>
         <button
           type="button"
           disabled={usedWordCount === 0}
           onClick={resetUsedWords}
           style={{
-            width: 'min(260px, 100%)',
-            minHeight: 50,
+            width: 'min(300px, 100%)',
+            minHeight: 48,
             display: 'inline-flex',
             alignItems: 'center',
             justifyContent: 'center',

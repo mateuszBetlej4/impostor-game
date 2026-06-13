@@ -20,7 +20,14 @@ export function PlayerOrderEditor({ players, newPlayer, setNewPlayer, addPlayer,
   const lastVisible = Math.min(players.length, startIndex + visiblePlayers.length);
 
   return (
-    <section className="panel-card player-editor-card">
+    <section
+      className="panel-card player-editor-card"
+      style={{
+        minHeight: 'min(560px, calc(100dvh - 220px))',
+        display: 'grid',
+        gridTemplateRows: 'auto auto minmax(0, 1fr) auto auto',
+      }}
+    >
       <div className="section-title-row player-title-row">
         <div>
           <p className="eyebrow">Phone pass order</p>
@@ -34,7 +41,7 @@ export function PlayerOrderEditor({ players, newPlayer, setNewPlayer, addPlayer,
         <strong>{players.length >= 3 ? 'Ready' : 'Need 3+'}</strong>
       </div>
 
-      <div className="pass-order-list compact-player-grid">
+      <div className="pass-order-list compact-player-grid" style={{ alignContent: 'start' }}>
         {visiblePlayers.map((player, index) => {
           const absoluteIndex = startIndex + index;
           return (
@@ -52,14 +59,14 @@ export function PlayerOrderEditor({ players, newPlayer, setNewPlayer, addPlayer,
       </div>
 
       {totalPages > 1 && (
-        <div className="compact-pager" aria-label="Player pages">
+        <div className="compact-pager" aria-label="Player pages" style={{ alignSelf: 'end' }}>
           <button type="button" onClick={() => setPage((current) => Math.max(0, current - 1))} disabled={page === 0}>Prev</button>
           <span>{firstVisible}-{lastVisible} of {players.length}</span>
           <button type="button" onClick={() => setPage((current) => Math.min(totalPages - 1, current + 1))} disabled={page >= totalPages - 1}>Next</button>
         </div>
       )}
 
-      <div className="input-row player-add-row">
+      <div className="input-row player-add-row" style={{ alignSelf: 'end', marginTop: 12 }}>
         <input
           value={newPlayer}
           onChange={(event) => setNewPlayer(event.target.value)}

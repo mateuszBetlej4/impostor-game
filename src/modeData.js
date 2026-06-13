@@ -1,7 +1,6 @@
 export const DEFAULT_SETTINGS = {
   guessRounds: 1,
   clueRounds: 1,
-  discussionSeconds: 60,
   showCategoryToImpostor: true,
   allowImpostorFinalGuess: true,
   hotSeatDefense: false,
@@ -19,7 +18,6 @@ export const SESSION_PRESETS = {
     settings: {
       guessRounds: 1,
       clueRounds: 1,
-      discussionSeconds: 60,
       allowImpostorFinalGuess: true,
       hotSeatDefense: false,
       yesNoQuestionRound: false,
@@ -31,7 +29,6 @@ export const SESSION_PRESETS = {
     settings: {
       guessRounds: 1,
       clueRounds: 1,
-      discussionSeconds: 90,
       allowImpostorFinalGuess: false,
       hotSeatDefense: true,
       yesNoQuestionRound: true,
@@ -43,7 +40,6 @@ export const SESSION_PRESETS = {
     settings: {
       guessRounds: 2,
       clueRounds: 2,
-      discussionSeconds: 120,
       allowImpostorFinalGuess: false,
       hotSeatDefense: true,
       yesNoQuestionRound: true,
@@ -55,7 +51,6 @@ export const SESSION_PRESETS = {
     settings: {
       guessRounds: 0,
       clueRounds: 1,
-      discussionSeconds: 30,
       allowImpostorFinalGuess: false,
       hotSeatDefense: false,
       yesNoQuestionRound: false,
@@ -67,7 +62,6 @@ export const SESSION_PRESETS = {
     settings: {
       guessRounds: 3,
       clueRounds: 3,
-      discussionSeconds: 180,
       allowImpostorFinalGuess: false,
       hotSeatDefense: true,
       yesNoQuestionRound: true,

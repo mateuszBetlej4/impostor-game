@@ -1,26 +1,6 @@
-import { supabase, isSupabaseConfigured } from './supabaseClient.js';
-
-function getClient() {
-  if (!isSupabaseConfigured || !supabase) {
-    throw new Error('Supabase is not configured yet.');
-  }
-  return supabase;
-}
-
-function pickWord({ category, wordBank }) {
-  const categoryNames = Object.keys(wordBank);
-  const chosenCategory = category === 'Random' || !wordBank[category]
-    ? categoryNames[Math.floor(Math.random() * categoryNames.length)]
-    : category;
-  const words = wordBank[chosenCategory] || [];
-  const word = words[Math.floor(Math.random() * words.length)];
-  return { category: chosenCategory, word };
-}
-
-function skipVotesNeeded(players) {
-  const mobPlayers = players.filter((player) => player.connected !== false && player.role !== 'impostor');
-  return Math.max(1, Math.floor(mobPlayers.length / 2) + 1);
-}
+import { pickWordFromBank } from '../game/index.js';
+import { getClient } from './getClient.js';
+import { getConnectedPlayers, getSkipVotesNeeded } from './playerGroups.js';
 
 export async function submitOnlineSecretSkipVote({ session, identity, round, players, wordBank }) {
   const client = getClient();
@@ -62,13 +42,13 @@ export async function submitOnlineSecretSkipVote({ session, identity, round, pla
   if (votesResult.error) throw votesResult.error;
 
   const votes = votesResult.data || [];
-  const threshold = skipVotesNeeded(players);
+  const threshold = getSkipVotesNeeded(players);
 
   if (votes.length < threshold) {
     return { skipped: false, votes };
   }
 
-  const selected = pickWord({ category: session.category || 'Random', wordBank });
+  const selected = pickWordFromBank({ category: session.category || 'Random', wordBank });
 
   await client
     .from('online_votes')
@@ -95,7 +75,7 @@ export async function submitOnlineSecretSkipVote({ session, identity, round, pla
 
   if (roundResult.error) throw roundResult.error;
 
-  await Promise.all(players.filter((player) => player.connected !== false).map((player) => client
+  await Promise.all(getConnectedPlayers(players).map((player) => client
     .from('online_players')
     .update({
       has_seen_role: false,

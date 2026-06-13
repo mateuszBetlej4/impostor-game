@@ -9,21 +9,60 @@
 .library-actions-card::after,
 .library-stats-card::after,
 .player-editor-card::after,
+.session-setup-card::after,
 .game-hud-header::before {
   content: none !important;
   display: none !important;
   opacity: 0 !important;
 }
 
-.home-tab-play .priority-card {
+.session-setup-card {
   min-height: auto !important;
   display: grid !important;
+  grid-template-columns: 1fr !important;
+  align-items: stretch !important;
   gap: 12px !important;
   padding: 20px !important;
   overflow: visible !important;
 }
 
-.home-tab-play .priority-card > div:last-child {
+.session-setup-title {
+  grid-column: 1 / -1 !important;
+  margin-bottom: 0 !important;
+}
+
+.session-setup-fields {
+  display: grid !important;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) !important;
+  gap: 10px !important;
+  min-width: 0 !important;
+}
+
+.session-field-full {
+  grid-column: 1 / -1 !important;
+}
+
+.session-field {
+  min-width: 0 !important;
+  display: grid !important;
+  gap: 6px !important;
+}
+
+.session-field > span {
+  color: var(--mob-muted) !important;
+  font-size: 11px !important;
+  font-weight: 950 !important;
+  letter-spacing: 0.12em !important;
+  text-transform: uppercase !important;
+}
+
+.session-field select {
+  width: 100% !important;
+  min-width: 0 !important;
+  min-height: 46px !important;
+}
+
+.session-toggle-list {
   display: grid !important;
   grid-template-columns: 1fr !important;
   gap: 8px !important;
@@ -31,67 +70,104 @@
   min-width: 0 !important;
 }
 
-.home-tab-play .priority-card .toggle-row {
-  min-height: 50px !important;
+.session-toggle-list .toggle-row {
   width: 100% !important;
+  min-height: 50px !important;
   padding: 9px 12px !important;
 }
 
-.home-tab-play .priority-card .toggle-row > span:first-child {
+.session-toggle-list .toggle-row > span:first-child {
   max-width: calc(100% - 46px) !important;
 }
 
-.home-tab-play .priority-card .toggle-row span,
-.home-tab-play .priority-card .toggle-row strong {
-  position: relative !important;
-  z-index: 1 !important;
-}
-
 .player-editor-card {
-  min-height: min(520px, calc(100dvh - 250px)) !important;
+  min-height: auto !important;
+  display: grid !important;
+  grid-template-rows: auto auto auto auto !important;
+  gap: 10px !important;
   overflow: hidden !important;
 }
 
-.player-editor-card .pass-order-list {
+.player-editor-card .section-title-row {
+  margin-bottom: 0 !important;
+}
+
+.player-scroll-list {
+  display: grid !important;
+  grid-template-columns: 1fr !important;
+  gap: 8px !important;
+  max-height: min(330px, 42dvh) !important;
   overflow-y: auto !important;
   overscroll-behavior: contain !important;
   padding-right: 2px !important;
   -webkit-overflow-scrolling: touch !important;
+  align-content: start !important;
 }
 
-.player-editor-card .pass-order-row {
+.player-scroll-row {
+  min-height: 54px !important;
   flex: 0 0 auto !important;
 }
 
+.player-scroll-row .order-number {
+  width: 36px !important;
+  height: 36px !important;
+  border-radius: 13px !important;
+  font-size: 16px !important;
+}
+
+.player-scroll-row strong {
+  font-size: 16px !important;
+}
+
 .player-editor-card .player-add-row {
+  margin-top: 0 !important;
+  padding-top: 6px !important;
   position: relative !important;
   z-index: 2 !important;
-  background: linear-gradient(180deg, rgba(5, 5, 5, 0.2), rgba(5, 5, 5, 0.88)) !important;
-  padding-top: 8px !important;
 }
 
 .library-stats-card {
   min-height: auto !important;
   display: grid !important;
+  grid-template-columns: 1fr !important;
   gap: 14px !important;
   padding: 22px !important;
   overflow: visible !important;
 }
 
-.library-stats-card > div:last-child {
+.library-title-row {
+  margin-bottom: 0 !important;
+}
+
+.library-stats-card .library-stat-grid {
+  display: grid !important;
+  grid-template-columns: 1fr 1fr !important;
+  gap: 10px !important;
+  width: 100% !important;
+}
+
+.reset-word-action-row {
   width: 100% !important;
   display: flex !important;
   justify-content: center !important;
   align-items: center !important;
-  padding-top: 4px !important;
+  padding-top: 2px !important;
 }
 
-.library-stats-card > div:last-child > button {
-  width: min(100%, 320px) !important;
-  max-width: 320px !important;
-  margin-left: auto !important;
-  margin-right: auto !important;
-  flex: 0 1 320px !important;
+.reset-word-action {
+  width: 100% !important;
+  min-height: 48px !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 10px !important;
+  border: 1px solid rgba(244, 208, 111, 0.18) !important;
+  border-radius: 18px !important;
+  color: var(--mob-text) !important;
+  background: rgba(255, 255, 255, 0.045) !important;
+  font-weight: 950 !important;
+  text-align: center !important;
 }
 
 @media (max-width: 430px) {
@@ -115,6 +191,11 @@
   .panel-card,
   .role-card,
   .result-card {
+    padding: 20px !important;
+  }
+
+  .session-setup-card,
+  .library-stats-card {
     padding: 20px !important;
   }
 

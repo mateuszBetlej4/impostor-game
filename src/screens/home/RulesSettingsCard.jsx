@@ -48,15 +48,36 @@ export function RulesSettingsCard({ settings, patchSettings }) {
         </label>
       </div>
       <div className="toggle-list">
-        <Toggle label="Show category to impostor" checked={settings.showCategoryToImpostor} onChange={(value) => patchSettings({ showCategoryToImpostor: value })} />
-        <Toggle label="Hot Seat Defense" checked={Boolean(settings.hotSeatDefense)} onChange={toggleHotSeat} />
-        <p className="helper-text">Hot Seat replaces the impostor save chance. The voted player gives one final clue, then the group accepts or rejects the defense.</p>
-        <Toggle label="Impostor save chance: final guess" checked={settings.allowImpostorFinalGuess} onChange={toggleFinalGuess} />
-        <p className="helper-text">When Hot Seat is off, a caught impostor can still save the round by guessing the secret word.</p>
-        {settings.hotSeatDefense && <p className="warning-text">Final guess is disabled while Hot Seat Defense is active.</p>}
-        <Toggle label="Yes/No Question Round" checked={Boolean(settings.yesNoQuestionRound)} onChange={(value) => patchSettings({ yesNoQuestionRound: value })} />
-        <p className="helper-text">After clues, everyone privately answers the same yes/no question about the secret word before voting.</p>
-        <Toggle label="Randomise pass order at start" checked={settings.randomisePassOrder} onChange={(value) => patchSettings({ randomisePassOrder: value })} />
+        <Toggle
+          label="Show category to impostor"
+          checked={settings.showCategoryToImpostor}
+          onChange={(value) => patchSettings({ showCategoryToImpostor: value })}
+          tooltip="When enabled, impostors see the category but not the secret word. This makes bluffing slightly easier."
+        />
+        <Toggle
+          label="Hot Seat Defense"
+          checked={Boolean(settings.hotSeatDefense)}
+          onChange={toggleHotSeat}
+          tooltip="Replaces the impostor final guess. The voted player gives one final clue, then the group accepts or rejects the defense."
+        />
+        <Toggle
+          label="Impostor save chance: final guess"
+          checked={settings.allowImpostorFinalGuess}
+          onChange={toggleFinalGuess}
+          tooltip="When Hot Seat is off, a caught impostor can still save the round by guessing the secret word."
+        />
+        <Toggle
+          label="Yes/No Question Round"
+          checked={Boolean(settings.yesNoQuestionRound)}
+          onChange={(value) => patchSettings({ yesNoQuestionRound: value })}
+          tooltip="After clues, everyone privately answers the same yes/no question about the secret word before voting."
+        />
+        <Toggle
+          label="Randomise pass order at start"
+          checked={settings.randomisePassOrder}
+          onChange={(value) => patchSettings({ randomisePassOrder: value })}
+          tooltip="Randomises the order players pass the phone during reveal and clue phases."
+        />
       </div>
     </section>
   );

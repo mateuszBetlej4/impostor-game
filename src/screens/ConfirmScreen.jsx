@@ -9,51 +9,59 @@ export function ConfirmScreen({
   onBack,
   onConfirm,
 }) {
+  const playerPreview = players.slice(0, 4).join(', ');
+  const extraPlayers = Math.max(0, players.length - 4);
+
   return (
-    <div className="screen-stack">
-      <section className="hero-card compact-hero confirm-card">
-        <p className="eyebrow">Verify session</p>
-        <h2>Ready to run this setup?</h2>
-        <div className="confirm-list">
+    <div className="screen-stack confirm-screen-fit">
+      <section className="panel-card confirm-card confirm-review-card">
+        <div className="section-title-row confirm-title-row">
+          <div>
+            <p className="eyebrow">Review</p>
+            <h3>Start game?</h3>
+          </div>
+        </div>
+
+        <div className="confirm-primary-grid">
           <div>
             <span>Players</span>
-            <strong>{players.length}: {players.join(', ')}</strong>
-          </div>
-          <div>
-            <span>Category / set</span>
-            <strong>{category}</strong>
-          </div>
-          <div>
-            <span>Words in pool</span>
-            <strong>{selectedWordCount} selected · {usedWordCount}/{totalWords} used</strong>
+            <strong>{players.length}</strong>
           </div>
           <div>
             <span>Impostors</span>
             <strong>{impostorCount}</strong>
           </div>
           <div>
-            <span>Clue rounds before vote</span>
+            <span>Clue rounds</span>
             <strong>{settings.guessRounds}</strong>
           </div>
           <div>
-            <span>Discussion timer</span>
-            <strong>{settings.discussionSeconds ? `${settings.discussionSeconds}s` : 'No timer'}</strong>
+            <span>Timer</span>
+            <strong>{settings.discussionSeconds ? `${settings.discussionSeconds}s` : 'Off'}</strong>
+          </div>
+        </div>
+
+        <div className="confirm-compact-list">
+          <div>
+            <span>Set</span>
+            <strong>{category}</strong>
           </div>
           <div>
-            <span>Category shown to impostor</span>
-            <strong>{settings.showCategoryToImpostor ? 'Yes' : 'No'}</strong>
-          </div>
-          <div>
-            <span>Final impostor guess</span>
-            <strong>{settings.allowImpostorFinalGuess ? 'On' : 'Off'}</strong>
+            <span>Words</span>
+            <strong>{selectedWordCount} selected · {usedWordCount}/{totalWords} used</strong>
           </div>
           <div>
             <span>Pass order</span>
-            <strong>{settings.randomisePassOrder ? 'Randomised' : 'Manual order'}</strong>
+            <strong>{settings.randomisePassOrder ? 'Random' : 'Manual'}</strong>
+          </div>
+          <div>
+            <span>Players preview</span>
+            <strong>{playerPreview}{extraPlayers ? ` +${extraPlayers}` : ''}</strong>
           </div>
         </div>
       </section>
-      <div className="action-grid">
+
+      <div className="action-grid confirm-action-grid">
         <button className="secondary-action" type="button" onClick={onBack}>Edit Setup</button>
         <button className="primary-action" type="button" onClick={onConfirm}>Confirm & Reveal</button>
       </div>

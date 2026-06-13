@@ -63,15 +63,23 @@ export async function submitOnlineHotSeatClue({ sessionId, round, playerId, play
   const cleanClue = clue.trim();
   if (!cleanClue) throw new Error('Final clue cannot be blank.');
 
+  const deleteExisting = await client
+    .from('online_clues')
+    .delete()
+    .eq('round_id', round.id)
+    .eq('clue_phase', 'hot_seat');
+
+  if (deleteExisting.error) throw deleteExisting.error;
+
   const clueResult = await client
     .from('online_clues')
-    .upsert({
+    .insert({
       session_id: sessionId,
       round_id: round.id,
       player_id: playerId,
       clue_phase: 'hot_seat',
       clue: cleanClue,
-    }, { onConflict: 'round_id' });
+    });
 
   if (clueResult.error) throw clueResult.error;
 
@@ -280,7 +288,7 @@ export async function resolveOnlineTieDuel({ session, identity, round, players, 
 
   if (duelResult.error) throw duelResult.error;
 
-  if (round.rules?.hotSeatDefense && !round.hot_seat_used && tieDuel.reason === 'initial_vote_tie') {
+  if (selected && round.rules?.hotSeatDefense && !round.hot_seat_used && tieDuel.reason === 'initial_vote_tie') {
     const roundResult = await client
       .from('online_rounds')
       .update({

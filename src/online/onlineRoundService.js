@@ -1,5 +1,6 @@
 import { pickWordFromBank, shuffle } from '../game/index.js';
 import { getClient } from './getClient.js';
+import { getConnectedPlayers } from './playerGroups.js';
 
 export async function startOnlineRound({ session, identity, players, wordBank }) {
   const client = getClient();
@@ -8,7 +9,7 @@ export async function startOnlineRound({ session, identity, players, wordBank })
     throw new Error('Only the host can start this online round.');
   }
 
-  const activePlayers = players.filter((player) => player.connected !== false);
+  const activePlayers = getConnectedPlayers(players);
   if (activePlayers.length < 3) {
     throw new Error('Online sessions need at least 3 connected players.');
   }

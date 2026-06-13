@@ -12,6 +12,7 @@ import './gameGuards.css';
 import './revealFit.css';
 import './kioskMode.css';
 import './guessScreen.css';
+import './appFit.css';
 
 const WORD_AUDIT_HASH = '#breadcrumb-words';
 

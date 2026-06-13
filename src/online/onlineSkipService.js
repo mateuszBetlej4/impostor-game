@@ -1,10 +1,6 @@
 import { pickWordFromBank } from '../game/index.js';
 import { getClient } from './getClient.js';
-
-function skipVotesNeeded(players) {
-  const mobPlayers = players.filter((player) => player.connected !== false && player.role !== 'impostor');
-  return Math.max(1, Math.floor(mobPlayers.length / 2) + 1);
-}
+import { getConnectedPlayers, getSkipVotesNeeded } from './playerGroups.js';
 
 export async function submitOnlineSecretSkipVote({ session, identity, round, players, wordBank }) {
   const client = getClient();
@@ -46,7 +42,7 @@ export async function submitOnlineSecretSkipVote({ session, identity, round, pla
   if (votesResult.error) throw votesResult.error;
 
   const votes = votesResult.data || [];
-  const threshold = skipVotesNeeded(players);
+  const threshold = getSkipVotesNeeded(players);
 
   if (votes.length < threshold) {
     return { skipped: false, votes };
@@ -79,7 +75,7 @@ export async function submitOnlineSecretSkipVote({ session, identity, round, pla
 
   if (roundResult.error) throw roundResult.error;
 
-  await Promise.all(players.filter((player) => player.connected !== false).map((player) => client
+  await Promise.all(getConnectedPlayers(players).map((player) => client
     .from('online_players')
     .update({
       has_seen_role: false,

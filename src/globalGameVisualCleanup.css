@@ -1,0 +1,191 @@
+/* Global visual cleanup for every game screen. Imported last. */
+
+.phone-frame::after,
+.app-header::before,
+.game-hud-header::before,
+.hero-card::after,
+.panel-card::after,
+.role-card::after,
+.result-card::after,
+.home-briefing-card::after,
+.vote-panel::after,
+.confirm-card::after,
+.final-guess-card::after,
+.result-summary-card::after,
+.clue-player-card::after {
+  content: none !important;
+  display: none !important;
+  opacity: 0 !important;
+}
+
+.phone-frame {
+  gap: 16px !important;
+}
+
+.screen-stack:not(.home-tab-layout) {
+  gap: 16px !important;
+}
+
+.screen-stack:not(.home-tab-layout) > .hero-card,
+.screen-stack:not(.home-tab-layout) > .panel-card,
+.screen-stack:not(.home-tab-layout) > .role-card,
+.screen-stack:not(.home-tab-layout) > .result-card,
+.screen-stack:not(.home-tab-layout) > .confirm-card,
+.vote-panel,
+.final-guess-card,
+.result-summary-card,
+.clue-player-card {
+  border-radius: 30px !important;
+  border-color: rgba(244, 208, 111, 0.18) !important;
+  background: linear-gradient(180deg, rgba(24, 20, 13, 0.82), rgba(7, 6, 5, 0.92)) !important;
+  box-shadow: 0 10px 26px rgba(0, 0, 0, 0.34), inset 0 1px 0 rgba(255, 255, 255, 0.045) !important;
+  overflow: hidden !important;
+}
+
+.confirm-card,
+.setup-summary,
+.guess-hero,
+.result-card,
+.role-card,
+.hero-card {
+  padding: 24px 22px !important;
+}
+
+.confirm-list,
+.summary-grid,
+.result-facts,
+.hero-stats,
+.vote-results {
+  display: grid !important;
+  gap: 0 !important;
+  border-top: 1px solid rgba(244, 208, 111, 0.11) !important;
+  border-bottom: 1px solid rgba(244, 208, 111, 0.11) !important;
+}
+
+.confirm-list div,
+.summary-grid div,
+.result-facts div,
+.hero-stats span,
+.vote-results .score-row {
+  border: 0 !important;
+  border-bottom: 1px solid rgba(244, 208, 111, 0.08) !important;
+  border-radius: 0 !important;
+  background: transparent !important;
+  padding: 12px 0 !important;
+}
+
+.confirm-list div:last-child,
+.summary-grid div:last-child,
+.result-facts div:last-child,
+.hero-stats span:last-child,
+.vote-results .score-row:last-child {
+  border-bottom: 0 !important;
+}
+
+.summary-grid,
+.hero-stats {
+  grid-template-columns: 1fr 1fr !important;
+  gap: 0 14px !important;
+}
+
+.summary-grid div,
+.hero-stats span {
+  border-bottom: 1px solid rgba(244, 208, 111, 0.08) !important;
+}
+
+.hold-card,
+.secret-card {
+  border-radius: 24px !important;
+  border-color: rgba(244, 208, 111, 0.16) !important;
+  background: rgba(0, 0, 0, 0.18) !important;
+  box-shadow: none !important;
+}
+
+.secret-card h3,
+.secret-card > p:not(.eyebrow) {
+  border-radius: 20px !important;
+  border-color: rgba(244, 208, 111, 0.14) !important;
+  background: rgba(0, 0, 0, 0.18) !important;
+  box-shadow: none !important;
+}
+
+.ordered-list {
+  gap: 0 !important;
+  border-top: 1px solid rgba(244, 208, 111, 0.11) !important;
+  border-bottom: 1px solid rgba(244, 208, 111, 0.11) !important;
+}
+
+.ordered-list li {
+  min-height: 54px !important;
+  border: 0 !important;
+  border-bottom: 1px solid rgba(244, 208, 111, 0.08) !important;
+  border-radius: 0 !important;
+  background: transparent !important;
+  padding: 10px 0 !important;
+}
+
+.ordered-list li:last-child {
+  border-bottom: 0 !important;
+}
+
+.vote-grid {
+  gap: 0 !important;
+  border-top: 1px solid rgba(244, 208, 111, 0.11) !important;
+  border-bottom: 1px solid rgba(244, 208, 111, 0.11) !important;
+}
+
+.vote-grid button {
+  min-height: 56px !important;
+  border: 0 !important;
+  border-bottom: 1px solid rgba(244, 208, 111, 0.08) !important;
+  border-radius: 0 !important;
+  background: transparent !important;
+  box-shadow: none !important;
+  text-align: left !important;
+  justify-content: flex-start !important;
+}
+
+.vote-grid button:last-child {
+  border-bottom: 0 !important;
+}
+
+.primary-action,
+.secondary-action,
+.bottom-start,
+.action-grid button {
+  border-radius: 20px !important;
+  min-height: 54px !important;
+}
+
+.action-grid {
+  gap: 10px !important;
+}
+
+.progress-pill {
+  border-color: rgba(244, 208, 111, 0.14) !important;
+  background: rgba(0, 0, 0, 0.22) !important;
+}
+
+@media (max-width: 430px) {
+  .confirm-card,
+  .setup-summary,
+  .guess-hero,
+  .result-card,
+  .role-card,
+  .hero-card,
+  .screen-stack:not(.home-tab-layout) > .panel-card {
+    padding: 22px 20px !important;
+  }
+
+  .summary-grid,
+  .hero-stats {
+    gap: 0 12px !important;
+  }
+
+  .result-card h2,
+  .hero-card h2,
+  .role-card h2,
+  .vote-panel h2 {
+    letter-spacing: -0.035em !important;
+  }
+}

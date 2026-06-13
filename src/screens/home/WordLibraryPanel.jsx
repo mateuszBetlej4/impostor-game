@@ -2,22 +2,15 @@ import { RotateCcw, Sparkles } from 'lucide-react';
 
 export function WordLibraryStats({ usedWordCount, totalWords, selectedWordCount, resetUsedWords }) {
   return (
-    <section
-      className="panel-card settings-card priority-card library-stats-card"
-      style={{
-        minHeight: 'auto',
-        padding: 22,
-        gap: 14,
-      }}
-    >
-      <div className="section-title-row" style={{ marginBottom: 0 }}>
+    <section className="panel-card settings-card library-stats-card">
+      <div className="section-title-row library-title-row">
         <div>
           <p className="eyebrow">Word library</p>
           <h3>Current pool</h3>
         </div>
         <Sparkles size={20} />
       </div>
-      <div className="library-stat-grid" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10 }}>
+      <div className="library-stat-grid">
         <div className="score-row">
           <span>Used</span>
           <strong>{usedWordCount} / {totalWords}</strong>
@@ -27,26 +20,8 @@ export function WordLibraryStats({ usedWordCount, totalWords, selectedWordCount,
           <strong>{selectedWordCount}</strong>
         </div>
       </div>
-      <div style={{ width: '100%', display: 'grid', placeItems: 'center', paddingTop: 2 }}>
-        <button
-          type="button"
-          disabled={usedWordCount === 0}
-          onClick={resetUsedWords}
-          style={{
-            width: 'min(300px, 100%)',
-            minHeight: 48,
-            display: 'inline-flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            gap: 10,
-            margin: '0 auto',
-            border: '1px solid rgba(244, 208, 111, 0.18)',
-            borderRadius: 18,
-            color: 'var(--mob-text)',
-            background: 'rgba(255, 255, 255, 0.045)',
-            fontWeight: 950,
-          }}
-        >
+      <div className="reset-word-action-row">
+        <button className="reset-word-action" type="button" disabled={usedWordCount === 0} onClick={resetUsedWords}>
           <RotateCcw size={18} /> Reset word history
         </button>
       </div>

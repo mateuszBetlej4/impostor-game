@@ -1,0 +1,225 @@
+/* Final one-screen polish for mobile Safari screenshots. Imported last. */
+.app-fit-home .home-tab-content {
+  justify-content: flex-start;
+  gap: 8px;
+}
+
+.app-fit-home .home-tab-content > *,
+.app-fit-home .home-tab-content > .panel-card,
+.app-fit-home .home-tab-content > .hero-card,
+.app-fit-home .home-tab-content > .settings-card,
+.app-fit-home .home-tab-content > .compact-mode-card {
+  flex: 0 0 auto;
+}
+
+.app-fit-home .panel-card,
+.app-fit-home .hero-card {
+  box-shadow: 0 12px 44px rgba(0, 0, 0, 0.46), inset 0 1px 0 rgba(255, 255, 255, 0.035);
+}
+
+/* Play tab */
+.compact-mode-card {
+  padding: 6px;
+  border-radius: 20px;
+}
+
+.compact-mode-switch button {
+  min-height: 38px;
+  padding: 5px 8px;
+  border-radius: 16px;
+}
+
+.compact-mode-switch strong {
+  font-size: 13px;
+  letter-spacing: 0.04em;
+}
+
+.compact-mode-switch small {
+  display: none;
+}
+
+.app-fit-home .priority-card {
+  grid-template-columns: 1fr 74px;
+  gap: 6px;
+  padding: 9px;
+  border-radius: 20px;
+}
+
+.app-fit-home .priority-card .section-title-row {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  grid-column: 1 / -1;
+  margin-bottom: 0;
+}
+
+.app-fit-home .priority-card .section-title-row h3 {
+  font-size: clamp(24px, 7vw, 32px);
+}
+
+.app-fit-home .priority-card .section-title-row svg {
+  width: 16px;
+  height: 16px;
+}
+
+.app-fit-home .priority-card label {
+  gap: 2px;
+}
+
+.app-fit-home .priority-card label > span {
+  font-size: 9px;
+  letter-spacing: 0.1em;
+}
+
+.app-fit-home .priority-card select {
+  min-height: 34px;
+  padding: 0 11px;
+  font-size: 17px;
+}
+
+.app-fit-home .bottom-start {
+  flex: 0 0 auto;
+  margin-top: 2px;
+  min-height: 44px;
+}
+
+/* Players tab */
+.app-fit-home .pass-order-list {
+  flex: 0 0 auto;
+  max-height: 238px;
+  overflow: hidden;
+}
+
+.app-fit-home .pass-order-row {
+  min-height: 30px;
+}
+
+.app-fit-home .input-row {
+  margin-top: 6px;
+}
+
+/* Rules tab */
+.app-fit-home .preset-button {
+  min-height: 36px;
+  padding: 5px 7px;
+}
+
+.app-fit-home .settings-grid select {
+  min-height: 36px;
+  font-size: 15px;
+}
+
+.app-fit-home .toggle-list label,
+.app-fit-home .toggle-row {
+  min-height: 31px;
+  padding: 4px 7px;
+}
+
+/* Library tab */
+.library-actions-card {
+  padding: 12px;
+  border-radius: 20px;
+}
+
+.library-actions-card .primary-action {
+  min-height: 44px;
+}
+
+/* Build set sub-screen */
+.app-fit-home .library-back-action {
+  flex: 0 0 auto;
+  min-height: 36px;
+  border-radius: 16px;
+}
+
+.app-fit-home .library-back-action + .panel-card {
+  flex: 0 0 auto;
+  padding: 12px;
+  border-radius: 20px;
+  overflow: hidden;
+}
+
+.app-fit-home .library-back-action + .panel-card .section-title-row h3 {
+  font-size: clamp(26px, 8vw, 36px);
+}
+
+.app-fit-home .library-back-action + .panel-card .settings-grid {
+  gap: 6px;
+}
+
+.app-fit-home .library-back-action + .panel-card input,
+.app-fit-home .library-back-action + .panel-card select {
+  min-height: 38px;
+  font-size: 15px;
+}
+
+.app-fit-home .library-back-action + .panel-card textarea {
+  min-height: 54px;
+  max-height: 70px;
+  font-size: 14px;
+  line-height: 1.25;
+}
+
+.app-fit-home .library-back-action + .panel-card .primary-action {
+  min-height: 42px;
+}
+
+/* General footer nav */
+.setup-bottom-nav {
+  margin-top: auto;
+}
+
+@media (max-height: 760px) {
+  .app-fit-home .home-tab-content {
+    gap: 6px;
+  }
+
+  .app-fit-home .priority-card {
+    grid-template-columns: 1fr 66px;
+    padding: 7px;
+  }
+
+  .app-fit-home .priority-card .section-title-row h3 {
+    font-size: clamp(20px, 6vw, 28px);
+  }
+
+  .app-fit-home .priority-card select {
+    min-height: 31px;
+    font-size: 14px;
+  }
+
+  .app-fit-home .bottom-start {
+    min-height: 38px;
+  }
+
+  .app-fit-home .pass-order-list {
+    max-height: 204px;
+  }
+
+  .library-actions-card .primary-action,
+  .app-fit-home .library-back-action + .panel-card .primary-action {
+    min-height: 38px;
+  }
+}
+
+@media (max-height: 680px) {
+  .app-fit-home .priority-card .section-title-row {
+    display: none;
+  }
+
+  .compact-mode-switch button {
+    min-height: 32px;
+  }
+
+  .app-fit-home .priority-card {
+    grid-template-columns: 1fr 58px;
+  }
+
+  .app-fit-home .pass-order-list {
+    max-height: 172px;
+  }
+
+  .app-fit-home .library-back-action + .panel-card textarea {
+    min-height: 42px;
+    max-height: 46px;
+  }
+}

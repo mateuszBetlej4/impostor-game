@@ -1,5 +1,4 @@
 import { Send } from 'lucide-react';
-import { DiscussionTimer } from '../components/index.js';
 
 export function TieDuelScreen({
   mode,
@@ -50,7 +49,6 @@ export function TieDuelScreen({
         <h2>Choose from the tied players.</h2>
         <p className="hero-copy">{round.bonusReason || 'The tied players gave one extra clue. Vote again between them.'}</p>
       </section>
-      <DiscussionTimer seconds={round.settings.discussionSeconds} timerKey={`tie-duel-${round.bonusCandidates.join('-')}`} />
       <section className="panel-card vote-panel compact-vote-panel">
         <p className="eyebrow">Pass the phone to {voter}</p>
         <h2>Who seems more suspicious?</h2>

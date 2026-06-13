@@ -1,8 +1,8 @@
 import { Sparkles } from 'lucide-react';
 
-export function WordLibraryStats({ usedWordCount, totalWords, selectedWordCount, resetUsedWords }) {
+export function WordLibraryStats({ usedWordCount, totalWords, selectedWordCount }) {
   return (
-    <section className="panel-card settings-card priority-card">
+    <section className="panel-card settings-card priority-card library-stats-card">
       <div className="section-title-row">
         <div>
           <p className="eyebrow">Word library</p>
@@ -10,15 +10,16 @@ export function WordLibraryStats({ usedWordCount, totalWords, selectedWordCount,
         </div>
         <Sparkles size={20} />
       </div>
-      <div className="score-row">
-        <span>Words used</span>
-        <strong>{usedWordCount} / {totalWords}</strong>
+      <div className="library-stat-grid">
+        <div className="score-row">
+          <span>Used</span>
+          <strong>{usedWordCount} / {totalWords}</strong>
+        </div>
+        <div className="score-row">
+          <span>Selected</span>
+          <strong>{selectedWordCount}</strong>
+        </div>
       </div>
-      <div className="score-row">
-        <span>Selected set</span>
-        <strong>{selectedWordCount}</strong>
-      </div>
-      <button className="secondary-action" type="button" onClick={resetUsedWords}>Reset Word History</button>
     </section>
   );
 }
@@ -36,7 +37,7 @@ export function CustomSetBuilder({
   deleteCustomSet,
 }) {
   return (
-    <section className="panel-card">
+    <section className="panel-card custom-set-builder-card">
       <div className="section-title-row">
         <div>
           <p className="eyebrow">Custom library</p>
@@ -44,7 +45,7 @@ export function CustomSetBuilder({
         </div>
         <Sparkles size={20} />
       </div>
-      <div className="settings-grid">
+      <div className="settings-grid custom-set-grid">
         <label>
           <span>Set name</span>
           <input value={customSetName} onChange={(event) => setCustomSetName(event.target.value)} placeholder="e.g. Le Mans Trip" />
@@ -62,7 +63,7 @@ export function CustomSetBuilder({
             value={customSetWords}
             onChange={(event) => setCustomSetWords(event.target.value)}
             placeholder="One word per line, or separated by commas"
-            rows="5"
+            rows="4"
           />
         </label>
       </div>

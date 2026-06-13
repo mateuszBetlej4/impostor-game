@@ -2,7 +2,6 @@ import { RotateCcw } from 'lucide-react';
 import { MOB_LOGO_SRC } from '../logoData.js';
 
 const SCREEN_LABELS = {
-  home: 'Setup',
   confirm: 'Briefing',
   reveal: 'Reveal',
   clueInput: 'Clue',
@@ -19,7 +18,9 @@ const SCREEN_LABELS = {
   result: 'Result',
 };
 
-export function Header({ screen, onReset }) {
+export function Header({ screen, onReset, onStart, canStart }) {
+  const isSetup = screen === 'home';
+
   return (
     <header className="app-header game-hud-header">
       <div className="brand-lockup">
@@ -30,11 +31,17 @@ export function Header({ screen, onReset }) {
         </div>
       </div>
       <div className="header-actions">
-        <span className="header-stage-badge">{SCREEN_LABELS[screen] || 'Game'}</span>
-        {screen !== 'home' && (
-          <button className="icon-button" type="button" onClick={onReset} aria-label="Reset game">
-            <RotateCcw size={18} />
+        {isSetup ? (
+          <button className="header-start" type="button" disabled={!canStart} onClick={onStart}>
+            Start
           </button>
+        ) : (
+          <>
+            <span className="header-stage-badge">{SCREEN_LABELS[screen] || 'Game'}</span>
+            <button className="icon-button" type="button" onClick={onReset} aria-label="Reset game">
+              <RotateCcw size={18} />
+            </button>
+          </>
         )}
       </div>
     </header>

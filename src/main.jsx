@@ -16,6 +16,7 @@ import './appFit.css';
 import './libraryFlow.css';
 import './setupResponsive.css';
 import './confirmFit.css';
+import './singleScreenPolish.css';
 
 const WORD_AUDIT_HASH = '#breadcrumb-words';
 

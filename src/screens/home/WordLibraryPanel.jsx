@@ -20,13 +20,25 @@ export function WordLibraryStats({ usedWordCount, totalWords, selectedWordCount,
           <strong>{selectedWordCount}</strong>
         </div>
       </div>
-      <div style={{ display: 'flex', justifyContent: 'center', paddingTop: 4 }}>
+      <div style={{ width: '100%', display: 'grid', placeItems: 'center', paddingTop: 8 }}>
         <button
-          className="secondary-action"
           type="button"
           disabled={usedWordCount === 0}
           onClick={resetUsedWords}
-          style={{ width: 'min(100%, 260px)', minHeight: 50, borderRadius: 18 }}
+          style={{
+            width: 'min(260px, 100%)',
+            minHeight: 50,
+            display: 'inline-flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            gap: 10,
+            margin: '0 auto',
+            border: '1px solid rgba(244, 208, 111, 0.18)',
+            borderRadius: 18,
+            color: 'var(--mob-text)',
+            background: 'rgba(255, 255, 255, 0.045)',
+            fontWeight: 950,
+          }}
         >
           <RotateCcw size={18} /> Reset word history
         </button>

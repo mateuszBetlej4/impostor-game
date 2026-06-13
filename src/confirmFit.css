@@ -1,0 +1,144 @@
+.confirm-screen-fit {
+  height: 100%;
+}
+
+.confirm-review-card {
+  flex: 1 1 0;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  overflow: hidden;
+}
+
+.confirm-title-row {
+  flex: 0 0 auto;
+  margin-bottom: 0;
+}
+
+.confirm-title-row h3 {
+  margin: 2px 0 0;
+  font-family: 'Barlow Condensed', Inter, sans-serif;
+  font-size: clamp(36px, 11vw, 56px);
+  line-height: 0.88;
+  text-transform: uppercase;
+}
+
+.confirm-primary-grid {
+  flex: 0 0 auto;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 7px;
+}
+
+.confirm-primary-grid div,
+.confirm-compact-list div {
+  min-width: 0;
+  border: 1px solid var(--mob-border-soft);
+  border-radius: 16px;
+  background: rgba(0, 0, 0, 0.22);
+}
+
+.confirm-primary-grid div {
+  min-height: 64px;
+  display: grid;
+  align-content: center;
+  gap: 2px;
+  padding: 10px;
+  text-align: center;
+}
+
+.confirm-primary-grid span,
+.confirm-compact-list span {
+  color: var(--mob-muted);
+  font-size: 10px;
+  font-weight: 950;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.confirm-primary-grid strong {
+  color: var(--mob-text);
+  font-family: 'Barlow Condensed', Inter, sans-serif;
+  font-size: clamp(34px, 10vw, 48px);
+  line-height: 0.9;
+}
+
+.confirm-compact-list {
+  min-height: 0;
+  flex: 1 1 0;
+  display: grid;
+  gap: 6px;
+  overflow: hidden;
+}
+
+.confirm-compact-list div {
+  min-height: 42px;
+  display: grid;
+  gap: 2px;
+  padding: 7px 9px;
+}
+
+.confirm-compact-list strong {
+  min-width: 0;
+  overflow: hidden;
+  color: var(--mob-text);
+  font-size: 13px;
+  font-weight: 900;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.confirm-action-grid {
+  flex: 0 0 auto;
+  margin-top: auto;
+}
+
+@media (max-height: 760px) {
+  .confirm-review-card {
+    gap: 7px;
+  }
+
+  .confirm-title-row h3 {
+    font-size: clamp(30px, 9vw, 44px);
+  }
+
+  .confirm-primary-grid div {
+    min-height: 54px;
+    padding: 7px;
+  }
+
+  .confirm-primary-grid strong {
+    font-size: clamp(28px, 8vw, 38px);
+  }
+
+  .confirm-compact-list div {
+    min-height: 36px;
+    padding: 5px 7px;
+  }
+
+  .confirm-compact-list strong {
+    font-size: 12px;
+  }
+}
+
+@media (max-height: 680px) {
+  .confirm-title-row .eyebrow {
+    display: none;
+  }
+
+  .confirm-primary-grid div {
+    min-height: 46px;
+  }
+
+  .confirm-primary-grid strong {
+    font-size: clamp(24px, 7vw, 32px);
+  }
+
+  .confirm-compact-list {
+    gap: 4px;
+  }
+
+  .confirm-compact-list div {
+    min-height: 31px;
+  }
+}

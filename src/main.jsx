@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { createRoot } from 'react-dom/client';
-import App from './App.jsx';
+import App from './AppWithTimedClues.jsx';
 import { WordAuditPage } from './dev/WordAuditPage.jsx';
 import { GameGuards } from './gameGuards.jsx';
 import './styles.css';
@@ -11,6 +11,13 @@ import './setupTabs.css';
 import './gameGuards.css';
 import './revealFit.css';
 import './kioskMode.css';
+import './guessScreen.css';
+import './appFit.css';
+import './libraryFlow.css';
+import './setupResponsive.css';
+import './confirmFit.css';
+import './singleScreenPolish.css';
+import './gameScreenFit.css';
 
 const WORD_AUDIT_HASH = '#breadcrumb-words';
 

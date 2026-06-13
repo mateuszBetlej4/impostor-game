@@ -1,0 +1,188 @@
+/* Final setup-tab responsive polish. Imported after appFit.css. */
+.app-fit-home .home-tab-content > * {
+  flex: 0 0 auto;
+}
+
+.app-fit-home .home-tab-content > .settings-card,
+.app-fit-home .home-tab-content > .panel-card,
+.app-fit-home .home-tab-content > .compact-mode-card {
+  flex: 0 0 auto;
+}
+
+.compact-mode-card {
+  padding: 8px;
+}
+
+.compact-mode-switch {
+  grid-template-columns: 1fr 1fr;
+  gap: 6px;
+}
+
+.compact-mode-switch button {
+  min-height: 46px;
+  padding: 7px 9px;
+  text-align: center;
+}
+
+.compact-mode-switch strong {
+  font-size: 14px;
+}
+
+.compact-mode-switch small {
+  font-size: 11px;
+}
+
+.app-fit-home .priority-card {
+  display: grid;
+  grid-template-columns: 1fr 92px;
+  align-items: end;
+  gap: 7px;
+  padding: 10px;
+}
+
+.app-fit-home .priority-card .section-title-row {
+  grid-column: 1 / -1;
+  margin-bottom: 0;
+}
+
+.app-fit-home .priority-card .section-title-row h3 {
+  font-size: clamp(22px, 6vw, 30px);
+}
+
+.app-fit-home .priority-card label {
+  min-width: 0;
+  gap: 4px;
+}
+
+.app-fit-home .priority-card label > span {
+  font-size: 10px;
+}
+
+.app-fit-home .priority-card select {
+  min-height: 38px;
+}
+
+.app-fit-home .bottom-start {
+  flex: 0 0 auto;
+  margin-top: auto;
+}
+
+.app-fit-home .settings-card,
+.app-fit-home .panel-card {
+  max-height: 100%;
+}
+
+.app-fit-home .settings-card .section-title-row,
+.app-fit-home .panel-card .section-title-row {
+  min-height: 0;
+}
+
+.app-fit-home .settings-card .section-title-row svg,
+.app-fit-home .panel-card .section-title-row svg {
+  width: 17px;
+  height: 17px;
+}
+
+.app-fit-home .preset-row {
+  flex: 0 0 auto;
+}
+
+.app-fit-home .preset-button strong {
+  font-size: 12px;
+}
+
+.app-fit-home .settings-grid {
+  flex: 0 0 auto;
+}
+
+.app-fit-home .toggle-list {
+  flex: 0 0 auto;
+  gap: 4px;
+}
+
+.app-fit-home .toggle-list label,
+.app-fit-home .toggle-row {
+  padding: 5px 7px;
+  border-radius: 12px;
+}
+
+.app-fit-home .pass-order-list {
+  flex: 1 1 0;
+  align-content: start;
+}
+
+.app-fit-home .library-actions-card {
+  flex: 0 0 auto;
+}
+
+.app-fit-home .library-actions-card .primary-action {
+  min-height: 42px;
+}
+
+.app-fit-home .library-back-action {
+  flex: 0 0 40px;
+}
+
+.app-fit-home .library-back-action + .panel-card {
+  flex: 1 1 0;
+  overflow: hidden;
+}
+
+.app-fit-home .library-back-action + .panel-card textarea {
+  max-height: 70px;
+}
+
+@media (max-height: 760px) {
+  .compact-mode-switch button {
+    min-height: 40px;
+  }
+
+  .compact-mode-switch small {
+    display: none;
+  }
+
+  .app-fit-home .priority-card {
+    grid-template-columns: 1fr 78px;
+    gap: 5px;
+    padding: 8px;
+  }
+
+  .app-fit-home .priority-card .section-title-row h3 {
+    font-size: clamp(20px, 6vw, 26px);
+  }
+
+  .app-fit-home .priority-card select {
+    min-height: 34px;
+  }
+
+  .app-fit-home .preset-button {
+    min-height: 36px;
+  }
+
+  .app-fit-home .toggle-list label,
+  .app-fit-home .toggle-row {
+    min-height: 30px;
+  }
+}
+
+@media (max-height: 680px) {
+  .compact-mode-card {
+    padding: 6px;
+  }
+
+  .compact-mode-switch button {
+    min-height: 34px;
+  }
+
+  .app-fit-home .priority-card .section-title-row {
+    display: none;
+  }
+
+  .app-fit-home .priority-card {
+    grid-template-columns: 1fr 68px;
+  }
+
+  .app-fit-home .priority-card select {
+    min-height: 32px;
+  }
+}

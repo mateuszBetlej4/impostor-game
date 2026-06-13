@@ -10,6 +10,8 @@ export function makeRound({ players, passOrder, category, word, impostorCount, s
     revealIndex: 0,
     revealedPlayers: [],
     clueRound: 1,
+    cluePlayerIndex: 0,
+    clues: [],
     votes: {},
     skipVotes: {},
     bonusCandidates: [],

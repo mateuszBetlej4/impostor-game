@@ -1,23 +1,14 @@
-import { Sparkles } from 'lucide-react';
-
 export function PlayModeSelector({ setupMode, setSetupMode }) {
   return (
-    <section className="panel-card">
-      <div className="section-title-row">
-        <div>
-          <p className="eyebrow">Play mode</p>
-          <h3>Local or Online</h3>
-        </div>
-        <Sparkles size={20} />
-      </div>
-      <div className="setup-mode-switch">
+    <section className="panel-card compact-mode-card">
+      <div className="setup-mode-switch compact-mode-switch" aria-label="Play mode">
         <button type="button" className={setupMode === 'local' ? 'selected' : ''} onClick={() => setSetupMode('local')}>
           <strong>Local</strong>
-          <small>One phone pass-and-play.</small>
+          <small>One phone</small>
         </button>
         <button type="button" className={setupMode === 'online' ? 'selected' : ''} onClick={() => setSetupMode('online')}>
-          <strong>Online beta</strong>
-          <small>Create or join with a code.</small>
+          <strong>Online</strong>
+          <small>Code room</small>
         </button>
       </div>
     </section>

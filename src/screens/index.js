@@ -1,4 +1,5 @@
 export * from './BonusVoteScreen.jsx';
+export * from './ClueInputScreen.jsx';
 export * from './ClueScreen.jsx';
 export * from './ConfirmScreen.jsx';
 export * from './GuessScreen.jsx';

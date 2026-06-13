@@ -21,7 +21,7 @@ import {
 import { DEFAULT_SETTINGS, SESSION_PRESETS } from './modeData.js';
 import {
   BonusVoteScreen,
-  ClueScreen,
+  ClueInputScreen,
   ConfirmScreen,
   GuessScreen,
   HomeScreen,
@@ -45,6 +45,7 @@ function App() {
   const [roleVisible, setRoleVisible] = useState(false);
   const [votingPlayerIndex, setVotingPlayerIndex] = useState(0);
   const [guessValue, setGuessValue] = useState('');
+  const [clueValue, setClueValue] = useState('');
   const [scores, setScores] = useState(() => loadJson(SCORE_KEY, {}));
   const [usedWords, setUsedWords] = useState(() => loadJson(USED_WORDS_KEY, {}));
   const [customSets, setCustomSets] = useState(() => loadJson(CUSTOM_SETS_KEY, {}));
@@ -57,6 +58,7 @@ function App() {
   const customSetNames = useMemo(() => Object.keys(customSets), [customSets]);
   const canStart = players.length >= MIN_PLAYERS && impostorCount >= 1 && impostorCount < players.length && categoryNames.length > 0;
   const currentRevealPlayer = round ? round.passOrder[round.revealIndex] : null;
+  const currentCluePlayer = round ? round.passOrder[round.cluePlayerIndex || 0] : null;
   const currentVotingPlayer = round ? round.passOrder[votingPlayerIndex] : null;
   const totalWords = categoryNames.reduce((sum, name) => sum + allWordBank[name].length, 0);
   const usedWordCount = Object.entries(usedWords).reduce((sum, [name, words]) => sum + (allWordBank[name] ? words.length : 0), 0);
@@ -103,6 +105,7 @@ function App() {
     setRoleVisible(false);
     setVotingPlayerIndex(0);
     setGuessValue('');
+    setClueValue('');
     setScreen('reveal');
   }
 
@@ -124,6 +127,7 @@ function App() {
     setRoleVisible(false);
     setVotingPlayerIndex(0);
     setGuessValue('');
+    setClueValue('');
     setScreen('reveal');
   }
 
@@ -208,19 +212,43 @@ function App() {
     setRound({ ...round, revealedPlayers, revealIndex: nextIndex });
 
     if (nextIndex >= round.passOrder.length) {
-      setScreen(round.settings.guessRounds > 0 ? 'clues' : 'vote');
+      setClueValue('');
+      setScreen(round.settings.guessRounds > 0 ? 'clueInput' : 'vote');
     }
   }
 
-  function nextClueRound() {
-    if (!round) return;
+  function submitClue() {
+    if (!round || !currentCluePlayer) return;
 
-    if (round.clueRound >= Number(round.settings.guessRounds || 0)) {
-      setScreen('vote');
+    const clue = normalisePlayerName(clueValue);
+    if (!clue) return;
+
+    const nextClues = [
+      ...(round.clues || []),
+      { round: round.clueRound, player: currentCluePlayer, clue },
+    ];
+    const nextPlayerIndex = (round.cluePlayerIndex || 0) + 1;
+    const totalClueRounds = Number(round.settings.guessRounds || 0);
+
+    setClueValue('');
+
+    if (nextPlayerIndex >= round.passOrder.length) {
+      if (round.clueRound >= totalClueRounds) {
+        setRound({ ...round, clues: nextClues, cluePlayerIndex: 0 });
+        setScreen('vote');
+        return;
+      }
+
+      setRound({
+        ...round,
+        clues: nextClues,
+        clueRound: round.clueRound + 1,
+        cluePlayerIndex: 0,
+      });
       return;
     }
 
-    setRound({ ...round, clueRound: round.clueRound + 1 });
+    setRound({ ...round, clues: nextClues, cluePlayerIndex: nextPlayerIndex });
   }
 
   function applyScores(winner) {
@@ -309,6 +337,7 @@ function App() {
     setRoleVisible(false);
     setVotingPlayerIndex(0);
     setGuessValue('');
+    setClueValue('');
     setScreen('home');
   }
 
@@ -392,7 +421,15 @@ function App() {
           />
         )}
 
-        {screen === 'clues' && round && <ClueScreen round={round} onNext={nextClueRound} />}
+        {screen === 'clueInput' && round && (
+          <ClueInputScreen
+            round={round}
+            player={currentCluePlayer}
+            clueValue={clueValue}
+            setClueValue={setClueValue}
+            submitClue={submitClue}
+          />
+        )}
         {screen === 'vote' && round && (
           <VoteScreen
             players={players}

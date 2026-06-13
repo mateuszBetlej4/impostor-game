@@ -1,0 +1,25 @@
+{
+  "name": "A$AP MOB Impostor",
+  "short_name": "MOB Impostor",
+  "description": "A mobile pass-and-play impostor party game for A$AP MOB.",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "orientation": "portrait-primary",
+  "background_color": "#050505",
+  "theme_color": "#050505",
+  "icons": [
+    {
+      "src": "/assets/3325401D-042F-4D79-BD7D-BEED5648C624.png?v=png-icon-20260613b",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/assets/3325401D-042F-4D79-BD7D-BEED5648C624.png?v=png-icon-20260613b",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ]
+}

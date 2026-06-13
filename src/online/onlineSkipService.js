@@ -1,12 +1,5 @@
 import { pickWordFromBank } from '../game/index.js';
-import { supabase, isSupabaseConfigured } from './supabaseClient.js';
-
-function getClient() {
-  if (!isSupabaseConfigured || !supabase) {
-    throw new Error('Supabase is not configured yet.');
-  }
-  return supabase;
-}
+import { getClient } from './getClient.js';
 
 function skipVotesNeeded(players) {
   const mobPlayers = players.filter((player) => player.connected !== false && player.role !== 'impostor');

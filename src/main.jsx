@@ -14,6 +14,7 @@ import './kioskMode.css';
 import './guessScreen.css';
 import './appFit.css';
 import './libraryFlow.css';
+import './setupResponsive.css';
 
 const WORD_AUDIT_HASH = '#breadcrumb-words';
 

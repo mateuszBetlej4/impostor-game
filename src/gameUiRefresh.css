@@ -1,0 +1,625 @@
+/* Game UI refresh: keep the one-screen mobile shell but make it feel like a real game HUD. */
+:root {
+  --game-glow: rgba(244, 208, 111, 0.34);
+  --game-glow-soft: rgba(214, 169, 58, 0.16);
+  --game-panel-top: rgba(34, 27, 14, 0.96);
+  --game-panel-bottom: rgba(5, 5, 5, 0.98);
+  --game-red: #fb7185;
+  --game-green: #86efac;
+}
+
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  background:
+    linear-gradient(rgba(255, 255, 255, 0.018) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.014) 1px, transparent 1px);
+  background-size: 18px 18px;
+  mask-image: radial-gradient(circle at 50% 22%, black 0%, transparent 72%);
+  opacity: 0.55;
+}
+
+.app-shell {
+  background:
+    radial-gradient(circle at 50% -6%, rgba(244, 208, 111, 0.22), transparent 34%),
+    radial-gradient(circle at 8% 8%, rgba(244, 208, 111, 0.11), transparent 28%),
+    radial-gradient(circle at 92% 78%, rgba(138, 100, 30, 0.22), transparent 36%),
+    linear-gradient(180deg, #0b0804 0%, #040403 62%, #000 100%);
+}
+
+.phone-frame {
+  position: relative;
+  padding: 6px;
+  border: 1px solid rgba(244, 208, 111, 0.26);
+  border-radius: 28px;
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.035), transparent 9%),
+    radial-gradient(circle at 50% 0%, rgba(244, 208, 111, 0.16), transparent 28%),
+    linear-gradient(180deg, rgba(10, 8, 5, 0.82), rgba(0, 0, 0, 0.7));
+  box-shadow:
+    0 0 0 1px rgba(0, 0, 0, 0.75),
+    0 28px 80px rgba(0, 0, 0, 0.72),
+    inset 0 1px 0 rgba(255, 255, 255, 0.08),
+    inset 0 0 32px rgba(214, 169, 58, 0.055);
+}
+
+.phone-frame::before,
+.phone-frame::after {
+  content: '';
+  position: absolute;
+  z-index: -1;
+  pointer-events: none;
+}
+
+.phone-frame::before {
+  inset: -2px;
+  border-radius: 30px;
+  background: linear-gradient(145deg, rgba(244, 208, 111, 0.46), transparent 22%, transparent 70%, rgba(244, 208, 111, 0.18));
+  filter: blur(10px);
+  opacity: 0.42;
+}
+
+.phone-frame::after {
+  width: 110px;
+  height: 5px;
+  left: 50%;
+  bottom: 5px;
+  transform: translateX(-50%);
+  border-radius: 999px;
+  background: rgba(244, 208, 111, 0.22);
+  box-shadow: 0 0 18px rgba(244, 208, 111, 0.18);
+}
+
+.game-hud-header {
+  position: relative;
+  overflow: hidden;
+  border-color: rgba(244, 208, 111, 0.34);
+  background:
+    linear-gradient(90deg, rgba(244, 208, 111, 0.13), transparent 24%),
+    linear-gradient(180deg, rgba(28, 22, 12, 0.98), rgba(6, 5, 4, 0.96));
+  box-shadow:
+    0 12px 28px rgba(0, 0, 0, 0.42),
+    inset 0 1px 0 rgba(255, 255, 255, 0.08),
+    inset 0 -1px 0 rgba(244, 208, 111, 0.12);
+}
+
+.game-hud-header::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: linear-gradient(115deg, transparent 0 24%, rgba(244, 208, 111, 0.1) 24% 26%, transparent 26% 100%);
+  opacity: 0.75;
+}
+
+.brand-lockup,
+.header-actions {
+  position: relative;
+  z-index: 1;
+}
+
+.crest-image {
+  border: 1px solid rgba(255, 247, 223, 0.18);
+  box-shadow:
+    0 0 0 1px rgba(0, 0, 0, 0.45),
+    0 0 22px rgba(244, 208, 111, 0.22),
+    inset 0 0 14px rgba(0, 0, 0, 0.42);
+}
+
+.header-stage-badge {
+  min-height: 28px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 9px;
+  border: 1px solid rgba(244, 208, 111, 0.24);
+  border-radius: 999px;
+  color: var(--mob-gold-bright);
+  background: rgba(0, 0, 0, 0.28);
+  font-size: 10px;
+  font-weight: 950;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.header-start,
+.icon-button {
+  box-shadow:
+    0 8px 18px rgba(0, 0, 0, 0.32),
+    0 0 18px rgba(244, 208, 111, 0.14),
+    inset 0 1px 0 rgba(255, 255, 255, 0.18);
+}
+
+.panel-card,
+.hero-card,
+.role-card,
+.result-card,
+.home-briefing-card {
+  position: relative;
+  overflow: hidden;
+  border-color: rgba(244, 208, 111, 0.26);
+  background:
+    linear-gradient(145deg, rgba(244, 208, 111, 0.13), transparent 22%),
+    radial-gradient(circle at 92% 8%, rgba(244, 208, 111, 0.16), transparent 24%),
+    linear-gradient(180deg, var(--game-panel-top), var(--game-panel-bottom));
+  box-shadow:
+    0 12px 34px rgba(0, 0, 0, 0.48),
+    inset 0 1px 0 rgba(255, 255, 255, 0.06),
+    inset 0 -1px 0 rgba(244, 208, 111, 0.08);
+}
+
+.panel-card::before,
+.hero-card::before,
+.role-card::before,
+.result-card::before,
+.home-briefing-card::before {
+  content: '';
+  position: absolute;
+  left: 10px;
+  right: 10px;
+  top: 0;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(244, 208, 111, 0.72), transparent);
+  opacity: 0.8;
+}
+
+.panel-card::after,
+.hero-card::after,
+.role-card::after,
+.result-card::after,
+.home-briefing-card::after {
+  content: '';
+  position: absolute;
+  width: 64px;
+  height: 64px;
+  right: -28px;
+  bottom: -32px;
+  border: 1px solid rgba(244, 208, 111, 0.12);
+  border-radius: 18px;
+  transform: rotate(18deg);
+  background: rgba(244, 208, 111, 0.04);
+  pointer-events: none;
+}
+
+.section-title-row h3,
+.hero-card h2,
+.role-card h2,
+.vote-panel h2,
+.result-summary-card h2,
+.final-guess-card h3,
+.clue-player-card h2 {
+  text-shadow: 0 2px 0 rgba(0, 0, 0, 0.55), 0 0 22px rgba(244, 208, 111, 0.12);
+}
+
+.home-tab-content {
+  justify-content: stretch;
+}
+
+.home-briefing-card {
+  flex: 0 0 auto;
+  min-height: 66px;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 1.45fr;
+  gap: 8px;
+  align-items: stretch;
+  padding: 9px;
+  border-radius: 20px;
+}
+
+.briefing-main,
+.briefing-chip-grid > div {
+  min-width: 0;
+  display: grid;
+  align-content: center;
+  gap: 2px;
+  border: 1px solid rgba(244, 208, 111, 0.16);
+  border-radius: 14px;
+  background: rgba(0, 0, 0, 0.24);
+}
+
+.briefing-main {
+  padding: 8px;
+}
+
+.briefing-main span,
+.briefing-chip-grid span {
+  min-width: 0;
+  color: var(--mob-muted);
+  font-size: 9px;
+  font-weight: 950;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.briefing-main strong {
+  min-width: 0;
+  color: var(--mob-text);
+  font-family: 'Barlow Condensed', Inter, sans-serif;
+  font-size: clamp(20px, 6vw, 29px);
+  line-height: 0.9;
+  text-transform: uppercase;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.briefing-chip-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 6px;
+}
+
+.briefing-chip-grid > div {
+  padding: 6px;
+  text-align: center;
+}
+
+.briefing-chip-grid strong {
+  min-width: 0;
+  color: var(--mob-gold-bright);
+  font-size: 12px;
+  font-weight: 950;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.home-briefing-card.is-ready {
+  border-color: rgba(134, 239, 172, 0.28);
+}
+
+.home-briefing-card.is-ready .briefing-main {
+  background: linear-gradient(180deg, rgba(34, 197, 94, 0.12), rgba(0, 0, 0, 0.24));
+}
+
+.home-briefing-card.is-locked .briefing-main {
+  background: linear-gradient(180deg, rgba(251, 113, 133, 0.1), rgba(0, 0, 0, 0.24));
+}
+
+.compact-mode-card,
+.app-fit-home .priority-card,
+.library-stats-card,
+.library-actions-card {
+  flex: 0 0 auto !important;
+}
+
+.compact-mode-card {
+  padding: 7px;
+}
+
+.compact-mode-switch button {
+  position: relative;
+  overflow: hidden;
+  min-height: 42px;
+  border-color: rgba(244, 208, 111, 0.22);
+  background:
+    linear-gradient(180deg, rgba(255, 247, 223, 0.06), rgba(0, 0, 0, 0.2));
+}
+
+.compact-mode-switch button.selected {
+  color: #120d03;
+  background: linear-gradient(145deg, rgba(244, 208, 111, 0.95), rgba(168, 119, 28, 0.95));
+  box-shadow: 0 0 20px rgba(244, 208, 111, 0.2), inset 0 1px 0 rgba(255, 255, 255, 0.25);
+}
+
+.compact-mode-switch button.selected strong {
+  color: #120d03;
+}
+
+.app-fit-home .priority-card {
+  grid-template-columns: 1fr 86px;
+  padding: 10px;
+}
+
+.app-fit-home .priority-card select,
+.app-fit-home input,
+.app-fit-home textarea {
+  border-color: rgba(244, 208, 111, 0.26);
+  background:
+    linear-gradient(180deg, rgba(255, 247, 223, 0.08), rgba(0, 0, 0, 0.3));
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.05);
+}
+
+.bottom-start,
+.primary-action {
+  position: relative;
+  overflow: hidden;
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+  box-shadow:
+    0 12px 24px rgba(214, 169, 58, 0.18),
+    inset 0 1px 0 rgba(255, 255, 255, 0.28);
+}
+
+.primary-action::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  transform: translateX(-120%) skewX(-20deg);
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.24), transparent);
+  transition: transform 0.45s ease;
+}
+
+.primary-action:active::after {
+  transform: translateX(120%) skewX(-20deg);
+}
+
+.setup-bottom-nav {
+  position: relative;
+  overflow: hidden;
+  border: 1px solid rgba(244, 208, 111, 0.24);
+  background:
+    linear-gradient(180deg, rgba(27, 21, 12, 0.98), rgba(4, 4, 4, 0.96));
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.06), 0 -8px 20px rgba(0, 0, 0, 0.24);
+}
+
+.setup-bottom-nav button {
+  border: 1px solid transparent;
+  border-radius: 13px;
+  color: rgba(255, 247, 223, 0.68);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.setup-bottom-nav button.active {
+  color: #120d03;
+  border-color: rgba(244, 208, 111, 0.5);
+  background: linear-gradient(145deg, var(--mob-gold-bright), var(--mob-gold-dark));
+  box-shadow: 0 0 16px rgba(244, 208, 111, 0.2);
+}
+
+.player-editor-card,
+.custom-set-builder-card,
+.app-fit-home.home-tab-rules > .home-tab-content > .panel-card,
+.home-tab-library .library-stats-card {
+  flex: 1 1 0 !important;
+}
+
+.compact-player-grid .pass-order-row,
+.compact-vote-row,
+.compact-clue-row,
+.score-row,
+.confirm-primary-grid > div,
+.confirm-compact-list > div,
+.result-stat-grid > div {
+  background:
+    linear-gradient(90deg, rgba(244, 208, 111, 0.08), transparent 35%),
+    rgba(0, 0, 0, 0.26);
+  border-color: rgba(244, 208, 111, 0.19);
+}
+
+.compact-count-row,
+.compact-pager {
+  background: linear-gradient(90deg, rgba(244, 208, 111, 0.08), rgba(0, 0, 0, 0.26));
+}
+
+.reveal-layout,
+.clue-screen-fit,
+.vote-screen-fit,
+.bonus-vote-screen,
+.guess-screen,
+.result-screen-fit,
+.confirm-screen-fit {
+  gap: 7px;
+}
+
+.role-card,
+.compact-vote-panel,
+.final-guess-card,
+.confirm-review-card,
+.result-votes-card {
+  flex: 1 1 0 !important;
+}
+
+.role-card {
+  justify-content: stretch;
+  padding: 12px;
+}
+
+.role-card > .eyebrow,
+.role-card > h2 {
+  flex: 0 0 auto;
+}
+
+.hold-card,
+.secret-card {
+  flex: 1 1 0;
+  min-height: 0;
+}
+
+.hold-card {
+  border-style: solid;
+  border-color: rgba(244, 208, 111, 0.28);
+  background:
+    radial-gradient(circle at 50% 25%, rgba(244, 208, 111, 0.16), transparent 35%),
+    linear-gradient(180deg, rgba(255, 247, 223, 0.06), rgba(0, 0, 0, 0.32));
+  box-shadow: inset 0 0 24px rgba(244, 208, 111, 0.05);
+}
+
+.secret-card {
+  display: grid;
+  align-content: center;
+}
+
+.secret-card h3 {
+  border-color: rgba(244, 208, 111, 0.35);
+  box-shadow: inset 0 0 28px rgba(244, 208, 111, 0.06);
+}
+
+.reveal-layout > .panel-card:not(.role-card) {
+  border-radius: 17px;
+}
+
+.clue-status-row,
+.progress-pill {
+  border-color: rgba(244, 208, 111, 0.28);
+  background:
+    linear-gradient(90deg, rgba(244, 208, 111, 0.12), rgba(0, 0, 0, 0.32));
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.05);
+}
+
+.clue-player-card {
+  background:
+    radial-gradient(circle at 86% 18%, rgba(244, 208, 111, 0.2), transparent 28%),
+    linear-gradient(180deg, rgba(32, 25, 14, 0.98), rgba(4, 4, 4, 0.98));
+}
+
+.clue-live-header {
+  align-items: center;
+}
+
+.clue-history-card,
+.clue-entry-card {
+  border-radius: 18px;
+}
+
+.compact-vote-panel {
+  padding: 12px;
+}
+
+.vote-panel h2 {
+  flex: 0 0 auto;
+  max-width: 100%;
+}
+
+.compact-target-grid,
+.vote-grid {
+  align-content: stretch;
+}
+
+.compact-target-grid button,
+.vote-grid button {
+  min-height: 44px;
+  border-color: rgba(244, 208, 111, 0.28);
+  background:
+    linear-gradient(145deg, rgba(244, 208, 111, 0.12), rgba(255, 255, 255, 0.035)),
+    rgba(0, 0, 0, 0.28);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.05);
+}
+
+.compact-target-grid button:active,
+.vote-grid button:active {
+  border-color: rgba(244, 208, 111, 0.7);
+  background: linear-gradient(145deg, rgba(244, 208, 111, 0.28), rgba(0, 0, 0, 0.24));
+}
+
+.bonus-summary-card,
+.guess-screen .compact-hero {
+  flex: 0 0 auto;
+  padding: 10px 12px;
+}
+
+.final-guess-card {
+  justify-items: stretch;
+  align-content: center;
+  text-align: left;
+}
+
+.final-guess-orb {
+  opacity: 0.48;
+}
+
+.result-summary-card {
+  border-color: rgba(244, 208, 111, 0.3);
+}
+
+.result-summary-card.caught {
+  border-color: rgba(134, 239, 172, 0.34);
+  background:
+    radial-gradient(circle at 92% 8%, rgba(134, 239, 172, 0.13), transparent 26%),
+    linear-gradient(180deg, rgba(23, 33, 18, 0.96), rgba(3, 4, 3, 0.98));
+}
+
+.result-summary-card.escaped,
+.result-card.escaped {
+  border-color: rgba(251, 113, 133, 0.34);
+  background:
+    radial-gradient(circle at 92% 8%, rgba(251, 113, 133, 0.13), transparent 26%),
+    linear-gradient(180deg, rgba(35, 18, 20, 0.96), rgba(4, 3, 3, 0.98));
+}
+
+.result-votes-card {
+  display: flex;
+  flex-direction: column;
+}
+
+.compact-vote-list {
+  flex: 1 1 0;
+  align-content: start;
+}
+
+.online-panel {
+  border-color: rgba(244, 208, 111, 0.28);
+}
+
+.online-card,
+.online-status-card,
+.online-lobby-card,
+.online-reveal-card,
+.online-phase-card,
+.online-vote-card,
+.online-guess-card,
+.online-result-card {
+  border: 1px solid rgba(244, 208, 111, 0.18);
+  background: rgba(0, 0, 0, 0.24);
+}
+
+@media (max-height: 760px) {
+  .phone-frame {
+    padding: 5px;
+    border-radius: 24px;
+  }
+
+  .home-briefing-card {
+    min-height: 56px;
+    padding: 7px;
+  }
+
+  .briefing-main strong {
+    font-size: clamp(18px, 5.5vw, 24px);
+  }
+
+  .briefing-chip-grid > div {
+    padding: 5px;
+  }
+
+  .header-stage-badge {
+    min-height: 24px;
+    padding: 0 7px;
+    font-size: 9px;
+  }
+
+  .compact-target-grid button,
+  .vote-grid button {
+    min-height: 38px;
+  }
+}
+
+@media (max-height: 700px) {
+  .home-briefing-card {
+    grid-template-columns: 1fr;
+    min-height: 48px;
+  }
+
+  .briefing-main {
+    display: none;
+  }
+
+  .briefing-chip-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+
+  .header-stage-badge {
+    display: none;
+  }
+
+  .phone-frame::after {
+    display: none;
+  }
+}

@@ -1,1 +1,1 @@
-export const MOB_LOGO_SRC = '/app-icon.svg?v=mob-logo-20260613';
+export const MOB_LOGO_SRC = '/assets/3325401D-042F-4D79-BD7D-BEED5648C624.png';

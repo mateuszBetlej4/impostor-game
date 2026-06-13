@@ -1,4 +1,3 @@
-import { Sparkles } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { OnlineSessionPanel } from '../online/OnlineSessionPanel.jsx';
 import {
@@ -15,7 +14,7 @@ function HomeBriefingCard({ homeTab, setupMode, players, category, impostorCount
   const panels = {
     play: {
       eyebrow: setupMode === 'online' ? 'Online lobby' : 'Local lobby',
-      title: canStart ? 'Ready to brief' : 'Build the crew',
+      title: canStart ? 'Ready to configure' : 'Build the crew',
       chips: [
         ['Players', players.length],
         ['Set', category === 'Random' ? 'Random' : category.replace('Custom: ', '')],
@@ -91,7 +90,6 @@ export function HomeScreen({
   impostorCount,
   setImpostorCount,
   canStart,
-  startRound,
   scores,
   resetScores,
   usedWordCount,
@@ -154,11 +152,10 @@ export function HomeScreen({
               impostorCount={impostorCount}
               setImpostorCount={setImpostorCount}
               maxImpostors={maxImpostors}
+              settings={settings}
+              patchSettings={patchSettings}
             />
             {!canStart && <p className="warning-text">You need at least 3 players, and impostors must be fewer than players.</p>}
-            <button className="primary-action bottom-start" type="button" disabled={!canStart} onClick={startRound}>
-              <Sparkles size={20} /> Review & Start
-            </button>
           </>
         )}
 
@@ -211,7 +208,7 @@ export function HomeScreen({
               customSetBase={customSetBase}
               setCustomSetBase={setCustomSetBase}
               customSetWords={customSetWords}
-              setCustomSetWords={setCustomSetWords}
+              setCustomSetWords={setCustomWords}
               categoryNames={categoryNames}
               customSetNames={customSetNames}
               saveCustomSet={saveSetAndReturn}

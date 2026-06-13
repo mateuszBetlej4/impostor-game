@@ -1,7 +1,7 @@
 import { Users } from 'lucide-react';
 import { useEffect, useMemo, useState } from 'react';
 
-const PLAYERS_PER_PAGE = 8;
+const PLAYERS_PER_PAGE = 6;
 
 export function PlayerOrderEditor({ players, newPlayer, setNewPlayer, addPlayer, removePlayer, movePlayer }) {
   const [page, setPage] = useState(0);
@@ -23,12 +23,13 @@ export function PlayerOrderEditor({ players, newPlayer, setNewPlayer, addPlayer,
     <section
       className="panel-card player-editor-card"
       style={{
-        minHeight: 'min(560px, calc(100dvh - 220px))',
+        minHeight: 'min(500px, calc(100dvh - 250px))',
         display: 'grid',
         gridTemplateRows: 'auto auto minmax(0, 1fr) auto auto',
+        gap: 10,
       }}
     >
-      <div className="section-title-row player-title-row">
+      <div className="section-title-row player-title-row" style={{ marginBottom: 0 }}>
         <div>
           <p className="eyebrow">Phone pass order</p>
           <h3>Players</h3>
@@ -41,14 +42,23 @@ export function PlayerOrderEditor({ players, newPlayer, setNewPlayer, addPlayer,
         <strong>{players.length >= 3 ? 'Ready' : 'Need 3+'}</strong>
       </div>
 
-      <div className="pass-order-list compact-player-grid" style={{ alignContent: 'start' }}>
+      <div
+        className="pass-order-list"
+        style={{
+          alignContent: 'start',
+          display: 'grid',
+          gridTemplateColumns: '1fr',
+          gap: 8,
+          minWidth: 0,
+        }}
+      >
         {visiblePlayers.map((player, index) => {
           const absoluteIndex = startIndex + index;
           return (
-            <div key={player} className="pass-order-row">
-              <span className="order-number">{absoluteIndex + 1}</span>
-              <strong>{player}</strong>
-              <div className="order-actions">
+            <div key={player} className="pass-order-row" style={{ minWidth: 0, minHeight: 52 }}>
+              <span className="order-number" style={{ width: 36, height: 36, borderRadius: 13, fontSize: 16 }}>{absoluteIndex + 1}</span>
+              <strong title={player} style={{ fontSize: 16 }}>{player}</strong>
+              <div className="order-actions" style={{ flex: '0 0 auto' }}>
                 <button type="button" onClick={() => movePlayer(absoluteIndex, -1)} disabled={absoluteIndex === 0}>↑</button>
                 <button type="button" onClick={() => movePlayer(absoluteIndex, 1)} disabled={absoluteIndex === players.length - 1}>↓</button>
                 <button type="button" className="remove-order" onClick={() => removePlayer(player)}>×</button>
@@ -66,7 +76,7 @@ export function PlayerOrderEditor({ players, newPlayer, setNewPlayer, addPlayer,
         </div>
       )}
 
-      <div className="input-row player-add-row" style={{ alignSelf: 'end', marginTop: 12 }}>
+      <div className="input-row player-add-row" style={{ alignSelf: 'end', marginTop: 8 }}>
         <input
           value={newPlayer}
           onChange={(event) => setNewPlayer(event.target.value)}

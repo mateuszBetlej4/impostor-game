@@ -1,0 +1,124 @@
+/* Final mobile setup layout overrides. Imported last. */
+
+.phone-frame::after,
+.panel-card::after,
+.hero-card::after,
+.role-card::after,
+.result-card::after,
+.home-briefing-card::after,
+.library-actions-card::after,
+.library-stats-card::after,
+.player-editor-card::after,
+.game-hud-header::before {
+  content: none !important;
+  display: none !important;
+  opacity: 0 !important;
+}
+
+.home-tab-play .priority-card {
+  min-height: auto !important;
+  display: grid !important;
+  gap: 12px !important;
+  padding: 20px !important;
+  overflow: visible !important;
+}
+
+.home-tab-play .priority-card > div:last-child {
+  display: grid !important;
+  grid-template-columns: 1fr !important;
+  gap: 8px !important;
+  width: 100% !important;
+  min-width: 0 !important;
+}
+
+.home-tab-play .priority-card .toggle-row {
+  min-height: 50px !important;
+  width: 100% !important;
+  padding: 9px 12px !important;
+}
+
+.home-tab-play .priority-card .toggle-row > span:first-child {
+  max-width: calc(100% - 46px) !important;
+}
+
+.home-tab-play .priority-card .toggle-row span,
+.home-tab-play .priority-card .toggle-row strong {
+  position: relative !important;
+  z-index: 1 !important;
+}
+
+.player-editor-card {
+  min-height: min(520px, calc(100dvh - 250px)) !important;
+  overflow: hidden !important;
+}
+
+.player-editor-card .pass-order-list {
+  overflow-y: auto !important;
+  overscroll-behavior: contain !important;
+  padding-right: 2px !important;
+  -webkit-overflow-scrolling: touch !important;
+}
+
+.player-editor-card .pass-order-row {
+  flex: 0 0 auto !important;
+}
+
+.player-editor-card .player-add-row {
+  position: relative !important;
+  z-index: 2 !important;
+  background: linear-gradient(180deg, rgba(5, 5, 5, 0.2), rgba(5, 5, 5, 0.88)) !important;
+  padding-top: 8px !important;
+}
+
+.library-stats-card {
+  min-height: auto !important;
+  display: grid !important;
+  gap: 14px !important;
+  padding: 22px !important;
+  overflow: visible !important;
+}
+
+.library-stats-card > div:last-child {
+  width: 100% !important;
+  display: flex !important;
+  justify-content: center !important;
+  align-items: center !important;
+  padding-top: 4px !important;
+}
+
+.library-stats-card > div:last-child > button {
+  width: min(100%, 320px) !important;
+  max-width: 320px !important;
+  margin-left: auto !important;
+  margin-right: auto !important;
+  flex: 0 1 320px !important;
+}
+
+@media (max-width: 430px) {
+  .phone-frame {
+    padding: 4px !important;
+  }
+
+  .app-header {
+    padding: 8px 10px !important;
+  }
+
+  .brand-lockup h1 {
+    font-size: clamp(24px, 7vw, 31px) !important;
+  }
+
+  .crest-mark {
+    width: 42px !important;
+    height: 42px !important;
+  }
+
+  .panel-card,
+  .role-card,
+  .result-card {
+    padding: 20px !important;
+  }
+
+  .home-briefing-card {
+    grid-template-columns: minmax(0, 1.25fr) minmax(0, 2fr) !important;
+  }
+}

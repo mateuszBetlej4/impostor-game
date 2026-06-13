@@ -6,13 +6,20 @@ const SCREEN_LABELS = {
   confirm: 'Briefing',
   reveal: 'Reveal',
   clueInput: 'Clue',
+  yesNoQuestion: 'Question',
+  yesNoResults: 'Answers',
   vote: 'Vote',
+  tieDuelClues: 'Tie duel',
+  tieDuelVote: 'Tie duel',
+  hotSeatClue: 'Hot seat',
+  hotSeatAcceptance: 'Defense',
+  hotSeatRevote: 'Revote',
   bonusVote: 'Tie break',
   guess: 'Final guess',
   result: 'Result',
 };
 
-export function Header({ screen, onReset, onStart, canStart }) {
+export function Header({ screen, onReset }) {
   return (
     <header className="app-header game-hud-header">
       <div className="brand-lockup">
@@ -24,11 +31,6 @@ export function Header({ screen, onReset, onStart, canStart }) {
       </div>
       <div className="header-actions">
         <span className="header-stage-badge">{SCREEN_LABELS[screen] || 'Game'}</span>
-        {screen === 'home' && (
-          <button className="header-start" type="button" disabled={!canStart} onClick={onStart}>
-            Start
-          </button>
-        )}
         {screen !== 'home' && (
           <button className="icon-button" type="button" onClick={onReset} aria-label="Reset game">
             <RotateCcw size={18} />

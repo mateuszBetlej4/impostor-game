@@ -10,9 +10,9 @@
   "theme_color": "#050505",
   "icons": [
     {
-      "src": "/app-icon.svg?v=mob-logo-20260613",
+      "src": "/assets/3325401D-042F-4D79-BD7D-BEED5648C624.png",
       "sizes": "512x512",
-      "type": "image/svg+xml",
+      "type": "image/png",
       "purpose": "any maskable"
     }
   ]

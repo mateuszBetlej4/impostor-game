@@ -2,6 +2,34 @@ import { pickWordFromBank, shuffle } from '../game/index.js';
 import { getClient } from './getClient.js';
 import { getConnectedPlayers } from './playerGroups.js';
 
+const ONLINE_YES_NO_QUESTIONS = [
+  'Would you usually find this indoors?',
+  'Would you usually find this outdoors?',
+  'Can you buy this?',
+  'Is this alive?',
+  'Would a child know what this is?',
+  'Is this connected to food or drink?',
+  'Is this bigger than a person?',
+  'Would you use this every day?',
+  'Is this usually expensive?',
+  'Can you hold this in your hand?',
+  'Is this connected to travel?',
+  'Is this something people do for fun?',
+];
+
+function pickYesNoQuestion() {
+  return ONLINE_YES_NO_QUESTIONS[Math.floor(Math.random() * ONLINE_YES_NO_QUESTIONS.length)];
+}
+
+async function clearPreviousRoundFlowData(client, sessionId) {
+  await client.from('online_votes').delete().eq('session_id', sessionId);
+  await client.from('online_skip_votes').delete().eq('session_id', sessionId);
+  await client.from('online_clues').delete().eq('session_id', sessionId);
+  await client.from('online_yes_no_answers').delete().eq('session_id', sessionId);
+  await client.from('online_hot_seat_votes').delete().eq('session_id', sessionId);
+  await client.from('online_tie_duels').delete().eq('session_id', sessionId);
+}
+
 export async function startOnlineRound({ session, identity, players, wordBank }) {
   const client = getClient();
 
@@ -14,16 +42,9 @@ export async function startOnlineRound({ session, identity, players, wordBank })
     throw new Error('Online sessions need at least 3 connected players.');
   }
 
-  await client
-    .from('online_votes')
-    .delete()
-    .eq('session_id', session.id);
+  await clearPreviousRoundFlowData(client, session.id);
 
-  await client
-    .from('online_skip_votes')
-    .delete()
-    .eq('session_id', session.id);
-
+  const settings = session.settings || {};
   const impostorCount = Math.min(Number(session.impostor_count || 1), activePlayers.length - 1);
   const impostorIds = new Set(shuffle(activePlayers).slice(0, impostorCount).map((player) => player.id));
   const selected = pickWordFromBank({ category: session.category || 'Random', wordBank });
@@ -37,6 +58,19 @@ export async function startOnlineRound({ session, identity, players, wordBank })
       clue_round: 1,
       outcome: null,
       impostor_guess: null,
+      phase: 'reveal',
+      rules: {
+        hotSeatDefense: Boolean(settings.hotSeatDefense),
+        yesNoQuestionRound: Boolean(settings.yesNoQuestionRound),
+        allowImpostorFinalGuess: Boolean(settings.allowImpostorFinalGuess) && !settings.hotSeatDefense,
+      },
+      yes_no_question: settings.yesNoQuestionRound ? pickYesNoQuestion() : null,
+      hot_seat_player_id: null,
+      hot_seat_final_clue: null,
+      hot_seat_accepted: null,
+      hot_seat_used: false,
+      resolved_eliminated_player_id: null,
+      result_reason: null,
     })
     .select()
     .single();

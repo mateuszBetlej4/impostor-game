@@ -1,56 +1,55 @@
 import { Vote } from 'lucide-react';
-import { MOB_LOGO_SRC } from '../logoData.js';
 
 export function ResultScreen({ round, voteResult, onPlayAgain, onReset }) {
   const impostors = [...round.impostors];
   const winner = round.outcome || (voteResult.caught ? 'mob' : 'impostors');
   const title = winner === 'mob' ? 'MOB wins' : 'Impostor wins';
+  const topVotes = voteResult.sorted.slice(0, 5);
 
   return (
-    <div className="screen-stack">
-      <section className={`result-card ${winner === 'mob' ? 'caught' : 'escaped'}`}>
-        <img className="result-logo" src={MOB_LOGO_SRC} alt="A$AP MOB FC crest" />
-        <p className="eyebrow">The MOB has spoken</p>
+    <div className="screen-stack result-screen-fit">
+      <section className={`panel-card result-summary-card ${winner === 'mob' ? 'caught' : 'escaped'}`}>
+        <p className="eyebrow">Result</p>
         <h2>{title}</h2>
-        <div className="result-facts">
+        <div className="result-stat-grid">
           <div>
             <span>Impostor</span>
             <strong>{impostors.join(', ')}</strong>
           </div>
           <div>
-            <span>Secret word</span>
+            <span>Secret</span>
             <strong>{round.word}</strong>
           </div>
-          {round.impostorGuess && (
-            <div>
-              <span>Guess</span>
-              <strong>{round.impostorGuess}</strong>
-            </div>
-          )}
           <div>
-            <span>Category</span>
+            <span>Set</span>
             <strong>{round.category}</strong>
+          </div>
+          <div>
+            <span>Guess</span>
+            <strong>{round.impostorGuess || '—'}</strong>
           </div>
         </div>
       </section>
-      <section className="panel-card">
+
+      <section className="panel-card result-votes-card">
         <div className="section-title-row">
           <div>
             <p className="eyebrow">Votes</p>
             <h3>Final count</h3>
           </div>
-          <Vote size={20} />
+          <Vote size={18} />
         </div>
-        <div className="vote-results">
-          {voteResult.sorted.map(([player, count]) => (
-            <div key={player} className="vote-result-row">
+        <div className="compact-vote-list">
+          {topVotes.map(([player, count]) => (
+            <div key={player} className="compact-vote-row">
               <span>{player}</span>
               <strong>{count}</strong>
             </div>
           ))}
         </div>
       </section>
-      <div className="action-grid">
+
+      <div className="action-grid result-action-grid">
         <button className="secondary-action" type="button" onClick={onReset}>New Setup</button>
         <button className="primary-action" type="button" onClick={onPlayAgain}>Play Again</button>
       </div>

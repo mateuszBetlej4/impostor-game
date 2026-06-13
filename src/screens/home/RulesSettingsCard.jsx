@@ -2,6 +2,20 @@ import { Trophy } from 'lucide-react';
 import { Toggle } from '../../components/index.js';
 
 export function RulesSettingsCard({ sessionPresets, settings, patchSettings, applyPreset }) {
+  function toggleHotSeat(value) {
+    patchSettings({
+      hotSeatDefense: value,
+      allowImpostorFinalGuess: value ? false : settings.allowImpostorFinalGuess,
+    });
+  }
+
+  function toggleFinalGuess(value) {
+    patchSettings({
+      allowImpostorFinalGuess: value,
+      hotSeatDefense: value ? false : settings.hotSeatDefense,
+    });
+  }
+
   return (
     <section className="panel-card">
       <div className="section-title-row">
@@ -43,7 +57,12 @@ export function RulesSettingsCard({ sessionPresets, settings, patchSettings, app
       </div>
       <div className="toggle-list">
         <Toggle label="Show category to impostor" checked={settings.showCategoryToImpostor} onChange={(value) => patchSettings({ showCategoryToImpostor: value })} />
-        <Toggle label="Impostor final guess after being caught" checked={settings.allowImpostorFinalGuess} onChange={(value) => patchSettings({ allowImpostorFinalGuess: value })} />
+        <Toggle label="Hot Seat Defense" checked={Boolean(settings.hotSeatDefense)} onChange={toggleHotSeat} />
+        <p className="helper-text">Hot Seat replaces the impostor final guess. The voted player gives one final clue, then the group accepts or rejects the defense.</p>
+        <Toggle label="Yes/No Question Round" checked={Boolean(settings.yesNoQuestionRound)} onChange={(value) => patchSettings({ yesNoQuestionRound: value })} />
+        <p className="helper-text">After clues, everyone privately answers the same yes/no question about the secret word before voting.</p>
+        <Toggle label="Impostor final guess after being caught" checked={settings.allowImpostorFinalGuess} onChange={toggleFinalGuess} />
+        {settings.hotSeatDefense && <p className="warning-text">Final guess is disabled while Hot Seat Defense is active.</p>}
         <Toggle label="Randomise pass order at start" checked={settings.randomisePassOrder} onChange={(value) => patchSettings({ randomisePassOrder: value })} />
       </div>
     </section>

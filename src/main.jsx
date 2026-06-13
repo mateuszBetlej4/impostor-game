@@ -17,6 +17,7 @@ import './libraryFlow.css';
 import './setupResponsive.css';
 import './confirmFit.css';
 import './singleScreenPolish.css';
+import './gameScreenFit.css';
 
 const WORD_AUDIT_HASH = '#breadcrumb-words';
 

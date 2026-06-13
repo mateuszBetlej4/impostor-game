@@ -9,10 +9,33 @@ export function Toggle({ label, checked, onChange, tooltip }) {
   }
 
   return (
-    <div style={{ position: 'relative' }}>
-      <button className={`toggle-row ${checked ? 'on' : ''}`} type="button" onClick={() => onChange(!checked)}>
-        <span style={{ display: 'inline-flex', alignItems: 'center', gap: 8, minWidth: 0 }}>
-          <span>{label}</span>
+    <div style={{ position: 'relative', width: '100%', minWidth: 0 }}>
+      <button
+        className={`toggle-row ${checked ? 'on' : ''}`}
+        type="button"
+        onClick={() => onChange(!checked)}
+        style={{
+          width: '100%',
+          minWidth: 0,
+          minHeight: 52,
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'space-between',
+          gap: 10,
+          padding: '10px 12px',
+        }}
+      >
+        <span
+          style={{
+            display: 'inline-flex',
+            alignItems: 'center',
+            gap: 8,
+            minWidth: 0,
+            flex: '1 1 auto',
+            textAlign: 'left',
+          }}
+        >
+          <span style={{ minWidth: 0, whiteSpace: 'normal', lineHeight: 1.15 }}>{label}</span>
           {tooltip && (
             <span
               title={tooltip}
@@ -37,7 +60,7 @@ export function Toggle({ label, checked, onChange, tooltip }) {
             </span>
           )}
         </span>
-        <strong>{checked ? 'On' : 'Off'}</strong>
+        <strong style={{ flex: '0 0 auto', minWidth: 34, textAlign: 'right' }}>{checked ? 'On' : 'Off'}</strong>
       </button>
       {tooltip && showTooltip && (
         <div
@@ -45,8 +68,8 @@ export function Toggle({ label, checked, onChange, tooltip }) {
           style={{
             position: 'absolute',
             zIndex: 30,
-            left: 12,
-            right: 12,
+            left: 0,
+            right: 0,
             top: 'calc(100% + 6px)',
             padding: '12px 14px',
             border: '1px solid rgba(244, 208, 111, 0.28)',

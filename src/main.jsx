@@ -22,6 +22,7 @@ import './mobileViewportFit.css';
 import './gameUiRefresh.css';
 import './removeDecorativeHandles.css';
 import './setupLayoutFixes.css';
+import './globalGameVisualCleanup.css';
 
 const WORD_AUDIT_HASH = '#breadcrumb-words';
 

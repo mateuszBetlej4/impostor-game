@@ -1,12 +1,5 @@
 import { pickWordFromBank, shuffle } from '../game/index.js';
-import { supabase, isSupabaseConfigured } from './supabaseClient.js';
-
-function getClient() {
-  if (!isSupabaseConfigured || !supabase) {
-    throw new Error('Supabase is not configured yet.');
-  }
-  return supabase;
-}
+import { getClient } from './getClient.js';
 
 export async function startOnlineRound({ session, identity, players, wordBank }) {
   const client = getClient();
